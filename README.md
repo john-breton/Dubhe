@@ -6,6 +6,9 @@ Dubhe is currently under active development and will be updated with additional 
 
 Created by the CyberSEA Lab at Carleton University. Learn more [here](https://carleton.ca/cybersea/).
 
+### Did You Know?
+Dubhe is a star in the Ursa Major constellation. It is commonly referred to as a ""pointer star"" as it is helpful for finding Polaris, also known as the North Star. Dubhe follows the naming conventions of previous released security posture analysis tools. You can learn more about these tools [here](https://compass.carleton.ca/explore).
+
 ## Development
 
 ### Tools
@@ -42,7 +45,7 @@ Sample XMI files are included under `common/XMI Files` which were generated usin
 Dubhe currently supports the following types of analysis:
  - Analysis of UML Activity Diagrams to provide recommendations for the locations of data sanitization objects with activity flows. Up to three recommendations can be generated that aim to minimize the potential for data corruption propagation throughout the system as a whole, or to protect datastores or the expected entry points of systems.
 
-More details on how this analysis works can be found with the comments in the source code of Dubhe.
+More details on how this analysis works can be found within the source code of Dubhe.
 ## Known issues
 
 Currently, there are no known issues.
