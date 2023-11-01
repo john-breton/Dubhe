@@ -1,6 +1,6 @@
 import unittest
 
-from backend.ActivityElement import ActivityElement
+from app.ActivityElement import ActivityElement
 
 
 class TestActivityElement(unittest.TestCase):

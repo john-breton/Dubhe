@@ -2,8 +2,8 @@ import os
 import sys
 import unittest
 
-from backend.CorruptionAnalysis import CorruptionAnalysis
-from backend.ActivityElement import ActivityElement
+from app.CorruptionAnalysis import CorruptionAnalysis
+from app.ActivityElement import ActivityElement
 from collections import Counter
 
 
