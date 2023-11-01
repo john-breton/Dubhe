@@ -10,7 +10,7 @@ from ActivityElement import ActivityElement
 class CorruptionAnalysis:
     """
     The CorruptionAnalysis class is responsible for performing three
-    types of analysis on supplied .XMI files that represent systems.
+    types of analysis on supplied XMI files that represent systems.
 
     All three types of analysis occur concurrently and results will
     only be displayed once all three have been completed.
