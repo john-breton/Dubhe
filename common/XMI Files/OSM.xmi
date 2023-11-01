@@ -12,7 +12,7 @@
 				<node xmi:id="AAAAAAGKhDMIcrH8W50=" name="Client%20Login%20Request" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
 				<node xmi:id="AAAAAAGKhDLU+LH0ntg=" name="InitialNode1" visibility="public" xmi:type="uml:InitialNode"/>
 			</groups>
-			<groups xmi:id="AAAAAAGKhDNOgLIcMBI=" name="WebServer" visibility="public" xmi:type="uml:ActivityPartition">
+			<groups xmi:id="AAAAAAGKhDNOgLIcMBI=" name="WebServer" visibility=A"public" xmi:type="uml:ActivityPartition">
 				<node xmi:id="AAAAAAGKhD30l7VOhY0=" name="Redirect%20to%20Landing%20Page" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
 				<node xmi:id="AAAAAAGKhDQ4uLJXeuY=" name="Begin%20Client%20Authentication" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
 			</groups>

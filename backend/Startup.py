@@ -13,15 +13,27 @@ represent the behavioural view of a system-to-be.
 Main contact: john.breton@carleton.ca
 """
 import os
+import sys
+
+from PySide2.QtWidgets import QApplication
 
 from CorruptionAnalysis import CorruptionAnalysis
 
 # You can update the path to a different XMI File here, otherwise
 # you can leave this as for the OSM case study.
+from frontend.Window import Window
+
 XMI_FILE_PATH = os.path.join(os.getcwd(), "..", "common", "XMI Files",
-                             "OSM.xmi")
+                             "DualDatabase.xmi")
 
 # Entry point for the application.
 if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
     dubhe = CorruptionAnalysis(XMI_FILE_PATH)
     dubhe.perform_analysis()
+
+    window = Window(dubhe)
+    window.show()
+
+    sys.exit(app.exec_())

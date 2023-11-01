@@ -312,46 +312,51 @@ class CorruptionAnalysis:
         """
         if no_datastore:
             print("----Protecting Expected Entry Points----")
-            print(f"It is recommended to place a Data Sanitizer object between "
-                  f"the following elements:\n\t- {self._protect_entry[0][0]} "
+            print(f"It is recommended to place a Data Sanitizer object between"
+                  f" the following elements:\n\t- {self._protect_entry[0][0]} "
                   f"(parented by {self._protect_entry[0][2]})\n\t- "
                   f"{self._protect_entry[1][0]}: {self._protect_entry[1][1]} "
                   f"(parented by {self._protect_entry[1][2]})")
-            print("This recommendation is useful if the threat of insider attacks "
-                  "is sufficiently small compared to\nthe threat of external "
-                  "attacks. Examples of such external attacks include attempting "
-                  "to harm\nyour system by threatening its availability, or "
-                  "attempting a forceful takeover using arbitrary \ncode "
-                  "execution via corrupted data.")
+            print("This recommendation is useful if the threat of insider "
+                  "attacks is sufficiently small compared to\nthe threat of "
+                  "external attacks. Examples of such external attacks include"
+                  " attempting to harm\nyour system by threatening its "
+                  "availability, or attempting a forceful takeover using "
+                  "arbitrary \ncode execution via corrupted data.")
             if len(self._protect_stores) > 0:
                 print("\n----Protecting Data Stores----")
-                print(f"It is recommended to place a Data Sanitizer object between"
-                      f" the following elements:\n\t- {self._protect_stores[0][0]}:"
-                      f" {self._protect_stores[0][1]} (parented by "
+                print(f"It is recommended to place a Data Sanitizer object"
+                      f"between the following elements:\n\t- "
+                      f"{self._protect_stores[0][0]}: "
+                      f"{self._protect_stores[0][1]} (parented by "
                       f"{self._protect_stores[0][2]})\n\t- "
-                      f"{self._protect_stores[1][0]}: {self._protect_stores[1][1]}"
+                      f"{self._protect_stores[1][0]}: "
+                      f"{self._protect_stores[1][1]}"
                       f" (parented by {self._protect_stores[1][2]})")
-                print("This recommendation is beneficial if you want to maximize "
-                      "the protection of your data stores\nagainst corrupted data "
-                      "that would be damaging if destroyed or leaked to an "
-                      "attacker\n(e.g. data injection attacks).")
+                print("This recommendation is beneficial if you want to "
+                      "maximize the protection of your data stores\nagainst "
+                      "corrupted data that would be damaging if destroyed or "
+                      "leaked to an attacker\n(e.g. data injection attacks).")
             print("\n----Minimizing Corruption Propagation----")
-            print(f"It is recommended to place a Data Sanitizer object between "
-                  f"the following elements:\n\t- {self._protect_whole[0][0]}: "
-                  f"{self._protect_whole[0][1]} (parented by "
-                  f"{self._protect_whole[0][2]})\n\t- {self._protect_whole[1][0]}:"
+            print(f"It is recommended to place a Data Sanitizer object between"
+                  f" the following elements:\n\t- {self._protect_whole[0][0]}:"
+                  f" {self._protect_whole[0][1]} (parented by "
+                  f"{self._protect_whole[0][2]})\n\t- "
+                  f"{self._protect_whole[1][0]}:"
                   f" {self._protect_whole[1][1]} (parented by "
                   f"{self._protect_whole[1][2]})")
-            print("This recommendation should be applied if you have the goal of "
-                  "minimizing the longest path\nof corruption within your system, "
-                  "making system wide data corruption attacks more difficult.")
+            print("This recommendation should be applied if you have the goal "
+                  "of minimizing the longest path\nof corruption within your "
+                  "system, making system wide data corruption attacks more"
+                  " difficult.")
         else:
             print("----Detected Data Sanitizer----")
-            print("It appears your submitted XMI already contains a reference to a "
-                  "'DataSanitizer'. It may be\nplaced in an optimal location according"
-                  "to your specific security goals. If you wish to have\nanalysis "
-                  "performed, please remove any references to 'DataSanitizer' elements"
-                  "and resubmit\nyour modified XMI to Dubhe.")
+            print("It appears your submitted XMI already contains a reference "
+                  "to a 'DataSanitizer'. It may be\nplaced in an optimal "
+                  "location according to your specific security goals. If you "
+                  "wish to have\nanalysis performed, please remove any "
+                  "references to 'DataSanitizer' elements and resubmit\n"
+                  "your modified XMI to Dubhe.")
 
     def _check_for_datastore(self):
         """
