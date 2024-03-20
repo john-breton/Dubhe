@@ -1,11 +1,6 @@
 import threading
 from collections import Counter
 
-import lxml
-from lxml import etree
-
-from ActivityElement import ActivityElement
-
 
 class CorruptionAnalysis:
     """
@@ -16,11 +11,6 @@ class CorruptionAnalysis:
     only be displayed once all three have been completed.
     """
 
-    # Constants needed to access target XMI tags.
-    PARENT_DESCRIPTOR = "groups"
-    CHILD_DESCRIPTOR = "node"
-    EDGE_DESCRIPTOR = "edge"
-
     # Constants for specific XMI types.
     INITIAL_NODE_TYPE = "InitialNode"
     STORE_NODE_TYPE = "DataStoreNode"
@@ -28,14 +18,13 @@ class CorruptionAnalysis:
     # Constants to check for Data Sanitizer elements.
     DATA_SANITIZER = "DataSanitizer"
 
-    def __init__(self, path):
+    def __init__(self, elements):
         """
         Constructor for the CorruptionAnalysis class.
 
-        :param path: The filepath to the .XMI file being used as input.
+        :param elements: The parsed elements that will be analyzed.
         """
-        self._path = path
-        self._elements = []
+        self._elements = elements
         self._protect_stores = []
         self._protect_entry = []
         self._protect_whole = []
@@ -53,58 +42,6 @@ class CorruptionAnalysis:
             if element.get_id() == target_id:
                 return element
         return None
-
-    def _parse_xmi(self):
-        """
-        Parse an XMI file and create ActivityElements.
-
-        We can abuse XML inheritance to know the parent of a given
-        UML Activity Diagram element, i.e., which activities belong
-        to which swimlanes, because those activities will always come
-        after the declaration of the swimlane.
-
-        :return: 1 if the file was successfully parsed, 0 otherwise.
-        """
-        curr_parent = None
-        with open(self._path, 'r') as file:
-            try:
-                tree = etree.parse(file)
-            except lxml.etree.XMLSyntaxError:
-                # The XMI is malformed
-                return 0
-            for element in tree.iter():
-                if element.tag == CorruptionAnalysis.PARENT_DESCRIPTOR:
-                    # Working with a swimlane, grab the Object name.
-                    curr_parent = element.items()[1][1]
-                elif element.tag == CorruptionAnalysis.CHILD_DESCRIPTOR:
-                    # Working with an element under a swimlane.
-                    # Build the ActivityElement and add it to the list.
-                    self._elements.append(
-                        ActivityElement(element.items(), curr_parent))
-                elif element.tag == CorruptionAnalysis.EDGE_DESCRIPTOR:
-                    # Working with an edge, update the elements
-                    # Some edges have names (labels), and they push the
-                    # indexing down, so we check for that here.
-                    curr_items = element.items()
-                    if len(curr_items) == 6:
-                        curr_source = curr_items[3][1]
-                        curr_dest = curr_items[4][1]
-                    else:
-                        curr_source = curr_items[2][1]
-                        curr_dest = curr_items[3][1]
-                    source_ele = None
-                    dest_ele = None
-                    # Set the source for one ActivityElement while
-                    # simultaneously setting the destination for another.
-                    for ele in self._elements:
-                        if ele.get_id() == curr_source:
-                            source_ele = ele
-                        elif ele.get_id() == curr_dest:
-                            dest_ele = ele
-                    if source_ele is not None and dest_ele is not None:
-                        source_ele.set_destination(dest_ele.get_id())
-                        dest_ele.set_source(source_ele.get_id())
-        return 1
 
     def _analyze_datastore(self):
         """
@@ -389,12 +326,6 @@ class CorruptionAnalysis:
         the XMI 2.X standard.
         """
         # Parse the XMI into usable ActivityElement objects.
-        if self._parse_xmi() == 0:
-            print("[ERROR] It appears the supplied XMI file is malformed. "
-                  "Dubhe currently offers support for XMI 2.X.\n\t\tPlease"
-                  " ensure you are supplying an XMI file that adheres to "
-                  "the official specification.")
-            return
         if self._check_for_datastore():
             # The submitted diagram already includes a data sanitizer.
             # Don't try to supersede the judgement of designers.

@@ -16,11 +16,13 @@ import os
 from flask import Flask, render_template
 
 from CorruptionAnalysis import CorruptionAnalysis
+from ActivityParser import ActivityParser
+from PatternMatching import PatternMatching
 
 # You can update the path to a different XMI File here, otherwise
 # you can leave this as for the OSM case study.
 XMI_FILE_PATH = os.path.join(os.getcwd(), "..", "common", "XMI Files",
-                             "DualDatabase.xmi")
+                             "Information Leakage Example Unprotected.xmi")
 
 app = Flask(__name__)
 
@@ -33,6 +35,20 @@ def home():
 
 # Entry point for the application.
 if __name__ == "__main__":
-    dubhe = CorruptionAnalysis(XMI_FILE_PATH)
-    dubhe.perform_analysis()
+    # Parse the XMI and create ActivityElements
+    parser = ActivityParser(XMI_FILE_PATH)
+    result = parser.parse_xmi()
+    if parser == 0:
+        print(
+            "[ERROR]: It appears the supplied .xmi file is malformed. "
+            "Dubhe currently support XMI versions 2.X+. "
+            "Please double-check your .xmi file before trying to rerun Dubhe.")
+        exit()
+
+    # Check for patterns within the parsed ActivityElements
+    detector = PatternMatching(parser.get_elements())
+
+    # Perform Analysis Specific to Data Corruption Attacks
+    corruption = CorruptionAnalysis(parser.get_elements())
+    corruption.perform_analysis()
     app.run()

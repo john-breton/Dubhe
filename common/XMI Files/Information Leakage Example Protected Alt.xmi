@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.0" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="StarUML" exporterVersion="2.0"/>
+	<uml:Model xmi:id="AAAAAAGOWRHh1ZxeqGA=" xmi:type="uml:Model" name="RootModel">
+		<packagedElement xmi:id="AAAAAAGOWQqshJqxd0s=" name="ClientServerMedical" visibility="public" isReentrant="true" xmi:type="uml:Activity" isReadOnly="false" isSingleExecution="false">
+			<groups xmi:id="AAAAAAGOWQsjhZq8xgY=" name="Client" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGOWRETBpv21Io=" name="Medical%20History" visibility="public" xmi:type="uml:AcceptEventAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOWRFzD5xAsU0=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
+			</groups>
+			<groups xmi:id="AAAAAAGOWQtGSJrIMq4=" name="Server" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGOWQv6rJrhbwc=" name="InitialNode1" visibility="public" xmi:type="uml:InitialNode"/>
+				<node xmi:id="AAAAAAGOWQwRBZroW8U=" name="Request%20Medical%20History" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOWQ7GrpsYq+Y=" name="DecisionNode1" visibility="public" xmi:type="uml:DecisionNode"/>
+				<node xmi:id="AAAAAAGOWQ8BupszsJk=" name="Encrypt%20Data" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOWQ9cw5tjoqE=" name="MergeNode1" visibility="public" xmi:type="uml:MergeNode"/>
+				<node xmi:id="AAAAAAGOWRCGm5uYXgc=" name="Authenticate%20User" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOWRDKvJu1Vao=" name="Medical%20History" visibility="public" xmi:type="uml:SendSignalAction" isLocallyReentrant="false" isSynchronous="true"/>
+			</groups>
+			<edge xmi:id="AAAAAAGOWQxVqZsGlDU=" visibility="public" source="AAAAAAGOWQv6rJrhbwc=" target="AAAAAAGOWQwRBZroW8U=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOWQ7hn5shlN0=" visibility="public" source="AAAAAAGOWQwRBZroW8U=" target="AAAAAAGOWQ7GrpsYq+Y=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOWQ8fR5tPWGg=" visibility="public" source="AAAAAAGOWQ7GrpsYq+Y=" target="AAAAAAGOWQ8BupszsJk=" xmi:type="uml:ControlFlow">
+				<guard xmi:id="AAAAAAGOWRHh1ZxfPZg=" xmi:type="uml:LiteralString" value="isSensitive"/>
+			</edge>
+			<edge xmi:id="AAAAAAGOWQ9+lZtsP3I=" visibility="public" source="AAAAAAGOWQ7GrpsYq+Y=" target="AAAAAAGOWQ9cw5tjoqE=" xmi:type="uml:ControlFlow">
+				<guard xmi:id="AAAAAAGOWRHh1ZxgJws=" xmi:type="uml:LiteralString" value="!isSensitive"/>
+			</edge>
+			<edge xmi:id="AAAAAAGOWQ+Nq5t+XYs=" visibility="public" source="AAAAAAGOWQ8BupszsJk=" target="AAAAAAGOWQ9cw5tjoqE=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOWRDub5vS7b0=" visibility="public" source="AAAAAAGOWQ9cw5tjoqE=" target="AAAAAAGOWRCGm5uYXgc=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOWRD615vkpDE=" visibility="public" source="AAAAAAGOWRCGm5uYXgc=" target="AAAAAAGOWRDKvJu1Vao=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOWRFLsZwVDXE=" visibility="public" source="AAAAAAGOWRETBpv21Io=" target="AAAAAAGOWRDKvJu1Vao=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOWRFZlZwuS8U=" visibility="public" source="AAAAAAGOWRDKvJu1Vao=" target="AAAAAAGOWRETBpv21Io=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOWRGRNpxK6iw=" visibility="public" source="AAAAAAGOWRETBpv21Io=" target="AAAAAAGOWRFzD5xAsU0=" xmi:type="uml:ControlFlow"/>
+		</packagedElement>
+	</uml:Model>
+</xmi:XMI>
