@@ -132,9 +132,7 @@ class PatternMatching:
                     break
 
             if detected:
-                self._detected_patterns.append(threat)
-                print("Wow")
-
+                self._detected_patterns.append((threat_type, threat))
 
     def _build_element_path_set(self, detect_pattern):
         """
@@ -212,7 +210,15 @@ class PatternMatching:
         return None
 
     def _display_results(self):
-        pass
+        for entry in self._detected_patterns:
+            pattern = entry[-1]
+            print(
+                f"\nYour design may be susceptible to the following {(entry[0].replace('_', ' ')).title()} threats:\n")
+            print(
+                f"Threat Name: {pattern.get_technique().strip()}\nMITRE ATT&CK Reference: {pattern.get_technique_num()}")
+            print(f"We recommend you review the mitigations associated with the"
+                  f" MITRE ATT&CK listing to harden your system. "
+                  f"\n\t(E.g., {pattern.get_mitigation().strip()}, reference number: {pattern.get_mitigation_num().strip()})")
 
     def perform_pattern_matching(self):
         # Create the analysis threads for each STRIDE classification.
@@ -252,7 +258,7 @@ class PatternMatching:
 if __name__ == '__main__':
     parser = ActivityParser(os.path.join(os.getcwd(), "..", "common",
                                          "XMI Files",
-                                         "Information Leakage Example Protected.xmi"))
+                                         "Information Leakage Example Unprotected.xmi"))
     result = parser.parse_xmi()
     test = PatternMatching(parser.get_elements())
     test.perform_pattern_matching()
