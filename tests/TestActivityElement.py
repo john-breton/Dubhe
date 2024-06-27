@@ -1,6 +1,6 @@
 import unittest
 
-from backend.ActivityElement import ActivityElement
+from main.ActivityElement import ActivityElement
 
 
 class TestActivityElement(unittest.TestCase):
@@ -9,9 +9,9 @@ class TestActivityElement(unittest.TestCase):
         # This method will run before each test case.
         self.activity_element_default = ActivityElement()
         self.activity_element_data = ActivityElement(
-            [('{http://schema.omg.org/spec/XMI/2.1}id', 'test_id'),
+            [('{https://schema.omg.org/spec/XMI/2.1}id', 'test_id'),
              ('name', 'Test%20Me'), ('visibility', 'public'),
-             ('{http://schema.omg.org/spec/XMI/2.1}type', 'uml:test')],
+             ('{https://schema.omg.org/spec/XMI/2.1}type', 'uml:test')],
             parent="parent_test")
 
     def test_default_constructor(self):
@@ -22,7 +22,7 @@ class TestActivityElement(unittest.TestCase):
         self.assertEqual(self.activity_element_default.get_parent(), "empty")
 
     def test_data_constructor(self):
-        # The the constructor once parameters are supplied.
+        # The constructor once parameters are supplied.
         self.assertEqual(self.activity_element_data.get_uml_type(), "test")
         self.assertEqual(self.activity_element_data.get_name(), "Test Me")
         self.assertEqual(self.activity_element_data.get_id(), "test_id")

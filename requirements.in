@@ -1,0 +1,4 @@
+# requirements.in
+lxml
+flask
+spacy
