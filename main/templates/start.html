@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en"
+>
+<head
+><title>Dubhe - Start</title
+>
+    <meta property="og:title" content="Dubhe - Start"/>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"/>
+    <meta
+            charset="utf-8"/>
+    <meta
+            property="twitter:card"
+            content="summary_large_image"/>
+    <style data-tag="reset-style-sheet">
+        html {
+            line-height: 1.15;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+        }
+
+        p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption {
+            margin: 0;
+            padding: 0;
+        }
+
+        button {
+            background-color: transparent;
+        }
+
+        button, input, optgroup, select, textarea {
+            font-family: inherit;
+            font-size: 100%;
+            line-height: 1.15;
+            margin: 0;
+        }
+
+        button, select {
+            text-transform: none;
+        }
+
+        button, [type="button"], [type="reset"], [type="submit"] {
+            -webkit-appearance: button;
+        }
+
+        button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {
+            border-style: none;
+            padding: 0;
+        }
+
+        button:-moz-focus, [type="button"]:-moz-focus, [type="reset"]:-moz-focus, [type="submit"]:-moz-focus {
+            outline: 1px dotted ButtonText;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        input {
+            padding: 2px 4px;
+        }
+
+        img {
+            display: block;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }</style
+    >
+    <style data-tag="default-style-sheet">
+        html {
+            font-family: Inter;
+            font-size: 16px;
+        }
+
+        body {
+            font-weight: 400;
+            font-style: normal;
+            text-decoration: none;
+            text-transform: none;
+            letter-spacing: normal;
+            line-height: 1.15;
+            color: var(--dl-color-gray-black);
+            background-color: var(--dl-color-gray-white);
+
+        }</style
+    >
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/animate.css@4.1.1/animate.css"/>
+    <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+            data-tag="font"/>
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"/>
+</head
+>
+<body
+>
+<link rel="stylesheet" href="../static/style.css"/>
+<div
+>
+    <link href="../static/start.css" rel="stylesheet"/>
+    <div class="start-container"
+    >
+        <div class="start-container1"
+        >
+            <div class="start-sidebar"
+            >
+                <nav class="start-nav"
+                ><a
+                        href="/"
+                        rel="noreferrer noopener"
+                        class="start-link"
+                >Dubhe</a
+                ><a href="start" class="start-navlink"
+                ><img
+                        src="../static/assets/new_selected.svg"
+                        alt="Dubhe - Start Page"
+                        loading="eager"
+                        class="start-image"/></a
+                ><a href="report" class="start-navlink1" id="reportLink"
+                    style="display: none;"
+                ><img
+                        src="../static/assets/report.svg"
+                        alt="Dubhe - Report Page"
+                        enabled
+                        loading="eager"
+                        class="start-image1"/></a
+                ><a href="suggestions" class="start-navlink2"
+                    id="suggestionsLink" style="display: none;"
+                ><img
+                        src="../static/assets/suggestions.svg"
+                        alt="Dubhe - Suggestions PAge"
+                        loading="eager"
+                        class="start-image2"/></a></nav>
+            </div>
+        </div
+        >
+        <div class="start-container2"
+        >
+            <div class="start-container3"
+            ><h1 class="start-text" id="header-text"
+            ><span>To get started, please submit your .xmi file</span
+            ><br/><br/><span
+            >Dubhe supports properly formatted .xmi files up to version
+                2.5.1</span
+            ><br/></h1
+            >
+                <form id="uploadForm" action="/upload" method="post"
+                      enctype="multipart/form-data">
+                    <button
+                            type="button"
+                            name="submitButton"
+                            class="start-button button"
+                            id="uploadBtn"
+                    ><span
+                    ><span>Select your .xmi file</span
+                    ><br/></span></button>
+                    <input type="file" name="file" id="fileInput" accept=".xmi"
+                           style="display: none;">
+                </form>
+            </div>
+        </div>
+    </div
+    >
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    let conditionIsMet = false;
+
+    document.getElementById('reportLink').addEventListener('click', function (event) {
+        if (!conditionIsMet) {
+            event.preventDefault();
+        }
+    });
+
+    document.getElementById('suggestionsLink').addEventListener('click', function (event) {
+        if (!conditionIsMet) {
+            event.preventDefault();
+        }
+    });
+
+    document.getElementById('uploadBtn').addEventListener('click', function () {
+        const fileInput = document.getElementById('fileInput');
+        fileInput.value = ''; // Clear the current file
+        fileInput.click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function () {
+        if (this.files.length > 0) {
+            const formData = new FormData();
+            formData.append('file', this.files[0]);
+            document.getElementById('header-text').innerText = "Dubhe is processing your file, please wait..."
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())  // Make sure to handle JSON response
+                .then(data => {
+                    alert(data.message);  // Show the server's response message
+                    if (data.status === 'success') {
+                        // Update the text.
+                        document.getElementById('header-text').innerText = "Your file has been successfully processed!\n\nYou can view the report summary and suggested recommendations using the buttons on the left."
+                        document.getElementById('uploadBtn').style = "display: none;"
+                        conditionIsMet = true;
+                        showLink();
+                    } else if (data.status === 'error') {
+                        document.getElementById('header-text').innerText = "To get started, please submit your .xmi file\n\nDubhe supports properly formatted .xmi files up to version 2.5.1"
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+        }
+    });
+
+    // Function to show the link and image
+    function showLink() {
+        if (conditionIsMet) {
+            document.getElementById('reportLink').style.display = '';
+            document.getElementById('suggestionsLink').style.display = '';
+        }
+    }
+</script>
+</body
+>
+</html>

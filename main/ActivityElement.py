@@ -6,6 +6,11 @@ class ActivityElement:
     and edge destination (if they exist).
     """
 
+    # Constants needed to access target XMI tags.
+    UML_PREFIX = "uml:"
+    XMI_BLANK_SPACE = "%20"
+    XMI_NEW_LINE = "%A0"
+
     def __init__(self, items=None, parent=None):
         """
         Constructor for the ActivityElement class.
@@ -19,23 +24,33 @@ class ActivityElement:
         """
         if items is None:
             # Default case constructor.
-            self._uml_type = "empty"
-            self._name = "empty"
-            self._id = "empty"
+            self._uml_type = None
+            self._name = None
+            self._id = None
         else:
             # We have data to populate the ActivityElement.
             if items[2][0].find("source") != -1:
-                self._uml_type = items[4][1].strip("uml:")
+                self._uml_type = items[4][1].strip(self.UML_PREFIX)
             else:
-                self._uml_type = items[3][1].strip("uml:")
+                self._uml_type = items[3][1].strip(self.UML_PREFIX)
             self._name = items[1][1].replace("%20", " ")
             self._id = items[0][1]
 
         # Not every ActivityElement will have a parent (per XMI 2.X).
         if parent is None:
-            self._parent = "empty"
+            self._parent = None
         else:
             self._parent = parent
+
+        # ActivityElements do not need to have any constraints, but if
+        # we encounter any, we can parse them here.
+        self._pre_conditions = []
+        self._post_conditions = []
+
+        # Like with constraints, Actions do not need to have a language
+        # and body specified, but if they do, parse them here
+        self._language = None
+        self._body = []
 
         # ActivityElements can have multiple sources (incoming edges)
         # and destinations (outgoing edges) so these are lists.

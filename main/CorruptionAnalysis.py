@@ -1,25 +1,18 @@
+import os
 import threading
 from collections import Counter
 
-import lxml
-from lxml import etree
-
-from ActivityElement import ActivityElement
+from main.ActivityParser import ActivityParser
 
 
 class CorruptionAnalysis:
     """
     The CorruptionAnalysis class is responsible for performing three
-    types of analysis on supplied .XMI files that represent systems.
+    types of analysis on supplied XMI files that represent systems.
 
     All three types of analysis occur concurrently and results will
     only be displayed once all three have been completed.
     """
-
-    # Constants needed to access target XMI tags.
-    PARENT_DESCRIPTOR = "groups"
-    CHILD_DESCRIPTOR = "node"
-    EDGE_DESCRIPTOR = "edge"
 
     # Constants for specific XMI types.
     INITIAL_NODE_TYPE = "InitialNode"
@@ -28,17 +21,18 @@ class CorruptionAnalysis:
     # Constants to check for Data Sanitizer elements.
     DATA_SANITIZER = "DataSanitizer"
 
-    def __init__(self, path):
+    def __init__(self, elements):
         """
         Constructor for the CorruptionAnalysis class.
 
-        :param path: The filepath to the .XMI file being used as input.
+        :param elements: The parsed elements that will be analyzed.
         """
-        self._path = path
-        self._elements = []
+        self._elements = elements
         self._protect_stores = []
         self._protect_entry = []
         self._protect_whole = []
+        self._longest_path = 0
+        self._all_paths = []
 
     def _get_element_by_id(self, target_id):
         """
@@ -53,58 +47,6 @@ class CorruptionAnalysis:
             if element.get_id() == target_id:
                 return element
         return None
-
-    def _parse_xmi(self):
-        """
-        Parse an XMI file and create ActivityElements.
-
-        We can abuse XML inheritance to know the parent of a given
-        UML Activity Diagram element, i.e., which activities belong
-        to which swimlanes, because those activities will always come
-        after the declaration of the swimlane.
-
-        :return: 1 if the file was successfully parsed, 0 otherwise.
-        """
-        curr_parent = None
-        with open(self._path, 'r') as file:
-            try:
-                tree = etree.parse(file)
-            except lxml.etree.XMLSyntaxError:
-                # The XMI is malformed
-                return 0
-            for element in tree.iter():
-                if element.tag == CorruptionAnalysis.PARENT_DESCRIPTOR:
-                    # Working with a swimlane, grab the Object name.
-                    curr_parent = element.items()[1][1]
-                elif element.tag == CorruptionAnalysis.CHILD_DESCRIPTOR:
-                    # Working with an element under a swimlane.
-                    # Build the ActivityElement and add it to the list.
-                    self._elements.append(
-                        ActivityElement(element.items(), curr_parent))
-                elif element.tag == CorruptionAnalysis.EDGE_DESCRIPTOR:
-                    # Working with an edge, update the elements
-                    # Some edges have names (labels), and they push the
-                    # indexing down, so we check for that here.
-                    curr_items = element.items()
-                    if len(curr_items) == 6:
-                        curr_source = curr_items[3][1]
-                        curr_dest = curr_items[4][1]
-                    else:
-                        curr_source = curr_items[2][1]
-                        curr_dest = curr_items[3][1]
-                    source_ele = None
-                    dest_ele = None
-                    # Set the source for one ActivityElement while
-                    # simultaneously setting the destination for another.
-                    for ele in self._elements:
-                        if ele.get_id() == curr_source:
-                            source_ele = ele
-                        elif ele.get_id() == curr_dest:
-                            dest_ele = ele
-                    if source_ele is not None and dest_ele is not None:
-                        source_ele.set_destination(dest_ele.get_id())
-                        dest_ele.set_source(source_ele.get_id())
-        return 1
 
     def _analyze_datastore(self):
         """
@@ -281,6 +223,10 @@ class CorruptionAnalysis:
         # Determine the longest path
         longest_path = max(all_paths, key=len)
 
+        # Store data for metric calculations
+        self._all_paths = all_paths
+        self._longest_path = longest_path
+
         # Get the middle ActivityElement
         if len(longest_path) % 2 == 0:
             # Even
@@ -299,7 +245,22 @@ class CorruptionAnalysis:
                                     mid_element.get_name(),
                                     mid_element.get_parent()])
 
-    def _display_results(self, no_datastore=True):
+    def get_longest_path(self):
+        return self._longest_path
+
+    def get_all_paths(self):
+        return self._all_paths
+
+    def get_protect_stores(self):
+        return self._protect_stores
+
+    def get_protect_entry(self):
+        return self._protect_entry
+
+    def get_protect_whole(self):
+        return self._protect_whole
+
+    def _display_results(self, web=False, no_datastore=True):
         """
         A method used to report the analysis results back to the user.
 
@@ -310,48 +271,54 @@ class CorruptionAnalysis:
                              system model already includes a data
                              sanitizer).
         """
-        if no_datastore:
-            print("----Protecting Expected Entry Points----")
-            print(f"It is recommended to place a Data Sanitizer object between "
-                  f"the following elements:\n\t- {self._protect_entry[0][0]} "
-                  f"(parented by {self._protect_entry[0][2]})\n\t- "
-                  f"{self._protect_entry[1][0]}: {self._protect_entry[1][1]} "
-                  f"(parented by {self._protect_entry[1][2]})")
-            print("This recommendation is useful if the threat of insider attacks "
-                  "is sufficiently small compared to\nthe threat of external "
-                  "attacks. Examples of such external attacks include attempting "
-                  "to harm\nyour system by threatening its availability, or "
-                  "attempting a forceful takeover using arbitrary \ncode "
-                  "execution via corrupted data.")
-            if len(self._protect_stores) > 0:
-                print("\n----Protecting Data Stores----")
+        if not web:
+            if no_datastore:
+                print("----Protecting Expected Entry Points----")
                 print(f"It is recommended to place a Data Sanitizer object between"
-                      f" the following elements:\n\t- {self._protect_stores[0][0]}:"
-                      f" {self._protect_stores[0][1]} (parented by "
-                      f"{self._protect_stores[0][2]})\n\t- "
-                      f"{self._protect_stores[1][0]}: {self._protect_stores[1][1]}"
-                      f" (parented by {self._protect_stores[1][2]})")
-                print("This recommendation is beneficial if you want to maximize "
-                      "the protection of your data stores\nagainst corrupted data "
-                      "that would be damaging if destroyed or leaked to an "
-                      "attacker\n(e.g. data injection attacks).")
-            print("\n----Minimizing Corruption Propagation----")
-            print(f"It is recommended to place a Data Sanitizer object between "
-                  f"the following elements:\n\t- {self._protect_whole[0][0]}: "
-                  f"{self._protect_whole[0][1]} (parented by "
-                  f"{self._protect_whole[0][2]})\n\t- {self._protect_whole[1][0]}:"
-                  f" {self._protect_whole[1][1]} (parented by "
-                  f"{self._protect_whole[1][2]})")
-            print("This recommendation should be applied if you have the goal of "
-                  "minimizing the longest path\nof corruption within your system, "
-                  "making system wide data corruption attacks more difficult.")
-        else:
-            print("----Detected Data Sanitizer----")
-            print("It appears your submitted XMI already contains a reference to a "
-                  "'DataSanitizer'. It may be\nplaced in an optimal location according"
-                  "to your specific security goals. If you wish to have\nanalysis "
-                  "performed, please remove any references to 'DataSanitizer' elements"
-                  "and resubmit\nyour modified XMI to Dubhe.")
+                      f" the following elements:\n\t- {self._protect_entry[0][0]} "
+                      f"(parented by {self._protect_entry[0][2]})\n\t- "
+                      f"{self._protect_entry[1][0]}: {self._protect_entry[1][1]} "
+                      f"(parented by {self._protect_entry[1][2]})")
+                print("This recommendation is useful if the threat of insider "
+                      "attacks is sufficiently small compared to\nthe threat of "
+                      "external attacks. Examples of such external attacks include"
+                      " attempting to harm\nyour system by threatening its "
+                      "availability, or attempting a forceful takeover using "
+                      "arbitrary \ncode execution via corrupted data.")
+                if len(self._protect_stores) > 0:
+                    print("\n----Protecting Data Stores----")
+                    print(f"It is recommended to place a Data Sanitizer object"
+                          f"between the following elements:\n\t- "
+                          f"{self._protect_stores[0][0]}: "
+                          f"{self._protect_stores[0][1]} (parented by "
+                          f"{self._protect_stores[0][2]})\n\t- "
+                          f"{self._protect_stores[1][0]}: "
+                          f"{self._protect_stores[1][1]}"
+                          f" (parented by {self._protect_stores[1][2]})")
+                    print("This recommendation is beneficial if you want to "
+                          "maximize the protection of your data stores\nagainst "
+                          "corrupted data that would be damaging if destroyed or "
+                          "leaked to an attacker\n(e.g. data injection attacks).")
+                print("\n----Minimizing Corruption Propagation----")
+                print(f"It is recommended to place a Data Sanitizer object between"
+                      f" the following elements:\n\t- {self._protect_whole[0][0]}:"
+                      f" {self._protect_whole[0][1]} (parented by "
+                      f"{self._protect_whole[0][2]})\n\t- "
+                      f"{self._protect_whole[1][0]}:"
+                      f" {self._protect_whole[1][1]} (parented by "
+                      f"{self._protect_whole[1][2]})")
+                print("This recommendation should be applied if you have the goal "
+                      "of minimizing the longest path\nof corruption within your "
+                      "system, making system wide data corruption attacks more"
+                      " difficult.")
+            else:
+                print("----Detected Data Sanitizer----")
+                print("It appears your submitted XMI already contains a reference "
+                      "to a 'DataSanitizer'. It may be\nplaced in an optimal "
+                      "location according to your specific security goals. If you "
+                      "wish to have\nanalysis performed, please remove any "
+                      "references to 'DataSanitizer' elements and resubmit\n"
+                      "your modified XMI to Dubhe.")
 
     def _check_for_datastore(self):
         """
@@ -366,7 +333,7 @@ class CorruptionAnalysis:
                 return True
         return False
 
-    def perform_analysis(self):
+    def perform_analysis(self, web=False):
         """
         Performs three types of analysis on .XMI files. The three
         analysis types aim to either protect datastore, expected entry
@@ -384,12 +351,6 @@ class CorruptionAnalysis:
         the XMI 2.X standard.
         """
         # Parse the XMI into usable ActivityElement objects.
-        if self._parse_xmi() == 0:
-            print("[ERROR] It appears the supplied XMI file is malformed. "
-                  "Dubhe currently offers support for XMI 2.X.\n\t\tPlease"
-                  " ensure you are supplying an XMI file that adheres to "
-                  "the official specification.")
-            return
         if self._check_for_datastore():
             # The submitted diagram already includes a data sanitizer.
             # Don't try to supersede the judgement of designers.
@@ -411,4 +372,11 @@ class CorruptionAnalysis:
             t3.join()
 
             # Display the results.
-            self._display_results()
+            self._display_results(web)
+
+
+if __name__ == '__main__':
+    parser = ActivityParser(os.path.join("..", "common", "XMI Files", "DualDatabase.xmi"))
+    result = parser.parse_xmi()
+    analysis = CorruptionAnalysis(parser.get_elements())
+    analysis.perform_analysis()
