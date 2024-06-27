@@ -1,0 +1,8 @@
+% 
+ATTACK NAME: Defacement
+TECHNIQUE NUMBER: T1491
+ATTACK MITIGATION: Verification of Data Authenticity
+MITIGATION NUMBER: M1053
+DETECT PATTERN: [["OpaqueAction", "DataStoreNode"]]
+MITIGATION PATTERN: [["DecisionNode", "ActivityFinalNode"], ["DecisionNode", "OpaqueAction"]]
+MODE: "AFTER"
