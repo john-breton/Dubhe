@@ -19,8 +19,8 @@ class ActivityParser:
         Parse an XMI file and create ActivityElements.
 
         We can abuse XML inheritance to know the parent of a given
-        UML Activity Diagram element, i.e., which activities belong
-        to which swimlanes, because those activities will always come
+        UML Activity Diagram element, i.e., which actions belong
+        to which swimlanes, because those actions will always come
         after the declaration of the swimlane.
 
         :return: 1 if the file was successfully parsed, 0 otherwise.

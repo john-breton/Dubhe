@@ -1,10 +1,7 @@
 import os
-import sys
 import unittest
 
 from app.CorruptionAnalysis import CorruptionAnalysis
-from app.ActivityElement import ActivityElement
-from collections import Counter
 
 
 class TestCorruptionAnalysis(unittest.TestCase):

@@ -1,7 +1,8 @@
 % 
-ATTACK TECHNIQUE: Adversary-in-the-Middle
-TECHNIQUE NUMBER: T1557
+ATTACK TECHNIQUE: Indicator Removal
+TECHNIQUE NUMBER: T1070
 ATTACK MITIGATION: Encrypt Sensitive Information
 MITIGATION NUMBER: M1041
 DETECT PATTERN: [["SendSignalAction"]]
 MITIGATION PATTERN: [["DecisionNode", "MergeNode"], ["DecisionNode", ("OpaqueAction", "EncryptData"), "MergeNode"]]
+MODE: "BEFORE"

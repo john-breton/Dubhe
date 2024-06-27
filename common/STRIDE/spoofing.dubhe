@@ -1,7 +1,8 @@
 % 
-ATTACK TECHNIQUE: Adversary-in-the-Middle
-TECHNIQUE NUMBER: T1557
-ATTACK MITIGATION: Encrypt Sensitive Information
-MITIGATION NUMBER: M1041
-DETECT PATTERN: [["SendSignalAction"]]
-MITIGATION PATTERN: [["DecisionNode", "MergeNode"], ["DecisionNode", ("OpaqueAction", "EncryptData"), "MergeNode"]]
+ATTACK NAME: Defacement
+TECHNIQUE NUMBER: T1491
+ATTACK MITIGATION: Verification of Data Authenticity
+MITIGATION NUMBER: M1053
+DETECT PATTERN: [["OpaqueAction", "DataStoreNode"]]
+MITIGATION PATTERN: [["DecisionNode", "ActivityFinalNode"], ["DecisionNode", "OpaqueAction"]]
+MODE: "AFTER"

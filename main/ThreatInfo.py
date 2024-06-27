@@ -15,6 +15,7 @@ class ThreatInfo:
         self._mitigation_num = None
         self._detect_pattern = []
         self._mitigation_pattern = []
+        self._mode = None
 
     def populate_threat(self, threat_info):
         """
@@ -27,6 +28,8 @@ class ThreatInfo:
         self._detect_pattern = ast.literal_eval(threat_info[4].split(": ")[-1])
         self._mitigation_pattern = ast.literal_eval(
             threat_info[5].split(": ")[-1])
+        self._mode = ast.literal_eval(
+            threat_info[6].split(": ")[-1])
 
     def get_technique(self):
         """
@@ -63,3 +66,15 @@ class ThreatInfo:
 
         """
         return self._mitigation_pattern
+
+    def get_mode(self):
+        """
+
+        """
+        return self._mode
+
+    def to_string(self):
+        """
+
+        """
+        return f"{self._technique} - {self._technique_num}"

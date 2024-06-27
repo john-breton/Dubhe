@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.0" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="StarUML" exporterVersion="2.0"/>
+	<uml:Model xmi:id="AAAAAAGKiqJxDBcicU8=" xmi:type="uml:Model" name="RootModel">
+		<packagedElement xmi:id="AAAAAAGKipkQwxMkUrc=" name="Dual%20Database" visibility="public" isReentrant="true" xmi:type="uml:Activity" isReadOnly="false" isSingleExecution="false">
+			<groups xmi:id="AAAAAAGKipoWnBUMEVI=" name="WebClient" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGKipv1XhUYdwY=" name="InitialNode1" visibility="public" xmi:type="uml:InitialNode"/>
+				<node xmi:id="AAAAAAGKipwm6xUguFg=" name="Client%20Login%20Request" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+			</groups>
+			<groups xmi:id="AAAAAAGKipxyHxVP2p0=" name="WebServer" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGKipyjuxVcIjQ=" name="Begin%20Client%20Authentication" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+			</groups>
+			<groups xmi:id="AAAAAAGKip0O6RWL+u0=" name="IdentityAcessManagement" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGKip4tyxW9i2M=" name="Request%20Client%20Information" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGKip+zXBYgt4Q=" name="Login%20Information" visibility="public" xmi:type="uml:SendSignalAction" isLocallyReentrant="false" isSynchronous="true"/>
+			</groups>
+			<groups xmi:id="AAAAAAGKip1/AxWdPbY=" name="CustomerManager" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGKiqAQBxZSfEM=" name="Login%20Information" visibility="public" xmi:type="uml:AcceptEventAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGKiqFXRRbcUWA=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
+				<node xmi:id="AAAAAAGKiqCqtxato6w=" name="CustomerDatabase" visibility="public" xmi:type="uml:DataStoreNode" isControlType="false" ordering="FIFO"/>
+			</groups>
+			<groups xmi:id="AAAAAAGKip2uSxWppQI=" name="ProfileManager" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGKip8+zBXsNv8=" name="Retrieve%20Client%20Profile" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGKiqHAqBcBNQc=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
+				<node xmi:id="AAAAAAGKiqBUyRaAnZo=" name="ProfileDatabase" visibility="public" xmi:type="uml:DataStoreNode" isControlType="false" ordering="FIFO"/>
+			</groups>
+			<edge xmi:id="AAAAAAGKipxUhhU8KB8=" visibility="public" source="AAAAAAGKipv1XhUYdwY=" target="AAAAAAGKipwm6xUguFg=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKipzRxxV524M=" visibility="public" source="AAAAAAGKipwm6xUguFg=" target="AAAAAAGKipyjuxVcIjQ=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKip5s5xXazb4=" visibility="public" source="AAAAAAGKipyjuxVcIjQ=" target="AAAAAAGKip4tyxW9i2M=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKip+SiRYOo14=" visibility="public" source="AAAAAAGKip4tyxW9i2M=" target="AAAAAAGKip8+zBXsNv8=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKip/gMxY82UY=" visibility="public" source="AAAAAAGKip4tyxW9i2M=" target="AAAAAAGKip+zXBYgt4Q=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKiqA5EBZuLew=" visibility="public" source="AAAAAAGKip+zXBYgt4Q=" target="AAAAAAGKiqAQBxZSfEM=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKiqCLsBab918=" visibility="public" source="AAAAAAGKip8+zBXsNv8=" target="AAAAAAGKiqBUyRaAnZo=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKiqFDKRbKVIc=" visibility="public" source="AAAAAAGKiqAQBxZSfEM=" target="AAAAAAGKiqCqtxato6w=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKiqGxzxbvmTc=" visibility="public" source="AAAAAAGKiqCqtxato6w=" target="AAAAAAGKiqFXRRbcUWA=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGKiqHgehcKimQ=" visibility="public" source="AAAAAAGKiqBUyRaAnZo=" target="AAAAAAGKiqHAqBcBNQc=" xmi:type="uml:ControlFlow"/>
+		</packagedElement>
+	</uml:Model>
+</xmi:XMI>

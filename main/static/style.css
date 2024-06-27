@@ -13,7 +13,7 @@
   --dl-size-size-xlarge: 192px;
   --dl-size-size-xsmall: 16px;
   --dl-space-space-unit: 16px;
-  --dl-color-primary-100: #0058ffff;
+  --dl-color-primary-100: #003EB3;
   --dl-color-primary-300: #0074F0;
   --dl-color-primary-500: #14A9FF;
   --dl-color-primary-700: #85DCFF;
@@ -83,6 +83,9 @@
   line-height: 1.15;
   text-transform: none;
   text-decoration: none;
+}
+.center {
+  margin: auto;
 }
 .Heading {
   font-size: 32px;
