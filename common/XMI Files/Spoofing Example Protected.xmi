@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.0" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="StarUML" exporterVersion="2.0"/>
+	<uml:Model xmi:id="AAAAAAGOleQXDjZUfxE=" xmi:type="uml:Model" name="RootModel">
+		<packagedElement xmi:id="AAAAAAGOlcPer/cDdII=" name="ClientServerAccount" visibility="public" isReentrant="true" xmi:type="uml:Activity" isReadOnly="false" isSingleExecution="false">
+			<groups xmi:id="AAAAAAGOldgrh/cJypA=" name="Client" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGOldoIPPckS6A=" name="InitialNode1" visibility="public" xmi:type="uml:InitialNode"/>
+				<node xmi:id="AAAAAAGOldpSIvcsmSM=" name="Update%20Account%20Username" visibility="public" xmi:type="uml:SendSignalAction" isLocallyReentrant="false" isSynchronous="true"/>
+			</groups>
+			<groups xmi:id="AAAAAAGOldhGlvcWv+4=" name="Server" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGOldv/cfdd8DE=" name="Update%20Account%20Username" visibility="public" xmi:type="uml:AcceptEventAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOldyWpPd9nrY=" name="Update%20Account%20Information" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOld2hK/e48Pk=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
+				<node xmi:id="AAAAAAGOleH2pTXQjxk=" name="Authenticate%20Request" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOleJglzXw5x8=" name="DecisionNode1" visibility="public" xmi:type="uml:DecisionNode"/>
+				<node xmi:id="AAAAAAGOleNULjYv8Eg=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
+				<node xmi:id="AAAAAAGOld1po/ebI0A=" name="User%20Information" visibility="public" xmi:type="uml:DataStoreNode" isControlType="false" ordering="FIFO"/>
+			</groups>
+			<edge xmi:id="AAAAAAGOldvsrvdL4To=" visibility="public" source="AAAAAAGOldoIPPckS6A=" target="AAAAAAGOldpSIvcsmSM=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOld21zPfAsKg=" visibility="public" source="AAAAAAGOldpSIvcsmSM=" target="AAAAAAGOldv/cfdd8DE=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOld3Tu/fkfKk=" visibility="public" source="AAAAAAGOldyWpPd9nrY=" target="AAAAAAGOld1po/ebI0A=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOld3jQ/f2pn4=" visibility="public" source="AAAAAAGOld1po/ebI0A=" target="AAAAAAGOld2hK/e48Pk=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOleJ9HTX5hxQ=" visibility="public" source="AAAAAAGOleH2pTXQjxk=" target="AAAAAAGOleJglzXw5x8=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOleKK7zYLQnA=" visibility="public" source="AAAAAAGOldv/cfdd8DE=" target="AAAAAAGOleH2pTXQjxk=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOleM3gzYdsT4=" visibility="public" source="AAAAAAGOleJglzXw5x8=" target="AAAAAAGOldyWpPd9nrY=" xmi:type="uml:ControlFlow">
+				<guard xmi:id="AAAAAAGOleQXDjZVwo8=" xmi:type="uml:LiteralString" value="authenticated"/>
+			</edge>
+			<edge xmi:id="AAAAAAGOleNmADY3cA4=" visibility="public" source="AAAAAAGOleJglzXw5x8=" target="AAAAAAGOleNULjYv8Eg=" xmi:type="uml:ControlFlow">
+				<guard xmi:id="AAAAAAGOleQXDjZWMhQ=" xmi:type="uml:LiteralString" value="!authenticated"/>
+			</edge>
+		</packagedElement>
+	</uml:Model>
+</xmi:XMI>
