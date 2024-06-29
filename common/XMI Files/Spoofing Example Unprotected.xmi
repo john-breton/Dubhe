@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.0" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
 	<xmi:Documentation exporter="StarUML" exporterVersion="2.0"/>
-	<uml:Model xmi:id="AAAAAAGOleBCOPgOYRA=" xmi:type="uml:Model" name="RootModel">
+	<uml:Model xmi:id="AAAAAAGQYLUHggTuWOU=" xmi:type="uml:Model" name="RootModel">
 		<packagedElement xmi:id="AAAAAAGOlcPer/cDdII=" name="ClientServerAccount" visibility="public" isReentrant="true" xmi:type="uml:Activity" isReadOnly="false" isSingleExecution="false">
 			<groups xmi:id="AAAAAAGOldgrh/cJypA=" name="Client" visibility="public" xmi:type="uml:ActivityPartition">
 				<node xmi:id="AAAAAAGOldoIPPckS6A=" name="InitialNode1" visibility="public" xmi:type="uml:InitialNode"/>
@@ -10,8 +10,8 @@
 			<groups xmi:id="AAAAAAGOldhGlvcWv+4=" name="Server" visibility="public" xmi:type="uml:ActivityPartition">
 				<node xmi:id="AAAAAAGOldv/cfdd8DE=" name="Update%20Account%20Username" visibility="public" xmi:type="uml:AcceptEventAction" isLocallyReentrant="false" isSynchronous="true"/>
 				<node xmi:id="AAAAAAGOldyWpPd9nrY=" name="Update%20Account%20Information" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
-				<node xmi:id="AAAAAAGOld2hK/e48Pk=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
 				<node xmi:id="AAAAAAGOld1po/ebI0A=" name="User%20Information" visibility="public" xmi:type="uml:DataStoreNode" isControlType="false" ordering="FIFO"/>
+				<node xmi:id="AAAAAAGOld2hK/e48Pk=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
 			</groups>
 			<edge xmi:id="AAAAAAGOldvsrvdL4To=" visibility="public" source="AAAAAAGOldoIPPckS6A=" target="AAAAAAGOldpSIvcsmSM=" xmi:type="uml:ControlFlow"/>
 			<edge xmi:id="AAAAAAGOld21zPfAsKg=" visibility="public" source="AAAAAAGOldpSIvcsmSM=" target="AAAAAAGOldv/cfdd8DE=" xmi:type="uml:ControlFlow"/>

@@ -4,12 +4,12 @@
     <title>Dubhe</title>
     <meta
             name="description"
-            content="Dubhe is an automated tool that can determine a system's behavioural security posture by analyzing UML Activity Diagrams."
+            content="Dubhe is an automated tool that can determine a system's behavioural security posture by analyzing UML activity diagrams"
     />
     <meta property="og:title" content="Dubhe"/>
     <meta
             property="og:description"
-            content="Dubhe is an automated tool that can determine a system's behavioural security posture by analyzing UML Activity Diagrams."
+            content="Dubhe is an automated tool that can determine a system's behavioural security posture by analyzing UML activity diagrams"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="utf-8"/>
@@ -60,7 +60,7 @@
             padding: 0;
         }
 
-        button:-moz-focus, [type="button"]:-moz-focus, [type="reset"]:-moz-focus, [type="submit"]:-moz-focus {
+        button:-moz-focus, [type="button"]:-moz-focus, [type="reset"], [type="submit"]:-moz-focus {
             outline: 1px dotted ButtonText;
         }
 
@@ -112,10 +112,15 @@
     <link href="../static/index.css" rel="stylesheet"/>
 
     <div class="home-container">
+        <!-- Add the video as a background -->
+        <video autoplay muted loop id="background-video">
+            <source src="../static/background.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
         <div class="home-banner center">
             <h2 class="home-text">Dubhe</h2>
             <span class="home-text1">
-            Dubhe is an automated tool that can determine a system's behavioural security posture by analyzing UML Activity Diagrams.
+            Dubhe is an automated tool that can determine a system's behavioural security posture by analyzing UML activity diagrams
           </span>
             <div class="home-btn-group">
                 <button
@@ -131,10 +136,10 @@
                         id="learn-btn"
                         name="learn_button"
                         type="button"
-                        onclick="location.href='learn'"
+                        onclick="window.open('https://gitlab.com/CyberSEA-Public/dubhe','_blank', 'noopener noreferrer')"
                         class="home-button1 button"
                 >
-                    Learn More
+                    Learn More on GitLab
                 </button>
             </div>
         </div>

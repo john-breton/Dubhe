@@ -13,13 +13,9 @@ represent the behavioural view of a system-to-be.
 Main contact: john.breton@carleton.ca
 """
 import os
-
 import numpy as np
-import matplotlib
-
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 from flask import Flask, render_template, request, jsonify
+import plotly.graph_objects as go
 
 from CorruptionAnalysis import CorruptionAnalysis
 from ActivityParser import ActivityParser
@@ -28,7 +24,7 @@ from PatternMatching import PatternMatching
 # You can update the path to a different XMI File here, otherwise
 # you can leave this as for the OSM case study.
 XMI_FILE_PATH = os.path.join(os.getcwd(), "..", "common", "XMI Files",
-                             "Information Leakage Example Unprotected.xmi")
+                             "Spoofing Example Unprotected.xmi")
 
 # Flask related variables, if you want to run the program in the command-line,
 # these variables are not needed.
@@ -87,7 +83,7 @@ def upload_file():
 def report_page():
     if web_detector is None:
         return render_template("start.html")
-    cepi = web_detector.get_cepi()
+    ceri = web_detector.get_ceri()
     mitigated = web_detector.get_mitigated_threats()
     potential = web_detector.get_potential_threats()
     unmitigated = web_detector.get_detected_threats()
@@ -158,45 +154,64 @@ def report_page():
     mitigated_values += mitigated_values[:1]
     angles += angles[:1]
 
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-    ax.fill(angles, unmitigated_values, color='red', alpha=0.25)
-    ax.plot(angles, unmitigated_values, 'red', linewidth=2,
-            label='Unmitigated')
+    # Create Plotly figure
+    fig = go.Figure()
 
-    ax.fill(angles, potential_values, color='yellow', alpha=0.25)
-    ax.plot(angles, potential_values, 'yellow', linewidth=2,
-            label='Potentially Mitigated')
+    fig.add_trace(go.Scatterpolar(
+        r=unmitigated_values,
+        theta=categories,
+        fill='toself',
+        name='Unmitigated',
+        line=dict(color='red')
+    ))
 
-    ax.fill(angles, mitigated_values, color='green', alpha=0.25)
-    ax.plot(angles, mitigated_values, 'green', linewidth=2, label='Mitigated')
+    fig.add_trace(go.Scatterpolar(
+        r=potential_values,
+        theta=categories,
+        fill='toself',
+        name='Potentially Mitigated',
+        line=dict(color='yellow')
+    ))
 
-    # Draw one axe per variable and add labels
-    ax.set_yticklabels([])
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(categories)
+    fig.add_trace(go.Scatterpolar(
+        r=mitigated_values,
+        theta=categories,
+        fill='toself',
+        name='Mitigated',
+        line=dict(color='green')
+    ))
 
-    ax.legend(loc='upper right', bbox_to_anchor=(1.13, 0.8))
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, max(max(unmitigated_values), max(potential_values), max(mitigated_values))]
+            )),
+        showlegend=True
+    )
 
-    # Save the graph
-    plt.savefig(os.path.join(os.getcwd(), "static", "assets", "graph.png"))
-    plt.close()
+    # Save the graph as an HTML div
+    graph_div = fig.to_html(full_html=False)
 
-    cepi_average_worst = 0
-    cepi_average_best = 0
+    ceri_average_worst = 0
+    ceri_average_best = 0
 
-    for entry in cepi:
-        cepi_average_worst += entry[2]
-        cepi_average_best += entry[3]
+    for entry in ceri:
+        ceri_average_worst += entry[2]
+        ceri_average_best += entry[3]
 
-    cepi_average_worst = cepi_average_worst / len(cepi)
-    cepi_average_best = cepi_average_best / len(cepi)
+    if not ceri:
+        return "No CERI values calculated, please check the input and try again."
+
+    ceri_average_worst = ceri_average_worst / len(ceri)
+    ceri_average_best = ceri_average_best / len(ceri)
 
     bsp_label = ""
-    for entry in cepi:
+    for entry in ceri:
         if bsp_label == "":
-            bsp_label += f"<br>CEPI for {entry[0]} - ({entry[1]}): ({entry[2]}, {entry[3]})"
+            bsp_label += f"<br>CERI for {entry[0]} - ({entry[1]}): ({entry[2]}, {entry[3]})"
         else:
-            bsp_label += f"<br>CEPI for {entry[0]} - ({entry[1]}): ({entry[2]}, {entry[3]})"
+            bsp_label += f"<br>CERI for {entry[0]} - ({entry[1]}): ({entry[2]}, {entry[3]})"
 
     mitigated_label = ""
     for entry in mitigated:
@@ -218,16 +233,16 @@ def report_page():
             unmitigated_label += f"<br><b>{entry[0].replace('_', ' ').title()[0]}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})"
 
     return render_template("report.html",
-                           cepi_average_worst=cepi_average_worst,
-                           cepi_average_best=cepi_average_best,
+                           ceri_average_worst=ceri_average_worst,
+                           ceri_average_best=ceri_average_best,
                            mitigated=mitigated,
                            potential=potential, unmitigated=unmitigated,
                            bsp_label=bsp_label,
                            mitigated_label=mitigated_label,
                            potential_label=potential_label,
                            unmitigated_label=unmitigated_label,
-                           longest_path=longest_path)
-
+                           longest_path=longest_path,
+                           graph_div=graph_div)
 
 # Defining the suggestions page of Dubhe
 @app.route("/suggestions")  # this sets the route to this page

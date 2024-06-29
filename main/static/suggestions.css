@@ -35,7 +35,7 @@
   flex-direction: column;
 }
 .suggestions-link {
-  font-size: 36px;
+  font-size: 42px;
   font-weight: 700;
   margin-bottom: var(--dl-space-space-fiveunits);
   text-decoration: none;
@@ -44,29 +44,29 @@
   display: contents;
 }
 .suggestions-image {
-  width: 50%;
-  height: 5%;
+  width: 100%;
+  height: 15%;
   object-fit: cover;
   margin-left: 4px;
-  margin-bottom: var(--dl-space-space-threeunits);
+  margin-bottom: var(--dl-space-space-fourunits);
   text-decoration: none;
 }
 .suggestions-navlink1 {
   display: contents;
 }
 .suggestions-image1 {
-  width: 50%;
-  height: 5%;
+  width: 100%;
+  height: 15%;
   object-fit: cover;
-  margin-bottom: var(--dl-space-space-threeunits);
+  margin-bottom: var(--dl-space-space-twounits);
   text-decoration: none;
 }
 .suggestions-navlink2 {
   display: contents;
 }
 .suggestions-image2 {
-  width: 50%;
-  height: 5%;
+  width: 90%;
+  height: 10%;
   object-fit: cover;
   margin-left: 4px;
   margin-bottom: var(--dl-space-space-twounits);

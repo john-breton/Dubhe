@@ -1,3 +1,4 @@
+/* start.css */
 .start-container {
   width: 100%;
   display: flex;
@@ -30,12 +31,12 @@
   width: 100%;
   height: 100%;
   display: flex;
-  align-self: center;
   align-items: center;
   flex-direction: column;
+  justify-content: flex-start;
 }
 .start-link {
-  font-size: 36px;
+  font-size: 42px;
   font-weight: 700;
   margin-bottom: var(--dl-space-space-fiveunits);
   text-decoration: none;
@@ -44,29 +45,31 @@
   display: contents;
 }
 .start-image {
-  width: 50%;
-  height: 5%;
+  width: 100%;
+  height: 15%;
   object-fit: cover;
-  margin-bottom: var(--dl-space-space-threeunits);
+  margin-left: 4px;
+  margin-bottom: var(--dl-space-space-fourunits);
   text-decoration: none;
 }
 .start-navlink1 {
   display: contents;
 }
 .start-image1 {
-  width: 50%;
-  height: 5%;
+  width: 100%;
+  height: 15%;
   object-fit: cover;
-  margin-bottom: var(--dl-space-space-threeunits);
+  margin-bottom: var(--dl-space-space-twounits);
   text-decoration: none;
 }
 .start-navlink2 {
   display: contents;
 }
 .start-image2 {
-  width: 50%;
-  height: 5%;
+  width: 90%;
+  height: 10%;
   object-fit: cover;
+  margin-left: 3%;
   margin-bottom: var(--dl-space-space-threeunits);
   text-decoration: none;
 }
@@ -96,7 +99,7 @@
 .start-text {
   width: 70%;
   height: 30%;
-  font-size: 150%;
+  font-size: 180%;
   text-align: center;
   padding-top: var(--dl-space-space-fourunits);
   margin-bottom: var(--dl-space-space-fourunits);
@@ -107,12 +110,23 @@
   box-shadow: rgb(212, 212, 212) 5px 5px 10px 0;
   text-align: center;
   transition: 0.3s;
+  font-size: 20px;
   border-color: #d9534f;
   padding: var(--dl-space-space-unit) var(--dl-space-space-twounits);
   background-color: rgb(217, 83, 79);
 }
 .start-button:hover {
   transform: scale(1.02);
+}
+.start-button.dragover {
+  background-color: #f9a157;
+  border-color: #f9a157;
+}
+.start-filename {
+  font-size: 180%;
+  text-align: center;
+  padding-top: var(--dl-space-space-fourunits);
+  margin-bottom: var(--dl-space-space-fourunits);
 }
 @media(max-width: 1600px) {
   .start-text {

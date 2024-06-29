@@ -1,8 +1,8 @@
-% 
-ATTACK TECHNIQUE: Valid Accounts
-TECHNIQUE NUMBER: T1078
-ATTACK MITIGATION: Account Use Policies
-MITIGATION NUMBER: M1036
-DETECT PATTERN: [["OpaqueAction", "DataStoreNode"]]
-MITIGATION PATTERN: [["DecisionNode", "ActivityFinalNode"], ["DecisionNode", "OpaqueAction"]]
-MODE: "AFTER"
+%
+THREAT TECHNIQUE: Abuse Elevation Control Mechanism
+TECHNIQUE NUMBER: T1548
+THREAT MITIGATION: Execution Prevention
+MITIGATION NUMBER: M1038
+DETECT PATTERN: [[("OpaqueAction", "Raise Permission"), "...", ("OpaqueAction", "Lower Permission")]]
+MITIGATION PATTERN: [["OpaqueAction", "...", "ActivityFinalNode"], "InputNode", ("OpaqueAction", "Lower Permission"), "...", "ActivityFinalNode"]
+MITIGATION INDEX: 1
