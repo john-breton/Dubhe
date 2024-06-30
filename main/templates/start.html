@@ -94,99 +94,99 @@
     <link rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"/>
 </head>
 <body>
-    <link rel="stylesheet" href="../static/style.css"/>
-    <div>
-        <link href="../static/start.css" rel="stylesheet"/>
-        <div class="start-container">
-            <div class="start-container1">
-                <div class="start-sidebar">
-                    <nav class="start-nav">
-                        <a href="/" rel="noreferrer noopener" class="start-link">Dubhe</a>
-                        <a href="start" class="start-navlink">
-                            <img src="../static/assets/new_selected.svg" alt="Dubhe - Start Page" loading="eager" class="start-image"/>
-                        </a>
-                        <a href="report" class="start-navlink1" id="reportLink" style="display: none;">
-                            <img src="../static/assets/suggestions.svg" alt="Dubhe - Report Page" enabled loading="eager" class="start-image1"/>
-                        </a>
-                        <a href="suggestions" class="start-navlink2" id="suggestionsLink" style="display: none;">
-                            <img src="../static/assets/report.svg" alt="Dubhe - Suggestions Page" loading="eager" class="start-image2"/>
-                        </a>
-                    </nav>
-                </div>
+<link rel="stylesheet" href="../static/style.css"/>
+<div>
+    <link href="../static/start.css" rel="stylesheet"/>
+    <div class="start-container">
+        <div class="start-container1">
+            <div class="start-sidebar">
+                <nav class="start-nav">
+                    <a href="/" rel="noreferrer noopener" class="start-link">Dubhe</a>
+                    <a href="start" class="start-navlink">
+                        <img src="../static/assets/new_selected.svg" alt="Dubhe - Start Page" loading="eager" class="start-image"/>
+                    </a>
+                    <a href="report" class="start-navlink1" id="reportLink" style="display: none;">
+                        <img src="../static/assets/suggestions.svg" alt="Dubhe - Report Page" enabled loading="eager" class="start-image1"/>
+                    </a>
+                    <a href="suggestions" class="start-navlink2" id="suggestionsLink" style="display: none;">
+                        <img src="../static/assets/report.svg" alt="Dubhe - Suggestions Page" loading="eager" class="start-image2"/>
+                    </a>
+                </nav>
             </div>
-            <div class="start-container2">
-                <div class="start-container3">
-                    <h1 class="start-text" id="header-text">
-                        <span>To begin, please upload your .xmi file.</span><br/><br/>
-                        <span>Dubhe supports properly formatted .xmi files up to version 2.5.1.</span><br/>
-                        <span id="fileName" class="start-filename" style="display: none;"></span> <!-- Updated element to display the file name -->
-                    </h1>
-                    <button type="button" name="submitButton" class="start-button button" id="uploadBtn">
-                        <span><span>Click here to select your .xmi file</span><br/><br/><span>You can also drag and drop your file onto the button</span></span>
-                    </button>
-                    <input type="file" name="file" id="fileInput" accept=".xmi" style="display: none;">
-                </div>
+        </div>
+        <div class="start-container2">
+            <div class="start-container3">
+                <h1 class="start-text" id="header-text">
+                    <span>To begin, please upload your .xmi file.</span><br/><br/>
+                    <span>Dubhe supports properly formatted .xmi files up to version 2.5.1.</span><br/>
+                    <span id="fileName" class="start-filename" style="display: none;"></span> <!-- Updated element to display the file name -->
+                </h1>
+                <button type="button" name="submitButton" class="start-button button" id="uploadBtn">
+                    <span><span>Click here to select your .xmi file</span><br/><br/><span>You can also drag and drop your file onto the button</span></span>
+                </button>
+                <input type="file" name="file" id="fileInput" accept=".xmi" style="display: none;">
             </div>
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        let conditionIsMet = false;
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    let conditionIsMet = false;
 
-        document.getElementById('reportLink').addEventListener('click', function (event) {
-            if (!conditionIsMet) {
-                event.preventDefault();
-            }
-        });
+    document.getElementById('reportLink').addEventListener('click', function (event) {
+        if (!conditionIsMet) {
+            event.preventDefault();
+        }
+    });
 
-        document.getElementById('suggestionsLink').addEventListener('click', function (event) {
-            if (!conditionIsMet) {
-                event.preventDefault();
-            }
-        });
+    document.getElementById('suggestionsLink').addEventListener('click', function (event) {
+        if (!conditionIsMet) {
+            event.preventDefault();
+        }
+    });
 
-        const uploadBtn = document.getElementById('uploadBtn');
-        const fileInput = document.getElementById('fileInput');
-        const fileNameDisplay = document.getElementById('fileName'); // Element to display file name
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const fileNameDisplay = document.getElementById('fileName'); // Element to display file name
 
-        uploadBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
 
-        uploadBtn.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadBtn.classList.add('dragover');
-        });
+    uploadBtn.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadBtn.classList.add('dragover');
+    });
 
-        uploadBtn.addEventListener('dragleave', () => {
-            uploadBtn.classList.remove('dragover');
-        });
+    uploadBtn.addEventListener('dragleave', () => {
+        uploadBtn.classList.remove('dragover');
+    });
 
-        uploadBtn.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadBtn.classList.remove('dragover');
+    uploadBtn.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadBtn.classList.remove('dragover');
 
-            const files = e.dataTransfer.files;
-            handleFiles(files);
-        });
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+    });
 
-        fileInput.addEventListener('change', (e) => {
-            const files = e.target.files;
-            handleFiles(files);
-        });
+    fileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        handleFiles(files);
+    });
 
-        function handleFiles(files) {
-            if (files.length > 0) {
-                const formData = new FormData();
-                formData.append('file', files[0]);
-                document.getElementById('header-text').innerText = "Dubhe is processing your file, please wait...";
-                uploadBtn.disabled = true;
-                uploadBtn.style.display = 'none'; // Hide the button
+    function handleFiles(files) {
+        if (files.length > 0) {
+            const formData = new FormData();
+            formData.append('file', files[0]);
+            document.getElementById('header-text').innerText = "Dubhe is processing your file, please wait...";
+            uploadBtn.disabled = true;
+            uploadBtn.style.display = 'none'; // Hide the button
 
-                fetch('/upload', {
-                    method: 'POST',
-                    body: formData,
-                })
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
                 .then(response => response.json())
                 .then(data => {
                     alert(data.message);
@@ -203,15 +203,15 @@
                 .catch(error => {
                     console.error('Error:', error);
                 });
-            }
         }
+    }
 
-        function showLink() {
-            if (conditionIsMet) {
-                document.getElementById('reportLink').style.display = '';
-                document.getElementById('suggestionsLink').style.display = '';
-            }
+    function showLink() {
+        if (conditionIsMet) {
+            document.getElementById('reportLink').style.display = '';
+            document.getElementById('suggestionsLink').style.display = '';
         }
-    </script>
+    }
+</script>
 </body>
 </html>
