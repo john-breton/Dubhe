@@ -2,31 +2,81 @@
 <html lang="en">
 <head>
     <title>Dubhe - Report</title>
-    <meta property="og:title" content="Dubhe - Report" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta charset="utf-8" />
-    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="og:title" content="Dubhe - Report"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8"/>
+    <meta property="twitter:card" content="summary_large_image"/>
     <style data-tag="reset-style-sheet">
-        html { line-height: 1.15; }
-        body { margin: 0; }
-        * { box-sizing: border-box; border-width: 0; border-style: solid; }
-        p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption { margin: 0; padding: 0; }
-        button { background-color: transparent; }
-        button, input, optgroup, select, textarea { font-family: inherit; font-size: 100%; line-height: 1.15; margin: 0; }
-        button, select { text-transform: none; }
-        button, [type="button"], [type="reset"], [type="submit"] { -webkit-appearance: button; }
-        button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner { border-style: none; padding: 0; }
-        button:-moz-focus, [type="button"]:-moz-focus, [type="reset"], [type="submit"]:-moz-focus { outline: 1px dotted ButtonText; }
-        a { color: inherit; text-decoration: inherit; }
-        input { padding: 2px 4px; }
-        img { display: block; }
-        html { scroll-behavior: smooth }
+        html {
+            line-height: 1.15;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+        }
+
+        p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption {
+            margin: 0;
+            padding: 0;
+        }
+
+        button {
+            background-color: transparent;
+        }
+
+        button, input, optgroup, select, textarea {
+            font-family: inherit;
+            font-size: 100%;
+            line-height: 1.15;
+            margin: 0;
+        }
+
+        button, select {
+            text-transform: none;
+        }
+
+        button, [type="button"], [type="reset"], [type="submit"] {
+            -webkit-appearance: button;
+        }
+
+        button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {
+            border-style: none;
+            padding: 0;
+        }
+
+        button:-moz-focus, [type="button"], [type="reset"], [type="submit"]:-moz-focus {
+            outline: 1px dotted ButtonText;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        input {
+            padding: 2px 4px;
+        }
+
+        img {
+            display: block;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
     </style>
     <style data-tag="default-style-sheet">
         html {
             font-family: Inter;
             font-size: 16px;
         }
+
         body {
             font-weight: 400;
             font-style: normal;
@@ -37,14 +87,19 @@
             color: var(--dl-color-gray-black);
             background-color: var(--dl-color-gray-white);
         }
+
+        .hyperlink {
+            color: blue;
+            text-decoration: underline;
+        }
     </style>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="https://unpkg.com/animate.css@4.1.1/animate.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" data-tag="font" />
-    <link rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/animate.css@4.1.1/animate.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" data-tag="font"/>
+    <link rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"/>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <link rel="stylesheet" href="../static/style.css" />
-    <link href="../static/report.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../static/style.css"/>
+    <link href="../static/report.css" rel="stylesheet"/>
     <style>
         .plotly-graph-div {
             width: 100%;
@@ -54,45 +109,92 @@
     </style>
 </head>
 <body>
-    <div class="report-container">
+<div class="report-container">
         <div class="report-container1">
-            <div class="report-sidebar">
-                <nav class="report-nav">
-                    <a href="/" rel="noreferrer noopener" class="report-link">Dubhe</a>
-                    <a href="start" class="report-navlink"><img alt="image" src="../static/assets/new.svg" loading="eager" class="report-image" /></a>
-                    <a href="report" class="report-navlink1"><img alt="image" src="../static/assets/suggestions_selected.svg" loading="eager" class="report-image1" /></a>
-                    <a href="suggestions" class="report-navlink2"><img alt="image" src="../static/assets/report.svg" loading="eager" class="report-image2" /></a>
-                </nav>
-            </div>
-        </div>
-        <div class="report-container2">
-            <div class="report-feature-card">
-                <h2 class="report-text"><span>✅ Mitigated Threats</span><br /></h2>
-                <label class="report-text03">{{ mitigated|length }}</label>
-                <label class="report-text04">{{ mitigated_label|safe }}</label>
-            </div>
-            <div class="report-feature-card1">
-                <h2 class="report-text05"><span>⚠️ Potentially Mitigated Threats</span><br /></h2>
-                <label class="report-text08">{{ potential|length }}</label>
-                <label class="report-text09">{{ potential_label|safe }}</label>
-            </div>
-            <div class="report-feature-card2">
-                <h2 class="report-text10"><span>❌ Unmitigated Threats</span><br /></h2>
-                <label class="report-text13">{{ unmitigated|length }}</label>
-                <label class="report-text14">{{ unmitigated_label|safe }}</label>
-            </div>
-        </div>
-        <div class="report-container3">
-            <div class="report-feature-card3">
-                <h2 class="report-text15">STRIDE Threat Mitigation</h2>
-                <div class="report-image3 plotly-graph-div">{{ graph_div|safe }}</div>
-            </div>
-            <div class="report-feature-card4">
-                <h2 class="report-text16">Behavioural Security Posture</h2>
-                <label class="report-text17">< ({{'%0.2f'| format(ceri_average_worst|float)}}, {{'%0.2f'| format(ceri_average_best|float)}}), {{ longest_path|length }} ></label>
-                <label class="report-text18">{{ bsp_label|safe }}</label>
-            </div>
+        <div class="report-sidebar">
+            <nav class="report-nav">
+                <a href="/" rel="noreferrer noopener" class="report-link">Dubhe</a>
+                <a href="start" class="report-navlink"><img alt="image" src="../static/assets/new.svg" loading="eager" class="report-image"/></a>
+                <a href="report" class="report-navlink1"><img alt="image" src="../static/assets/suggestions_selected.svg" loading="eager"
+                                                              class="report-image1"/></a>
+                <a href="suggestions" class="report-navlink2"><img alt="image" src="../static/assets/report.svg" loading="eager" class="report-image2"/></a>
+            </nav>
         </div>
     </div>
+    <div class="report-container2">
+        <div class="report-feature-card">
+            <h2 class="report-text"><span class="emoji">✅</span> Mitigated Threats<br/></h2>
+            <label class="report-text03">{{ mitigated|length }}</label>
+            {% if mitigated_label %}
+            <div class="dropdown" onclick="toggleDropdown('mitigated')">
+                <span id="dropdown-arrow-mitigated" class="arrow">▼</span>
+                <span class="dropdown-text">View Mitigated Threats</span>
+            </div>
+            <div id="dropdown-content-mitigated" class="dropdown-content">{{ mitigated_label|linkify_threat_numbers }}</div>
+            {% endif %}
+        </div>
+        <div class="report-feature-card1">
+            <h2 class="report-text05"><span class="emoji">⚠️</span> Potentially Mitigated Threats<br/></h2>
+            <label class="report-text08">{{ potential|length }}</label>
+            {% if potential_label %}
+            <div class="dropdown" onclick="toggleDropdown('potential')">
+                <span id="dropdown-arrow-potential" class="arrow">▼</span>
+                <span class="dropdown-text">View Potentially Mitigated Threats</span>
+            </div>
+            <div id="dropdown-content-potential" class="dropdown-content">{{ potential_label|linkify_threat_numbers }}</div>
+            {% endif %}
+        </div>
+        <div class="report-feature-card2">
+            <h2 class="report-text10"><span class="emoji">❌</span> Unmitigated Threats<br/></h2>
+            <label class="report-text13">{{ unmitigated|length }}</label>
+            {% if unmitigated_label %}
+            <div class="dropdown" onclick="toggleDropdown('unmitigated')">
+                <span id="dropdown-arrow-unmitigated" class="arrow">▼</span>
+                <span class="dropdown-text">View Unmitigated Threats</span>
+            </div>
+            <div id="dropdown-content-unmitigated" class="dropdown-content">{{ unmitigated_label|linkify_threat_numbers }}</div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="report-container3">
+        <div class="report-feature-card3">
+            <h2 class="report-text15">STRIDE Threat Mitigation</h2>
+            <div class="report-image3 plotly-graph-div">{{ graph_div|safe }}</div>
+        </div>
+        <div class="report-feature-card4">
+            <h2 class="report-text16">Behavioural Security Posture - {{ filename }}</h2>
+            <label class="report-text17">< ({{'%0.2f'| format(ceri_average_worst|float)}}, {{'%0.2f'| format(ceri_average_best|float)}}), {{ cpp }} ></label>
+            <div class="dropdown" onclick="toggleDropdown('ceri')">
+                <span id="dropdown-arrow-ceri" class="arrow">▼</span>
+                <span class="dropdown-text">View BSP Vector String Breakdown</span>
+            </div>
+            <div id="dropdown-content-ceri" class="dropdown-content">
+                <ul class="report-list">
+                    <li><b>Worst-Case Average CERI</b>: {{ '%0.2f'|format(ceri_average_worst|float) }}</li>
+                    <li><b>Best-Case Average CERI</b>: {{ '%0.2f'|format(ceri_average_best|float) }}</li>
+                    <li><b>CPP</b>: {{ cpp }}</li>
+                </ul>
+            </div>
+            <div class="dropdown" onclick="toggleDropdown('bsp')">
+                <span id="dropdown-arrow-bsp" class="arrow">▼</span>
+                <span class="dropdown-text">View Individual CERI Details</span>
+            </div>
+            <div id="dropdown-content-bsp" class="dropdown-content">{{ bsp_label|linkify_threat_numbers }}</div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleDropdown(type) {
+        var content = document.getElementById(`dropdown-content-${type}`);
+        var arrow = document.getElementById(`dropdown-arrow-${type}`);
+        if (content.classList.contains("show")) {
+            content.classList.remove("show");
+            arrow.classList.remove("rotate");
+        } else {
+            content.classList.add("show");
+            arrow.classList.add("rotate");
+        }
+    }
+</script>
 </body>
 </html>

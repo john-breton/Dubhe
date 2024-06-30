@@ -1,5 +1,6 @@
 import ast
 
+
 class ThreatInfo:
     def __init__(self):
         self._technique = None

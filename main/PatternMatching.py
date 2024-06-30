@@ -5,6 +5,7 @@ from enum import Enum
 from ActivityParser import ActivityParser
 from ThreatInfo import ThreatInfo
 
+
 def contains_in_order(arr1, arr2):
     i = 0
     j = 0
@@ -28,6 +29,7 @@ def contains_in_order(arr1, arr2):
         else:
             i += 1
     return j == len(arr2)
+
 
 def find_pattern_index(lst, pattern):
     for i in range(len(lst) - len(pattern) + 1):
@@ -131,10 +133,10 @@ class PatternMatching:
                     curr_id = walk_elems[i].get_id()
                     print(f"Adding element to detection: {curr_id} with pattern length: {len(paths_to_check)}")
                     if curr_id not in self._detection_elements:
-                        self._detection_elements[curr_id] = (len(paths_to_check), 0, 0, 1)
+                        self._detection_elements[curr_id] = (len(paths_to_check) + 1, 0, 0, 1)
                     else:
                         old_tup = self._detection_elements[curr_id]
-                        new_tup = (old_tup[0] + len(paths_to_check), old_tup[1], old_tup[2], old_tup[3] + 1)
+                        new_tup = (old_tup[0] + len(paths_to_check) + 1, old_tup[1], old_tup[2], old_tup[3] + 1)
                         self._detection_elements[curr_id] = new_tup
                     print(f"Detection element state: {self._detection_elements[curr_id]}")
 
