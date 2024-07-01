@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.0" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="StarUML" exporterVersion="2.0"/>
+	<uml:Model xmi:id="AAAAAAGOlPaVdMG9o5Y=" xmi:type="uml:Model" name="RootModel">
+		<packagedElement xmi:id="AAAAAAGOkSVsPGcgyv0=" name="ClientServerGame" visibility="public" isReentrant="true" xmi:type="uml:Activity" isReadOnly="false" isSingleExecution="false">
+			<groups xmi:id="AAAAAAGOkSXQ1WcnwB8=" name="Client" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGOkSZqo2dCF3U=" name="InitialNode1" visibility="public" xmi:type="uml:InitialNode"/>
+				<node xmi:id="AAAAAAGOkSdzGWeQ7Io=" name="Game%20Event" visibility="public" xmi:type="uml:SendSignalAction" isLocallyReentrant="false" isSynchronous="true"/>
+			</groups>
+			<groups xmi:id="AAAAAAGOkSXzSmc0cNI=" name="Server" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGOkSeP+WeuqbA=" name="Game%20Event" visibility="public" xmi:type="uml:AcceptEventAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOkSgF4GfyHCE=" name="Process%20Game%20Event" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGOkSg8e2gQgFI=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
+			</groups>
+			<edge xmi:id="AAAAAAGOkSfKBGfN68c=" visibility="public" source="AAAAAAGOkSZqo2dCF3U=" target="AAAAAAGOkSdzGWeQ7Io=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOkSfZ8Gffqag=" visibility="public" source="AAAAAAGOkSdzGWeQ7Io=" target="AAAAAAGOkSeP+WeuqbA=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOkShUjGgXYDc=" visibility="public" source="AAAAAAGOkSeP+WeuqbA=" target="AAAAAAGOkSgF4GfyHCE=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGOkShjM2gpFE0=" visibility="public" source="AAAAAAGOkSgF4GfyHCE=" target="AAAAAAGOkSg8e2gQgFI=" xmi:type="uml:ControlFlow"/>
+		</packagedElement>
+	</uml:Model>
+</xmi:XMI>
