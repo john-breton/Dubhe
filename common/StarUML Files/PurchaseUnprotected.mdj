@@ -1,0 +1,25 @@
+{
+	"_type": "Project",
+	"_id": "AAAAAAFF+h6SjaM2Hec=",
+	"name": "Repudiation Example",
+	"ownedElements": [
+		{
+			"_type": "UMLActivity",
+			"_id": "AAAAAAGQK2DOWAZPDB8=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "ClientServerPurchase",
+			"ownedElements": [
+				{
+					"_type": "UMLActivityDiagram",
+					"_id": "AAAAAAGQK2DOWAZQ5Dc=",
+					"_parent": {
+						"$ref": "AAAAAAGQK2DOWAZPDB8="
+					},
+					"name": "PurchaseUnprotected"
+				}
+			]
+		}
+	]
+}
