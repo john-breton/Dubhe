@@ -75,9 +75,12 @@ numpy==1.26.4
     #   thinc
 packaging==24.0
     # via
+    #   plotly
     #   spacy
     #   thinc
     #   weasel
+plotly==5.22.0
+    # via -r requirements.in
 preshed==3.0.9
     # via
     #   spacy
@@ -110,6 +113,8 @@ srsly==2.4.8
     #   spacy
     #   thinc
     #   weasel
+tenacity==8.4.2
+    # via plotly
 thinc==8.2.3
     # via spacy
 tqdm==4.66.2
@@ -140,5 +145,3 @@ zipp==3.18.1
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
-
-matplotlib~=3.8.4

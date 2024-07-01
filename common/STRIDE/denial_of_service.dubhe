@@ -1,10 +1,8 @@
-% 
-ATTACK TECHNIQUE: Denial of Service
+%
+THREAT TECHNIQUE: Denial of Service
 TECHNIQUE NUMBER: T0814
-ATTACK MITIGATION: Filter Network Traffic
+THREAT MITIGATION: Filter Network Traffic
 MITIGATION NUMBER: M1037
 DETECT PATTERN: [["AcceptEventAction", "OpaqueAction"]]
-MITIGATION PATTERN: [["DecisionNode", "ActivityFinalNode"], ["DecisionNode", "OpaqueAction"]]
-MODE: "AFTER"
-
-
+MITIGATION PATTERN: [[("OpaqueAction", "Check Message Rate"), "DecisionNode", "ActivityFinalNode"], [("OpaqueAction", "Check Message Rate"), "DecisionNode", "OpaqueAction"]]
+MITIGATION INDEX: 1

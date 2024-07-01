@@ -1,9 +1,8 @@
-% 
-ATTACK TECHNIQUE: Adversary-in-the-Middle
+%
+THREAT TECHNIQUE: Adversary-in-the-Middle
 TECHNIQUE NUMBER: T1557
-ATTACK MITIGATION: Encrypt Sensitive Information
+THREAT MITIGATION: Encrypt Sensitive Information
 MITIGATION NUMBER: M1041
-DETECT PATTERN: [["SendSignalAction"]]
+DETECT PATTERN: [["DataStoreNode", "...", "SendSignalAction"]]
 MITIGATION PATTERN: [["DecisionNode", "MergeNode"], ["DecisionNode", ("OpaqueAction", "Obfuscate Data"), "MergeNode"]]
-MODE: "BEFORE"
-
+MITIGATION INDEX: 1
