@@ -1,8 +1,8 @@
-% 
-ATTACK TECHNIQUE: Indicator Removal
+%
+THREAT TECHNIQUE: Indicator Removal
 TECHNIQUE NUMBER: T1070
-ATTACK MITIGATION: Encrypt Sensitive Information
-MITIGATION NUMBER: M1041
-DETECT PATTERN: [["SendSignalAction"]]
-MITIGATION PATTERN: [["DecisionNode", "MergeNode"], ["DecisionNode", ("OpaqueAction", "EncryptData"), "MergeNode"]]
-MODE: "BEFORE"
+THREAT MITIGATION: Remote Data Storage & Data Sanitization
+MITIGATION NUMBER: M1029
+DETECT PATTERN: [["OpaqueAction", "...", ("DataStoreNode", "Log")]]
+MITIGATION PATTERN: [[("OpaqueAction", "Sanitize Data"), "...", "ForkNode", "...", "DataStoreNode", "...", "JoinNode"]]
+MITIGATION INDEX: 0

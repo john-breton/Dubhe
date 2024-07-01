@@ -1,73 +1,77 @@
-"""
-Dubhe is a work-in-progress tool that is geared towards design-time
-security hardening activities. In its current iteration, Dubhe is
-able to:
-    - Analyze UML Activity Diagrams and provide recommendations for
-      the locations of data sanitization object.
-
-In the future, Dubhe will support additional functions that will
-culminate in the output of a 'behavioural security posture' of
-in-development software systems using artifacts generated to
-represent the behavioural view of a system-to-be.
-
-Main contact: john.breton@carleton.ca
-"""
 import os
-
+import re
 import numpy as np
-import matplotlib
-
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 from flask import Flask, render_template, request, jsonify
+import plotly.graph_objects as go
+from markupsafe import Markup
 
 from CorruptionAnalysis import CorruptionAnalysis
 from ActivityParser import ActivityParser
 from PatternMatching import PatternMatching
 
-# You can update the path to a different XMI File here, otherwise
-# you can leave this as for the OSM case study.
-XMI_FILE_PATH = os.path.join(os.getcwd(), "..", "common", "XMI Files",
-                             "Information Leakage Example Unprotected.xmi")
+# File paths for XMI files.
+XMI_FILE_PATH = os.path.join(os.getcwd(), "..", "common", "XMI Files", "Spoofing Example Unprotected.xmi")
+XMI_PATH_WEB = os.path.join(os.getcwd(), "..", "common", "XMI Files", "Analysis.xmi")
 
-# Flask related variables, if you want to run the program in the command-line,
-# these variables are not needed.
-XMI_PATH_WEB = os.path.join(os.getcwd(), "..", "common", "XMI Files",
-                            "Analysis.xmi")
 app = Flask(__name__)
 web_detector = None
 web_corruption = None
+uploaded_file_name = ""
 
 
-# Defining the home page of our site
-@app.route("/")  # this sets the route to this page
+@app.template_filter('linkify_threat_numbers')
+def linkify_threat_numbers(text):
+    """
+    Custom Jinja filter to convert threat numbers into clickable links.
+
+    :param text: The text containing threat numbers.
+    :return: The text with threat numbers converted to hyperlinks.
+    """
+    pattern = re.compile(r'\(T(\d+)\)')
+    return Markup(pattern.sub(r'(<a href="https://attack.mitre.org/techniques/T\1/" target="_blank" class="hyperlink">T\1</a>)', text))
+
+
+@app.route("/")
 def home():
+    """
+    Route for the home page.
+
+    :return: Rendered home page.
+    """
     return render_template("index.html")
 
 
-# Defining the start of Dubhe
-@app.route("/start")  # this sets the route to this page
+@app.route("/start")
 def start_page():
+    """
+    Route for the start page.
+
+    :return: Rendered start page.
+    """
     return render_template("start.html")
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    """
+    Route for uploading and processing the XMI file.
+
+    :return: JSON response indicating success or error.
+    """
+    global uploaded_file_name
     file = request.files.get('file')
     if not file:
         return jsonify({"message": "No file provided", "status": "error"})
     if file and file.filename.endswith('.xmi'):
-        # Process the file here
+        uploaded_file_name = file.filename
         file.save(os.path.join(XMI_PATH_WEB))
         web_parser = ActivityParser(XMI_PATH_WEB)
         web_result = web_parser.parse_xmi()
         if web_result == 0:
-            return jsonify(
-                {
-                    "message": "The submitted .xmi file is malformed. Please "
-                               "ensure your .xmi file conforms to the XMI "
-                               "2.5.1 specification.",
-                    "status": "error"})
+            return jsonify({
+                "message": "The submitted .xmi file is malformed. Please ensure your .xmi file conforms to the XMI 2.5.1 specification.",
+                "status": "error"
+            })
         else:
             global web_detector
             web_detector = PatternMatching(web_parser.get_elements())
@@ -75,82 +79,87 @@ def upload_file():
             global web_corruption
             web_corruption = CorruptionAnalysis(web_parser.get_elements())
             web_corruption.perform_analysis(True)
-            return jsonify(
-                {"message": "File successfully uploaded", "status": "success"})
-    return jsonify(
-        {"message": "Invalid file format. Dubhe only supports .xmi files.",
-         "status": "error"})
+            return jsonify({"message": "File successfully uploaded", "status": "success"})
+    return jsonify({"message": "Invalid file format. Dubhe only supports .xmi files.", "status": "error"})
 
 
-# Defining the report page of Dubhe
-@app.route("/report")  # this sets the route to this page
+@app.route("/report")
 def report_page():
+    """
+    Route for the report page that displays analysis results.
+
+    :return: Rendered report page.
+    """
     if web_detector is None:
         return render_template("start.html")
-    cepi = web_detector.get_cepi()
+
+    ceri = web_detector.get_ceri()
     mitigated = web_detector.get_mitigated_threats()
     potential = web_detector.get_potential_threats()
     unmitigated = web_detector.get_detected_threats()
 
-    longest_path = web_corruption.get_longest_path()
     all_paths = web_corruption.get_all_paths()
+    sum_paths = 0
+    total_paths = 0
 
-    # Graph data
-    unmitigated_values = [1, 1, 1, 1, 1, 1]
-    potential_values = [1, 1, 1, 1, 1, 1]
-    mitigated_values = [1, 1, 1, 1, 1, 1]
+    for cpp_path in all_paths:
+        for elem in cpp_path:
+            if elem.get_parent() == 'Data Sanitizer':
+                total_paths += 1
+                sum_paths -= 1
+        sum_paths += len(cpp_path) - 1
+        total_paths += 1
+
+    cpp = sum_paths / total_paths
+
+    unmitigated_values = [0, 0, 0, 0, 0, 0]
+    potential_values = [0, 0, 0, 0, 0, 0]
+    mitigated_values = [0, 0, 0, 0, 0, 0]
 
     for entry in unmitigated:
         if entry[0].replace('_', ' ').title() == "Spoofing":
-            unmitigated_values[0] = unmitigated_values[0] + 1
+            unmitigated_values[0] += 1
         elif entry[0].replace('_', ' ').title() == "Tampering":
-            unmitigated_values[1] = unmitigated_values[1] + 1
+            unmitigated_values[1] += 1
         elif entry[0].replace('_', ' ').title() == "Repudiation":
-            unmitigated_values[2] = unmitigated_values[2] + 1
+            unmitigated_values[2] += 1
         elif entry[0].replace('_', ' ').title() == "Information Disclosure":
-            unmitigated_values[3] = unmitigated_values[3] + 1
+            unmitigated_values[3] += 1
         elif entry[0].replace('_', ' ').title() == "Denial Of Service":
-            unmitigated_values[4] = unmitigated_values[4] + 1
+            unmitigated_values[4] += 1
         elif entry[0].replace('_', ' ').title() == "Elevation Of Privilege":
-            unmitigated_values[5] = unmitigated_values[5] + 1
+            unmitigated_values[5] += 1
 
     for entry in potential:
         if entry[0].replace('_', ' ').title() == "Spoofing":
-            potential_values[0] = potential_values[0] + 1
+            potential_values[0] += 1
         elif entry[0].replace('_', ' ').title() == "Tampering":
-            potential_values[1] = potential_values[1] + 1
+            potential_values[1] += 1
         elif entry[0].replace('_', ' ').title() == "Repudiation":
-            potential_values[2] = potential_values[2] + 1
+            potential_values[2] += 1
         elif entry[0].replace('_', ' ').title() == "Information Disclosure":
-            potential_values[3] = potential_values[3] + 1
+            potential_values[3] += 1
         elif entry[0].replace('_', ' ').title() == "Denial Of Service":
-            potential_values[4] = potential_values[4] + 1
+            potential_values[4] += 1
         elif entry[0].replace('_', ' ').title() == "Elevation Of Privilege":
-            potential_values[5] = potential_values[5] + 1
+            potential_values[5] += 1
 
     for entry in mitigated:
         if entry[0].replace('_', ' ').title() == "Spoofing":
-            mitigated_values[0] = mitigated_values[0] + 1
+            mitigated_values[0] += 1
         elif entry[0].replace('_', ' ').title() == "Tampering":
-            mitigated_values[1] = mitigated_values[1] + 1
+            mitigated_values[1] += 1
         elif entry[0].replace('_', ' ').title() == "Repudiation":
-            mitigated_values[2] = mitigated_values[2] + 1
+            mitigated_values[2] += 1
         elif entry[0].replace('_', ' ').title() == "Information Disclosure":
-            mitigated_values[3] = mitigated_values[3] + 1
+            mitigated_values[3] += 1
         elif entry[0].replace('_', ' ').title() == "Denial Of Service":
-            mitigated_values[4] = mitigated_values[4] + 1
+            mitigated_values[4] += 1
         elif entry[0].replace('_', ' ').title() == "Elevation Of Privilege":
-            mitigated_values[5] = mitigated_values[5] + 1
+            mitigated_values[5] += 1
 
-    # STRIDE categories
-    categories = ['Spoofing', 'Tampering', 'Repudiation',
-                  'Information Disclosure', 'Denial of Service',
-                  'Elevation of Privilege']
-
-    # Number of variables we're plotting.
+    categories = ['Spoofing', 'Tampering', 'Repudiation', 'Information Disclosure', 'Denial of Service', 'Elevation of Privilege']
     num_vars = len(categories)
-
-    # Compute angle for each axis
     angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
 
     unmitigated_values += unmitigated_values[:1]
@@ -158,124 +167,291 @@ def report_page():
     mitigated_values += mitigated_values[:1]
     angles += angles[:1]
 
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-    ax.fill(angles, unmitigated_values, color='red', alpha=0.25)
-    ax.plot(angles, unmitigated_values, 'red', linewidth=2,
-            label='Unmitigated')
+    fig = go.Figure()
 
-    ax.fill(angles, potential_values, color='yellow', alpha=0.25)
-    ax.plot(angles, potential_values, 'yellow', linewidth=2,
-            label='Potentially Mitigated')
+    fig.add_trace(go.Scatterpolar(
+        r=[x + 1 for x in unmitigated_values],  # Shift values by +1
+        theta=categories,
+        fill='toself',
+        name='Unmitigated',
+        line=dict(color='red')
+    ))
 
-    ax.fill(angles, mitigated_values, color='green', alpha=0.25)
-    ax.plot(angles, mitigated_values, 'green', linewidth=2, label='Mitigated')
+    fig.add_trace(go.Scatterpolar(
+        r=[x + 1 for x in potential_values],  # Shift values by +1
+        theta=categories,
+        fill='toself',
+        name='Potentially Mitigated',
+        line=dict(color='yellow')
+    ))
 
-    # Draw one axe per variable and add labels
-    ax.set_yticklabels([])
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(categories)
+    fig.add_trace(go.Scatterpolar(
+        r=[x + 1 for x in mitigated_values],  # Shift values by +1
+        theta=categories,
+        fill='toself',
+        name='Mitigated',
+        line=dict(color='green')
+    ))
 
-    ax.legend(loc='upper right', bbox_to_anchor=(1.13, 0.8))
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True,
+                range=[0, max(max(unmitigated_values), max(potential_values), max(mitigated_values)) + 1]  # Extend range by +1
+            ),
+            angularaxis=dict(
+                direction="counterclockwise",  # Orient the categories counterclockwise
+                rotation=90  # Start from the north
+            )
+        ),
+        showlegend=True,
+        legend=dict(
+            x=0.9,
+            y=1.1,
+            xanchor='center',
+            yanchor='top'
+        )
+    )
 
-    # Save the graph
-    plt.savefig(os.path.join(os.getcwd(), "static", "assets", "graph.png"))
-    plt.close()
+    graph_div = fig.to_html(full_html=False)
 
-    cepi_average_worst = 0
-    cepi_average_best = 0
+    if len(ceri) == 0:
+        ceri_average_worst = 'undf.'
+        ceri_average_best = 'undf.'
+        bsp_label_sorted = "🎉 Dubhe did not detect any threats in your system! 🎉"
+        rounded_ceri = []
+    else:
+        ceri_average_worst = round(sum(entry[2] for entry in ceri) / len(ceri), 2)
+        ceri_average_best = round(sum(entry[3] for entry in ceri) / len(ceri), 2)
+        rounded_ceri = [{'uml_type': entry[0], 'name': entry[1], 'worst': round(entry[2], 2), 'best': round(entry[3], 2)} for entry in ceri]
 
-    for entry in cepi:
-        cepi_average_worst += entry[2]
-        cepi_average_best += entry[3]
+        bsp_label = ""
+        for entry in rounded_ceri:
+            if bsp_label == "":
+                bsp_label += f"<br><b>CERI for {entry['uml_type']}: {entry['name']}</b> - ({entry['worst']}, {entry['best']})"
+            else:
+                bsp_label += f"<br><b>CERI for {entry['uml_type']}: {entry['name']}</b> - ({entry['worst']}, {entry['best']})"
 
-    cepi_average_worst = cepi_average_worst / len(cepi)
-    cepi_average_best = cepi_average_best / len(cepi)
+        # Sort the BSP label alphabetically
+        bsp_entries = bsp_label.split("<br>")
+        bsp_entries_sorted = sorted([entry for entry in bsp_entries if entry.strip() != ""], key=lambda x: x.split(" ")[2].lower())
+        bsp_label_sorted = "<br>".join(bsp_entries_sorted)
 
-    bsp_label = ""
-    for entry in cepi:
-        if bsp_label == "":
-            bsp_label += f"<br>CEPI for {entry[0]} - ({entry[1]}): ({entry[2]}, {entry[3]})"
-        else:
-            bsp_label += f"<br>CEPI for {entry[0]} - ({entry[1]}): ({entry[2]}, {entry[3]})"
+    mitigated_label = create_stride_sorted_label(mitigated)
+    potential_label = create_stride_sorted_label(potential)
+    unmitigated_label = create_stride_sorted_label(unmitigated)
 
-    mitigated_label = ""
-    for entry in mitigated:
-        if mitigated_label == "":
-            mitigated_label += f"<br><b>{entry[0].replace('_', ' ').title()[0]}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})"
-        else:
-            mitigated_label += f"<br><b>{entry[0].replace('_', ' ').title()[0]}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})"
-    potential_label = ""
-    for entry in potential:
-        if potential_label == "":
-            potential_label += f"<br><b>{entry[0].replace('_', ' ').title()[0]}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})"
-        else:
-            potential_label += f"<br><b>{entry[0].replace('_', ' ').title()[0]}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})"
-    unmitigated_label = ""
-    for entry in unmitigated:
-        if unmitigated_label == "":
-            unmitigated_label += f"<br><b>{entry[0].replace('_', ' ').title()[0]}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})"
-        else:
-            unmitigated_label += f"<br><b>{entry[0].replace('_', ' ').title()[0]}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})"
-
-    return render_template("report.html",
-                           cepi_average_worst=cepi_average_worst,
-                           cepi_average_best=cepi_average_best,
-                           mitigated=mitigated,
-                           potential=potential, unmitigated=unmitigated,
-                           bsp_label=bsp_label,
-                           mitigated_label=mitigated_label,
-                           potential_label=potential_label,
-                           unmitigated_label=unmitigated_label,
-                           longest_path=longest_path)
+    return render_template(
+        "report.html",
+        filename=uploaded_file_name,
+        ceri_average_worst=ceri_average_worst,
+        ceri_average_best=ceri_average_best,
+        mitigated=mitigated,
+        potential=potential,
+        unmitigated=unmitigated,
+        bsp_label=bsp_label_sorted,
+        mitigated_label=mitigated_label,
+        potential_label=potential_label,
+        unmitigated_label=unmitigated_label,
+        cpp=round(cpp, 2),
+        graph_div=graph_div,
+        ceri_details=rounded_ceri  # Pass the rounded CERI details to the template
+    )
 
 
-# Defining the suggestions page of Dubhe
-@app.route("/suggestions")  # this sets the route to this page
+def create_stride_sorted_label(threats):
+    """
+    Create a formatted label for threats grouped by STRIDE categories.
+
+    :param threats: List of threats.
+    :return: Formatted label string.
+    """
+    if not threats:
+        return ""
+
+    # Define the STRIDE order
+    stride_order = {
+        "Spoofing": 0,
+        "Tampering": 1,
+        "Repudiation": 2,
+        "Information Disclosure": 3,
+        "Denial Of Service": 4,
+        "Elevation Of Privilege": 5
+    }
+
+    # Create a list of formatted threat strings
+    threat_strings = [
+        (stride_order.get(entry[0].replace('_', ' ').title(), 6),  # Use a high default value for unrecognized threats (should never be needed)
+         f"<b>{entry[0].replace('_', ' ').title()}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})")
+        for entry in threats
+    ]
+
+    # Sort the list according to the STRIDE order
+    sorted_threats = sorted(threat_strings, key=lambda x: x[0])
+
+    # Join the sorted list into a single string separated by <br> tags
+    formatted_threats = "<br>".join([entry[1] for entry in sorted_threats])
+
+    return formatted_threats
+
+
+@app.route("/suggestions")
 def suggestions_page():
+    """
+    Route for the suggestions page that displays mitigation suggestions.
+
+    :return: Rendered suggestions page.
+    """
     if web_detector is None:
         return render_template("start.html")
 
     unmitigated = web_detector.get_detected_threats()
     potential = web_detector.get_potential_threats()
+    mitigated = web_detector.get_mitigated_threats()
 
-    datastores = [web_corruption.get_protect_entry(),
-                  web_corruption.get_protect_stores(),
-                  web_corruption.get_protect_whole()]
+    datastores = [web_corruption.get_protect_entry(), web_corruption.get_protect_stores(), web_corruption.get_protect_whole()]
 
-    # Build the DataSanitizer recommendation string.
-    suggestions_label = f"If you want to harden your system against data corruption attacks, we recommend the incorporation of a DataSanitizer object. We outline some possible locations for the DataSanitizer below:<br><br><b>Protecting Expected Entry Points</b><br>It is recommended to place a Data Sanitizer object between the following elements:<br><b>{datastores[0][0][0]}</b> (parented by {datastores[0][0][2]}), <b>{datastores[0][1][0]}-{datastores[0][1][1]}</b> (parented by {datastores[0][1][2]})"
-    if len(datastores[1]) > 0:
-        suggestions_label += f"<br><br><b>Protecting Data Stores</b><br>It is recommended to place a Data Sanitizer object between the following elements:<br><b>{datastores[1][0][0]}-{datastores[1][0][1]}</b> (parented by {datastores[1][0][2]}), <b>{datastores[1][1][0]}-{datastores[1][1][1]}</b> (parented by {datastores[1][1][2]})"
-    suggestions_label += f"<br><br><b>Minimizing Corruption Propagation</b><br>It is recommended to place a Data Sanitizer object between the following elements:<br><b>{datastores[2][0][0]}-{datastores[2][0][1]}</b> (parented by {datastores[2][0][2]}), <b>{datastores[2][1][0]}-{datastores[2][1][1]}</b> (parented by {datastores[2][1][2]})"
+    suggestions_label = ""
+
+    try:
+        entry_points = datastores[0]
+        datastore_points = datastores[1]
+        whole_system_points = datastores[2]
+
+        if entry_points and len(entry_points) >= 2:
+            suggestions_label += (
+                "<b>Protecting Expected Entry Points</b><br>"
+                "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
+                f"&emsp;<b>1. {entry_points[0][0]}: {entry_points[0][1]}</b> (parented by {entry_points[0][2]})<br>"
+                f"&emsp;<b>2. {entry_points[1][0]}: {entry_points[1][1]}</b> (parented by {entry_points[1][2]})</div>"
+                "<div class='indented'>This recommendation is useful if the threat of insider attacks is sufficiently small compared to the threat of external attacks. Examples of such external attacks include attempting to harm your system by threatening its availability or attempting a forceful takeover using arbitrary code execution via corrupted data.</div><br>"
+            )
+        else:
+            suggestions_label += (
+                "<b>Protecting Expected Entry Points</b><br>"
+                "<div class='indented'>No InitialNodes were detected in your file. Are you sure you submitted the right file?</div><br>"
+            )
+
+        if datastore_points and len(datastore_points) >= 2:
+            suggestions_label += (
+                "<b>Protecting Data Stores</b><br>"
+                "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
+                f"&emsp;<b>1. {datastore_points[0][0]}: {datastore_points[0][1]}</b> (parented by {datastore_points[0][2]})<br> "
+                f"&emsp;<b>2. {datastore_points[1][0]}: {datastore_points[1][1]}</b> (parented by {datastore_points[1][2]})</div>"
+                "<div class='indented'>This recommendation is beneficial if you want to maximize the protection of your data stores against corrupted data that would be damaging if destroyed or leaked to an attacker (e.g., data injection attacks).</div><br>"
+            )
+        else:
+            suggestions_label += (
+                "<b>Protecting Data Stores</b><br>"
+                "<div class='indented'>No datastores were detected in your system, so no recommendation was generated.</div><br>"
+            )
+
+        if whole_system_points and len(whole_system_points) >= 2:
+            suggestions_label += (
+                "<b>Minimizing Corruption Propagation</b><br>"
+                "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
+                f"&emsp;<b>1. {whole_system_points[0][0]}: {whole_system_points[0][1]}</b> (parented by {whole_system_points[0][2]})<br> "
+                f"&emsp;<b>2. {whole_system_points[1][0]}: {whole_system_points[1][1]}</b> (parented by {whole_system_points[1][2]})</div>"
+                "<div class='indented'>This recommendation should be applied if you have the goal of minimizing the longest flow of corruption within your system, making system-wide data corruption attacks more difficult.</div><br>"
+            )
+        else:
+            suggestions_label += (
+                "<b>Minimizing Corruption Propagation</b><br>"
+                "<div class='indented'>Somehow, no paths were detected in your system... Are you sure you submitted the correct file?</div><br>"
+            )
+
+    except (IndexError, TypeError) as e:
+        suggestions_label = (
+            "An error occurred while generating suggestions. "
+            "Please ensure the analysis was performed correctly and the XMI file is properly formatted."
+        )
+        print(f"Error generating suggestions: {e}")
+
+    # Group threats by STRIDE categories
+    stride_categories = ['Spoofing', 'Tampering', 'Repudiation', 'Information Disclosure', 'Denial Of Service', 'Elevation Of Privilege']
+    grouped_threats = {category: [] for category in stride_categories}
+
+    for entry in unmitigated + potential:
+        category = entry[0].replace('_', ' ').title()
+        if category in grouped_threats:
+            grouped_threats[category].append((entry[0].replace('_', ' ').title(), entry[-1].get_technique(), entry[-1].get_technique_num().strip(),
+                                              entry[-1].get_mitigation(), entry[-1].get_mitigation_num(),
+                                              os.path.join("static", "assets", f"{entry[-1].get_mitigation_num()}.png")))
+
+    # Collect the threats data
+    all_threats = web_detector.get_detected_threats() + web_detector.get_potential_threats() + web_detector.get_mitigated_threats()
+    total_threats_checked = len(all_threats)
+
+    # Initialize threat counts
+    threat_counts = {category: {'undetected': [], 'unmitigated': [], 'potentially_mitigated': [], 'mitigated': []} for category in stride_categories}
+
+    # Fill in the counts and threat lists
+    for threat in web_detector.get_detected_threats():
+        category = threat[0].replace('_', ' ').title()
+        threat_counts[category]['unmitigated'].append((threat[1].get_technique_num(), threat[1].get_technique()))
+
+    for threat in web_detector.get_potential_threats():
+        category = threat[0].replace('_', ' ').title()
+        threat_counts[category]['potentially_mitigated'].append((threat[1].get_technique_num(), threat[1].get_technique()))
+
+    for threat in web_detector.get_mitigated_threats():
+        category = threat[0].replace('_', ' ').title()
+        threat_counts[category]['mitigated'].append((threat[1].get_technique_num(), threat[1].get_technique()))
+
+    # Collect BSP vector string and CERI values
+    ceri = web_detector.get_ceri()
+    all_paths = web_corruption.get_all_paths()
+    sum_paths = 0
+    total_paths = 0
+
+    # Data Sanitizer Check
+    has_data_sanitizer = any(elem.get_parent() == 'Data Sanitizer' for elem in web_corruption._elements)
+
+    for cpp_path in all_paths:
+        for elem in cpp_path:
+            if elem.get_parent() == 'DATA SANITIZER' or elem.get_parent().upper() == 'DATASANITIZER':
+                total_paths += 1
+                sum_paths -= 1
+        sum_paths += len(cpp_path) - 1
+        total_paths += 1
+
+    cpp = sum_paths / total_paths
+    bsp_vector = "({:.2f}, {:.2f}), {:.2f}".format(sum(entry[2] for entry in ceri) / len(ceri), sum(entry[3] for entry in ceri) / len(ceri), cpp)
+    ceri_values = [(ceri_val[0], ceri_val[1], round(ceri_val[2], 2), round(ceri_val[3], 2)) for ceri_val in ceri]
 
     return render_template("suggestions.html",
-                           suggestions_label=suggestions_label)
+                           suggestions_label=suggestions_label,
+                           grouped_threats=grouped_threats,
+                           uploaded_file_name=uploaded_file_name,
+                           total_threats_checked=total_threats_checked,
+                           threat_counts=threat_counts,
+                           bsp_vector=bsp_vector,
+                           ceri_values=ceri_values,
+                           total_paths=total_paths,
+                           has_data_sanitizer=has_data_sanitizer,
+                           mitigation_suggestions=suggestions_label)
 
 
-# Defining the learn page of our site
 @app.route("/learn")
 def learn_page():
+    """
+    Route for the learn page.
+
+    :return: Rendered learn page.
+    """
     return render_template("learn.html")
 
 
-# Entry point for the application.
 if __name__ == "__main__":
-    # Parse the XMI and create ActivityElements
     parser = ActivityParser(XMI_FILE_PATH)
     result = parser.parse_xmi()
     if parser == 0:
         print(
-            "[ERROR]: It appears the supplied .xmi file is malformed. "
-            "Dubhe currently support XMI versions 2.X+. "
-            "Please double-check your .xmi file before trying to rerun Dubhe.")
+            "[ERROR]: It appears the supplied .xmi file is malformed. Dubhe currently supports XMI versions 2.X+. Please double-check your .xmi file before trying to rerun Dubhe.")
         exit()
 
-    # Check for patterns within the parsed ActivityElements
     detector = PatternMatching(parser.get_elements())
-
-    # Perform Analysis Specific to Data Corruption Attacks
     corruption = CorruptionAnalysis(parser.get_elements())
     corruption.perform_analysis()
 
-    # If you don't want the web interface, please comment out the next line
     app.run()

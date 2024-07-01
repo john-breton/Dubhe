@@ -5,12 +5,22 @@ from ActivityElement import ActivityElement
 
 
 class ActivityParser:
+    """
+    The ActivityParser class is responsible for parsing XMI files to
+    create ActivityElement objects representing elements in a UML Activity Diagram.
+    """
+
     # Constants needed to access target XMI tags.
     PARENT_DESCRIPTOR = "groups"
     CHILD_DESCRIPTOR = "node"
     EDGE_DESCRIPTOR = "edge"
 
     def __init__(self, path):
+        """
+        Constructor for the ActivityParser class.
+
+        :param path: The path to the XMI file to be parsed.
+        """
         self._path = path
         self._elements = []
 
@@ -67,4 +77,9 @@ class ActivityParser:
         return 1
 
     def get_elements(self):
+        """
+        Get the list of parsed ActivityElements.
+
+        :return: A list of ActivityElements.
+        """
         return self._elements

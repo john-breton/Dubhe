@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"
->
-<head
-><title>Dubhe - Start</title
->
+<html lang="en">
+<head>
+    <title>Dubhe - Start</title>
     <meta property="og:title" content="Dubhe - Start"/>
-    <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"/>
-    <meta
-            charset="utf-8"/>
-    <meta
-            property="twitter:card"
-            content="summary_large_image"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8"/>
+    <meta property="twitter:card" content="summary_large_image"/>
     <style data-tag="reset-style-sheet">
         html {
             line-height: 1.15;
@@ -57,7 +50,7 @@
             padding: 0;
         }
 
-        button:-moz-focus, [type="button"]:-moz-focus, [type="reset"]:-moz-focus, [type="submit"]:-moz-focus {
+        button:-moz-focus, [type="button"]:-moz-focus, [type="reset"], [type="submit"]:-moz-focus {
             outline: 1px dotted ButtonText;
         }
 
@@ -75,9 +68,9 @@
         }
 
         html {
-            scroll-behavior: smooth
-        }</style
-    >
+            scroll-behavior: smooth;
+        }
+    </style>
     <style data-tag="default-style-sheet">
         html {
             font-family: Inter;
@@ -93,91 +86,48 @@
             line-height: 1.15;
             color: var(--dl-color-gray-black);
             background-color: var(--dl-color-gray-white);
-
-        }</style
-    >
+        }
+    </style>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link
-            rel="stylesheet"
-            href="https://unpkg.com/animate.css@4.1.1/animate.css"/>
-    <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
-            data-tag="font"/>
-    <link
-            rel="stylesheet"
-            href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"/>
-</head
->
-<body
->
+    <link rel="stylesheet" href="https://unpkg.com/animate.css@4.1.1/animate.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" data-tag="font"/>
+    <link rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"/>
+</head>
+<body>
 <link rel="stylesheet" href="../static/style.css"/>
-<div
->
+<div>
     <link href="../static/start.css" rel="stylesheet"/>
-    <div class="start-container"
-    >
-        <div class="start-container1"
-        >
-            <div class="start-sidebar"
-            >
-                <nav class="start-nav"
-                ><a
-                        href="/"
-                        rel="noreferrer noopener"
-                        class="start-link"
-                >Dubhe</a
-                ><a href="start" class="start-navlink"
-                ><img
-                        src="../static/assets/new_selected.svg"
-                        alt="Dubhe - Start Page"
-                        loading="eager"
-                        class="start-image"/></a
-                ><a href="report" class="start-navlink1" id="reportLink"
-                    style="display: none;"
-                ><img
-                        src="../static/assets/report.svg"
-                        alt="Dubhe - Report Page"
-                        enabled
-                        loading="eager"
-                        class="start-image1"/></a
-                ><a href="suggestions" class="start-navlink2"
-                    id="suggestionsLink" style="display: none;"
-                ><img
-                        src="../static/assets/suggestions.svg"
-                        alt="Dubhe - Suggestions PAge"
-                        loading="eager"
-                        class="start-image2"/></a></nav>
-            </div>
-        </div
-        >
-        <div class="start-container2"
-        >
-            <div class="start-container3"
-            ><h1 class="start-text" id="header-text"
-            ><span>To get started, please submit your .xmi file</span
-            ><br/><br/><span
-            >Dubhe supports properly formatted .xmi files up to version
-                2.5.1</span
-            ><br/></h1
-            >
-                <form id="uploadForm" action="/upload" method="post"
-                      enctype="multipart/form-data">
-                    <button
-                            type="button"
-                            name="submitButton"
-                            class="start-button button"
-                            id="uploadBtn"
-                    ><span
-                    ><span>Select your .xmi file</span
-                    ><br/></span></button>
-                    <input type="file" name="file" id="fileInput" accept=".xmi"
-                           style="display: none;">
-                </form>
+    <div class="start-container">
+        <div class="start-container1">
+            <div class="start-sidebar">
+                <nav class="start-nav">
+                    <a href="/" rel="noreferrer noopener" class="start-link">Dubhe</a>
+                    <a href="start" class="start-navlink">
+                        <img src="../static/assets/new_selected.svg" alt="Dubhe - Start Page" loading="eager" class="start-image"/>
+                    </a>
+                    <a href="report" class="start-navlink1" id="reportLink" style="display: none;">
+                        <img src="../static/assets/suggestions.svg" alt="Dubhe - Report Page" enabled loading="eager" class="start-image1"/>
+                    </a>
+                    <a href="suggestions" class="start-navlink2" id="suggestionsLink" style="display: none;">
+                        <img src="../static/assets/report.svg" alt="Dubhe - Suggestions Page" loading="eager" class="start-image2"/>
+                    </a>
+                </nav>
             </div>
         </div>
-    </div
-    >
+        <div class="start-container2">
+            <div class="start-container3">
+                <h1 class="start-text" id="header-text">
+                    <span>To begin, please upload your .xmi file.</span><br/><br/>
+                    <span>Dubhe supports properly formatted .xmi files up to version 2.5.1.</span><br/>
+                    <span id="fileName" class="start-filename" style="display: none;"></span> <!-- Updated element to display the file name -->
+                </h1>
+                <button type="button" name="submitButton" class="start-button button" id="uploadBtn">
+                    <span><span>Click here to select your .xmi file</span><br/><br/><span>You can also drag and drop your file onto the button</span></span>
+                </button>
+                <input type="file" name="file" id="fileInput" accept=".xmi" style="display: none;">
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
@@ -195,42 +145,67 @@
         }
     });
 
-    document.getElementById('uploadBtn').addEventListener('click', function () {
-        const fileInput = document.getElementById('fileInput');
-        fileInput.value = ''; // Clear the current file
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const fileNameDisplay = document.getElementById('fileName'); // Element to display file name
+
+    uploadBtn.addEventListener('click', () => {
         fileInput.click();
     });
 
-    document.getElementById('fileInput').addEventListener('change', function () {
-        if (this.files.length > 0) {
+    uploadBtn.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadBtn.classList.add('dragover');
+    });
+
+    uploadBtn.addEventListener('dragleave', () => {
+        uploadBtn.classList.remove('dragover');
+    });
+
+    uploadBtn.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadBtn.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        handleFiles(files);
+    });
+
+    function handleFiles(files) {
+        if (files.length > 0) {
             const formData = new FormData();
-            formData.append('file', this.files[0]);
-            document.getElementById('header-text').innerText = "Dubhe is processing your file, please wait..."
+            formData.append('file', files[0]);
+            document.getElementById('header-text').innerText = "Dubhe is processing your file, please wait...";
+            uploadBtn.disabled = true;
+            uploadBtn.style.display = 'none'; // Hide the button
 
             fetch('/upload', {
                 method: 'POST',
                 body: formData,
             })
-                .then(response => response.json())  // Make sure to handle JSON response
+                .then(response => response.json())
                 .then(data => {
-                    alert(data.message);  // Show the server's response message
+                    alert(data.message);
                     if (data.status === 'success') {
-                        // Update the text.
-                        document.getElementById('header-text').innerText = "Your file has been successfully processed!\n\nYou can view the report summary and suggested recommendations using the buttons on the left."
-                        document.getElementById('uploadBtn').style = "display: none;"
+                        document.getElementById('header-text').innerText = "Your file has been successfully processed!\n\nYou can view the \"Analysis Highlights\" and the \"Full Report\" using the buttons on the left. If you submitted the wrong file, click on the \"New Report\" button to start over.\n\n" + `Submitted file: ${files[0].name}`;
                         conditionIsMet = true;
                         showLink();
                     } else if (data.status === 'error') {
-                        document.getElementById('header-text').innerText = "To get started, please submit your .xmi file\n\nDubhe supports properly formatted .xmi files up to version 2.5.1"
+                        document.getElementById('header-text').innerText = "To begin, please upload your .xmi file.\n\nDubhe supports properly formatted .xmi files up to version 2.5.1.";
+                        uploadBtn.disabled = false;
+                        uploadBtn.style.display = 'block'; // Show the button
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                })
+                });
         }
-    });
+    }
 
-    // Function to show the link and image
     function showLink() {
         if (conditionIsMet) {
             document.getElementById('reportLink').style.display = '';
@@ -238,6 +213,5 @@
         }
     }
 </script>
-</body
->
+</body>
 </html>

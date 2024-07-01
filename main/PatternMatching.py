@@ -2,53 +2,75 @@ import os
 import threading
 import spacy
 from enum import Enum
-
 from ActivityParser import ActivityParser
 from ThreatInfo import ThreatInfo
 
 
-def contains_in_order(arr1, arr2):
+def contains_in_order_with_wildcards(path, pattern, nlp, check_semantic=True):
     """
-    Check to see if one array contains another array in order. That
-    is to say, arr2 appears exactly in arr1 with no elements
-    in between.
+    Checks if elements in the path match the pattern with possible wildcards.
 
-    Example:
-        arr1 = [1, 2, 3, 4]
-        arr2 = [2, 3]
-        The result will be True
-
-        arr1 = [1, 2, 3, 4]
-        arr2 = [2, 4, 3]
-        The result will be False
-
-    Dubhe uses this to check to see if a mitigation path exists
-    within the submitted XMI paths it detected.
+    :param path: List of path elements.
+    :param pattern: List of pattern elements which may contain wildcards.
+    :param nlp: Spacy NLP model for semantic similarity.
+    :param check_semantic: Boolean indicating whether to check semantic similarity.
+    :return: Boolean indicating if the path matches the pattern.
     """
-    j = 0
+    path_idx = 0
+    pattern_idx = 0
 
-    for elem in arr1:
-        if elem == arr2[j]:
-            j += 1
-            if j == len(arr2):
+    while path_idx < len(path) and pattern_idx < len(pattern):
+        pattern_element = pattern[pattern_idx]
+        path_element = path[path_idx]
+
+        if pattern_element == "...":
+            # Skip wildcard and try to match subsequent elements
+            pattern_idx += 1
+            if pattern_idx == len(pattern):
                 return True
+            next_pattern_elem = pattern[pattern_idx]
+            while path_idx < len(path):
+                if isinstance(next_pattern_elem, tuple):
+                    if path[path_idx][0] == next_pattern_elem[0]:
+                        if check_semantic:
+                            name_similarity = nlp(path[path_idx][1]).similarity(nlp(next_pattern_elem[1]))
+                            if name_similarity >= 0.7:
+                                break
+                        else:
+                            break
+                else:
+                    if path[path_idx][0] == next_pattern_elem:
+                        break
+                path_idx += 1
+            if path_idx == len(path):
+                return False
+
+        elif isinstance(pattern_element, tuple):
+            # Check for semantic similarity if tuple
+            if path_element[0] == pattern_element[0]:
+                if len(pattern_element) > 1 and check_semantic:
+                    name_similarity = nlp(path_element[1]).similarity(nlp(pattern_element[1]))
+                    if name_similarity < 0.7:
+                        path_idx += 1
+                        continue
+                pattern_idx += 1
+                path_idx += 1
+            else:
+                path_idx += 1
+
+        elif path_element[0] == pattern_element:
+            # Direct match of UML type
+            pattern_idx += 1
+            path_idx += 1
         else:
-            j = 0
-    return False
+            path_idx += 1
 
-
-def find_pattern_index(a, b):
-    len_b = len(b)
-    len_a = len(a)
-    for i in range(len_a - len_b + 1):  # only go up to where B can fit in A
-        if a[i:i + len_b] == b:
-            return i
-    return -1  # return -1 if no match is found
+    return pattern_idx == len(pattern)
 
 
 class StrideClassification(str, Enum):
-    """ The StrideClassification enumeration is used to associate
-    string representations for each of the six STRIDE categories.
+    """
+    Enum for STRIDE classification types.
     """
     SPOOF = "spoofing"
     TAMPER = "tampering"
@@ -60,15 +82,17 @@ class StrideClassification(str, Enum):
 
 class PatternMatching:
     """
-    TEMP
+    The PatternMatching class is responsible for detecting potential security threats
+    in a UML Activity Diagram by matching patterns to detect threats and their mitigations.
     """
-
     FILE_TYPE = ".dubhe"
     SIMILARITY_THRESHOLD = 0.7
 
     def __init__(self, elements):
         """
         Constructor for the PatternMatching class.
+
+        :param elements: The parsed elements that will be analyzed.
         """
         self._pattern_path = os.path.join("..", "common", "STRIDE")
         self._elements = elements
@@ -76,288 +100,144 @@ class PatternMatching:
         self._detection_elements = {}
         self._potential_threats = []
         self._mitigated_threats = []
-        self._cepi = []
+        self._ceri = []
         self._nlp = spacy.load('en_core_web_md')
 
     def _detect_patterns(self, threat_type):
         """
-        Attempts to identify potentially unsafe patterns within UML
-        Activity Diagrams using a repository of patterns that correspond
-        to a STRIDE classification.
+        Detect patterns for a specific threat type.
 
-        Note that just because a pattern is identified, it does not mean
-        with 100% confidence the threat is unmitigated. Rather, it is
-        possible that the threat exists, but there is a chance a unique
-        mitigation option is being employed that does not match the
-        mitigation recommendations supplied by MITRE ATT&CK. In these
-        cases, detection will occur regardless.
-
-        Dubhe uses .xmi representations of attack patterns that
-        corresponds to specific techniques from MITRE sources. If a
-        threat pattern is identified, a second check initiates to
-        determine if a pattern that would mitigate the threat exists.
-
-        :param threat_type: The type of threats that are being
-        retrieved, corresponding to STRIDE
+        :param threat_type: The threat type to detect patterns for.
         """
-        to_check = []
-        names = []
-        temp_names = []
-        ids = []
-        shallow_copy = []
-        similar = True
+        curr_path = os.path.join(self._pattern_path, threat_type + PatternMatching.FILE_TYPE)
 
-        # Get the ThreatInfo objects for the threat type.
-        curr_path = os.path.join(self._pattern_path,
-                                 threat_type + PatternMatching.FILE_TYPE)
         with open(curr_path, 'r') as f:
             curr_threats = []
             to_build = []
             for line in f:
                 if '%' in line:
-                    continue
-                else:
-                    to_build.append(line)
-                    if len(to_build) == 7:
+                    # End of a threat pattern definition
+                    if to_build:
                         curr_threat = ThreatInfo()
                         curr_threat.populate_threat(to_build)
                         curr_threats.append(curr_threat)
                         to_build = []
-
-        # Compare each threat to the elements within the submitted XMI
-        for threat in curr_threats:
-            detected = True
-            mitigate_present = False
-            mitigation_paths = threat.get_mitigate_pattern()
-            mode = threat.get_mode()
-            if mode == "BEFORE":
-                paths_to_check = self._build_element_path_set_before(
-                    threat.get_detect_pattern())
-            else:
-                paths_to_check = self._build_element_path_set_after(
-                    threat.get_detect_pattern())
-            paths_to_check_uml = paths_to_check.copy()
-
-            # Build the uml_type representation of the paths
-            for path in paths_to_check_uml:
-                for i in range(len(path)):
-                    temp_names.append(path[i].get_name())
-                    ids.append(path[i].get_id())
-                    path[i] = path[i].get_uml_type()
-                if len(names) == 0 or find_pattern_index(names,
-                                                         temp_names) != -1:
-                    for ele in temp_names:
-                        names.append(ele)
-                temp_names = []
-
-            # Add the elements to the data set for metric purposes
-            walk_elems = self._elements.copy()
-            temp_emp = []
-            for walk_curr in walk_elems:
-                temp_emp.append(walk_curr.get_uml_type())
-
-            index = find_pattern_index(temp_emp,
-                                       threat.get_detect_pattern()[0])
-            if index != -1:
-                for i in range(index,
-                               len(threat.get_detect_pattern()[0]) + index):
-                    curr_id = walk_elems[i].get_id()
-                    shallow_copy.append(curr_id)
-                    if curr_id not in self._detection_elements:
-                        self._detection_elements[curr_id] = (
-                            len(paths_to_check), 0, 0, 1)
-                    else:
-                        old_tup = self._detection_elements[curr_id]
-                        new_tup = (
-                            old_tup[0] + len(paths_to_check), old_tup[1],
-                            old_tup[2], old_tup[3] + 1)
-                        self._detection_elements[curr_id] = new_tup
-
-            for path in paths_to_check_uml:
-                for mitigation_path in mitigation_paths:
-                    path_copy = mitigation_path.copy()
-                    for i in range(len(path_copy)):
-                        if type(path_copy[i]) is tuple:
-                            to_check.append(
-                                (i, path_copy[i][0], path_copy[i][1]))
-                            path_copy[i] = path_copy[i][0]
-                    if contains_in_order(path, path_copy):
-                        # Identify index where pattern is matched.
-                        index = find_pattern_index(path, path_copy)
-                        if len(to_check) > 0:
-                            for entry in to_check:
-                                if path[index + entry[0]] == entry[1]:
-                                    # Check to see if the name is similar
-                                    if self._semantic_similarity(
-                                            names[index + entry[0]], entry[
-                                                2]) < self.SIMILARITY_THRESHOLD:
-                                        similar = False
-                        to_check = []
-                        mitigate_present = True
-                        break
-                if mitigate_present and path == paths_to_check_uml[
-                    -1] and similar:
-                    detected = False
-                    self._mitigated_threats.append((threat_type, threat))
-                    for curr in shallow_copy:
-                        old_tup = self._detection_elements[curr]
-                        new_tup = (
-                            old_tup[0], old_tup[1] + 1, old_tup[2], old_tup[3])
-                        self._detection_elements[curr] = new_tup
-                    break
-                elif mitigate_present and path == paths_to_check_uml[
-                    -1] and not similar:
-                    detected = False
-                    similar = True
-                    self._potential_threats.append((threat_type, threat))
-                    for curr in shallow_copy:
-                        old_tup = self._detection_elements[curr]
-                        new_tup = (
-                            old_tup[0], old_tup[1], old_tup[2] + 1, old_tup[3])
-                        self._detection_elements[curr] = new_tup
-                    break
-                elif mitigate_present:
-                    mitigate_present = False
-                    continue
                 else:
+                    to_build.append(line.strip())
+            if to_build:
+                curr_threat = ThreatInfo()
+                curr_threat.populate_threat(to_build)
+                curr_threats.append(curr_threat)
+
+        for threat in curr_threats:
+            detect_pattern = threat.get_detect_pattern()[0]
+            mitigation_patterns = threat.get_mitigation_pattern()
+            mitigation_index = threat.get_mitigation_index()
+            detected = False
+            path_detected = []
+
+            for element in self._elements:
+                paths = self._collect_paths_from_element(element)
+                for path in paths:
+                    if self._match_path_with_pattern(path, detect_pattern):
+                        detected = True
+                        path_detected = path
+                        self._record_detection(threat, path, detect_pattern)
+                        if self._check_mitigation(path, mitigation_patterns, detect_pattern, mitigation_index):
+                            self._update_ceri_values(path, mitigated=True, potentially_mitigated=False)
+                            self._mitigated_threats.append((threat_type, threat))
+                        elif self._check_potential_mitigation(path, mitigation_patterns, detect_pattern, mitigation_index):
+                            self._update_ceri_values(path, mitigated=False, potentially_mitigated=True)
+                            self._potential_threats.append((threat_type, threat))
+                        break
+                if detected:
                     break
 
-            if detected:
+            if detected and (threat_type, threat) not in self._mitigated_threats and (threat_type, threat) not in self._potential_threats:
                 self._detected_patterns.append((threat_type, threat))
+            elif not detected:
+                pass
 
-    def _build_element_path_set_after(self, detect_pattern):
+    def _collect_paths_from_element(self, element):
         """
-        Builds an element path set, which is a set of paths within a UML
-        Activity Diagram but only using the uml types and containing no
-        additional info.
+        Collect all paths starting from a given element.
+
+        :param element: The starting element.
+        :return: A list of paths, each path being a list of elements.
         """
-        # Check for any occurrences of the detect pattern
-        final_paths = []
-        temp_paths = []
-        for xmi_element in self._elements:
-            if xmi_element.get_uml_type() == detect_pattern[0][0]:
-                # Special case: The detect_pattern is more than one element
-                if len(detect_pattern[0]) != 1:
-                    # Check to see if the whole pattern is present.
-                    if find_pattern_index(detect_pattern[0],
-                                          self._elements) == -1:
-                        pass  # TODO: Figure out what is going wrong here. (Empty list)
-                # Build the path forwards
-                temp_paths = [[xmi_element]]
-                for curr_path in temp_paths:
-                    for curr_element in curr_path:
-                        if curr_path[-1] != curr_element:
-                            # Working with one of the alternative paths we
-                            # encountered when working forwards.
-                            continue
-                        if len(curr_element.get_destination()) == 0 or (
-                                curr_path.index(
-                                    curr_element) != 0 and curr_element.get_uml_type() ==
-                                detect_pattern[0][0]):
-                            # We reached the end of this path.
-                            if (curr_element.get_uml_type() ==
-                                    detect_pattern[0][0]):
-                                curr_path.pop()
-                            break
-                        elif curr_path.index(curr_element) == 0 and len(
-                                curr_path) > 1:
-                            # Working with one of the alternative paths we
-                            # encountered when working forwards.
-                            continue
-                        elif len(curr_element.get_destination()) == 1:
-                            # Simple case, only one source into this element.
-                            curr_path.append(self._get_element_by_id(
-                                curr_element.get_destination()[0]))
-                        else:
-                            # Special case, multiple destination, create a
-                            # copy of the path for each destination.
-                            for i in range(1,
-                                           len(curr_element.get_destination())):
-                                temp_copy = curr_path.copy()
-                                temp_copy.append(self._get_element_by_id(
-                                    curr_element.get_destination()[i]))
-                                temp_paths.append(temp_copy)
-                            curr_path.append(self._get_element_by_id(
-                                curr_element.get_destination()[0]))
-        for path in temp_paths:
-            final_paths.append(path)
+        paths = []
+        to_visit = [[element]]
+        while to_visit:
+            current_path = to_visit.pop()
+            last_element = current_path[-1]
+            next_elements = last_element.get_destination()
+            if not next_elements:
+                paths.append(current_path)
+            else:
+                for dest_id in next_elements:
+                    next_element = self._get_element_by_id(dest_id)
+                    if next_element:
+                        new_path = current_path + [next_element]
+                        to_visit.append(new_path)
+        return paths
 
-        # We finished building the paths, now we need to flip everything
-        for path in final_paths:
-            path.reverse()
-
-        return final_paths
-
-    def _build_element_path_set_before(self, detect_pattern):
+    def _match_path_with_pattern(self, path, pattern):
         """
-        Builds an element path set, which is a set of paths within a UML
-        Activity Diagram but only using the uml types and containing no
-        additional info.
+        Check if a path matches a given pattern.
+
+        :param path: The path to check.
+        :param pattern: The pattern to match.
+        :return: Boolean indicating if the path matches the pattern.
         """
-        # Check for any occurrences of the detect pattern
-        final_paths = []
-        temp_paths = []
-        for xmi_element in self._elements:
-            if xmi_element.get_uml_type() == detect_pattern[0][0]:
-                # Special case: The detect_pattern is more than one element
-                if len(detect_pattern[0]) != 1:
-                    # Check to see if the whole pattern is present.
-                    if find_pattern_index(detect_pattern[0],
-                                          self._elements) == -1:
-                        break
-                # Build the path backwards
-                temp_paths = [[xmi_element]]
-                for curr_path in temp_paths:
-                    for curr_element in curr_path:
-                        if curr_path[-1] != curr_element:
-                            # Working with one of the alternative paths we
-                            # encountered when working backwards.
-                            continue
-                        if len(curr_element.get_source()) == 0 or (
-                                curr_path.index(
-                                    curr_element) != 0 and curr_element.get_uml_type() ==
-                                detect_pattern[0][0]):
-                            # We reached the end of this path.
-                            if (curr_element.get_uml_type() ==
-                                    detect_pattern[0][0]):
-                                curr_path.pop()
-                            break
-                        elif curr_path.index(curr_element) == 0 and len(
-                                curr_path) > 1:
-                            # Working with one of the alternative paths we
-                            # encountered  when working backwards.
-                            continue
-                        elif len(curr_element.get_source()) == 1:
-                            # Simple case, only one source into this element.
-                            curr_path.append(self._get_element_by_id(
-                                curr_element.get_source()[0]))
-                        else:
-                            # Special case, multiple sources, create a copy of
-                            # the path for each source.
-                            for i in range(1, len(curr_element.get_source())):
-                                temp_copy = curr_path.copy()
-                                temp_copy.append(self._get_element_by_id(
-                                    curr_element.get_source()[i]))
-                                temp_paths.append(temp_copy)
-                            curr_path.append(self._get_element_by_id(
-                                curr_element.get_source()[0]))
-        for path in temp_paths:
-            final_paths.append(path)
+        path_uml_types = [(element.get_uml_type(), element.get_name()) for element in path]
+        result = contains_in_order_with_wildcards(path_uml_types, pattern, self._nlp)
+        return result
 
-        # We finished building the paths, now we need to flip everything
-        for path in final_paths:
-            path.reverse()
+    def _record_detection(self, threat, path, detect_pattern):
+        """
+        Record detection of a pattern.
 
-        return final_paths
+        :param threat: The detected threat.
+        :param path: The path where the threat was detected.
+        :param detect_pattern: The pattern that was detected.
+        """
+        pattern_elements = set(detect_pattern)
+        for element in path:
+            element_uml_type = element.get_uml_type()
+            element_name = element.get_name()
+            if element_uml_type in pattern_elements or any(
+                    isinstance(p, tuple) and p[0] == element_uml_type and self._semantic_similarity(p[1], element_name) >= PatternMatching.SIMILARITY_THRESHOLD
+                    for p in detect_pattern if isinstance(p, tuple)):
+                element_id = element.get_id()
+                cyclomatic_complexity = 1 + (len(element.get_source()) if isinstance(element.get_source(), list) else 0)
+                if element_id not in self._detection_elements:
+                    self._detection_elements[element_id] = [cyclomatic_complexity, 0, 0, 1]
+                else:
+                    self._detection_elements[element_id][3] += 1
+
+    def _update_ceri_values(self, path, mitigated, potentially_mitigated):
+        """
+        Update the CERI values based on detection results.
+
+        :param path: The path where the threat was detected.
+        :param mitigated: Boolean indicating if the threat was mitigated.
+        :param potentially_mitigated: Boolean indicating if the threat was potentially mitigated.
+        """
+        for element in path:
+            element_id = element.get_id()
+            if element_id in self._detection_elements:
+                if mitigated:
+                    self._detection_elements[element_id][1] += 1
+                if potentially_mitigated:
+                    self._detection_elements[element_id][2] += 1
+                self._detection_elements[element_id][3] += 1
 
     def _get_element_by_id(self, target_id):
         """
-        Get a specific ActivityElement by looking up its unique ID.
+        Get an element by its ID.
 
-        :param target_id: The ID of the ActivityElement that is being
-                          queried for.
-        :return: The ActivityElement with the specific target ID if it
-                 is found, None otherwise.
+        :param target_id: The ID of the element.
+        :return: The element with the given ID, or None if not found.
         """
         for element in self._elements:
             if element.get_id() == target_id:
@@ -366,114 +246,180 @@ class PatternMatching:
 
     def _semantic_similarity(self, s1, s2):
         """
-        TEMP
+        Calculate semantic similarity between two strings.
+
+        :param s1: The first string.
+        :param s2: The second string.
+        :return: The semantic similarity score.
         """
         doc1 = self._nlp(s1)
         doc2 = self._nlp(s2)
+        similarity = doc1.similarity(doc2)
+        return similarity
 
-        # Compute similarity using cosine similarity of vectors
-        return doc1.similarity(doc2)
-
-    def _calculate_cepi(self):
+    def _check_mitigation(self, path, mitigation_patterns, detect_pattern, mitigation_index):
         """
-        TEMP
+        Check if the detected threat is mitigated.
+
+        :param path: The path where the threat was detected.
+        :param mitigation_patterns: The patterns for mitigations.
+        :param detect_pattern: The detection pattern.
+        :param mitigation_index: The index for mitigation.
+        :return: Boolean indicating if the threat is mitigated.
+        """
+        if mitigation_index == -1:
+            mitigation_position = len(detect_pattern)
+        elif mitigation_index == 0:
+            mitigation_position = 0
+        else:
+            mitigation_position = mitigation_index
+
+        for pattern in mitigation_patterns:
+            if not self._has_required_paths(path, pattern, detect_pattern, mitigation_position):
+                return False
+        return True
+
+    def _check_potential_mitigation(self, path, mitigation_patterns, detect_pattern, mitigation_index):
+        """
+        Check if the detected threat is potentially mitigated.
+
+        :param path: The path where the threat was detected.
+        :param mitigation_patterns: The patterns for mitigations.
+        :param detect_pattern: The detection pattern.
+        :param mitigation_index: The index for mitigation.
+        :return: Boolean indicating if the threat is potentially mitigated.
+        """
+        if mitigation_index == -1:
+            mitigation_position = len(detect_pattern)
+        elif mitigation_index == 0:
+            mitigation_position = 0
+        else:
+            mitigation_position = mitigation_index
+
+        for pattern in mitigation_patterns:
+            if not self._has_potential_paths(path, pattern, detect_pattern, mitigation_position):
+                return False
+        return True
+
+    def _has_required_paths(self, path, pattern, detect_pattern, mitigation_position):
+        """
+        Check if the required paths exist for mitigation.
+
+        :param path: The path where the threat was detected.
+        :param pattern: The pattern for mitigation.
+        :param detect_pattern: The detection pattern.
+        :param mitigation_position: The position for mitigation.
+        :return: Boolean indicating if the required paths exist.
+        """
+        if mitigation_position == len(detect_pattern):
+            for sub_path in self._collect_paths_from_element(path[-1]):
+                if self._match_path_with_pattern(sub_path, pattern):
+                    return True
+        else:
+            element = path[mitigation_position]
+            sub_paths = self._collect_paths_from_element(element)
+            for sub_path in sub_paths:
+                if self._match_path_with_pattern(sub_path, pattern):
+                    return True
+        return False
+
+    def _has_potential_paths(self, path, pattern, detect_pattern, mitigation_position):
+        """
+        Check if the potential paths exist for mitigation.
+
+        :param path: The path where the threat was detected.
+        :param pattern: The pattern for mitigation.
+        :param detect_pattern: The detection pattern.
+        :param mitigation_position: The position for mitigation.
+        :return: Boolean indicating if the potential paths exist.
+        """
+        if mitigation_position == len(detect_pattern):
+            for sub_path in self._collect_paths_from_element(path[-1]):
+                if contains_in_order_with_wildcards([(elem.get_uml_type(), elem.get_name()) for elem in sub_path], pattern, self._nlp, check_semantic=False):
+                    return True
+        else:
+            element = path[mitigation_position]
+            sub_paths = self._collect_paths_from_element(element)
+            for sub_path in sub_paths:
+                if contains_in_order_with_wildcards([(elem.get_uml_type(), elem.get_name()) for elem in sub_path], pattern, self._nlp, check_semantic=False):
+                    return True
+        return False
+
+    def _calculate_ceri(self):
+        """
+        Calculate the CERI (Critical Element Risk Index) values for the detected threats.
+
+        The best case CERI will include both mitigated and potentially mitigated threats.
+        The worst case CERI will only include mitigated threats.
         """
         for elem in self._detection_elements:
             full_elem = self._get_element_by_id(elem)
-            cepi_vals = self._detection_elements[elem]
-            cepi_worst = cepi_vals[0] * (1 - (cepi_vals[1] / cepi_vals[3]))
-            cepi_best = cepi_vals[0] * (
-                    1 - ((cepi_vals[1] + cepi_vals[2]) / cepi_vals[3]))
-            self._cepi.append((full_elem.get_uml_type(), full_elem.get_name(),
-                               cepi_worst, cepi_best))
+            ceri_vals = self._detection_elements[elem]
+            if ceri_vals[3] > 0:
+                ceri_worst = ceri_vals[0] * (1 - (ceri_vals[1] / ceri_vals[3]))
+                ceri_best = ceri_vals[0] * (1 - ((ceri_vals[1] + ceri_vals[2]) / ceri_vals[3]))
+                self._ceri.append((full_elem.get_uml_type(), full_elem.get_name(), ceri_worst, ceri_best))
 
     def _display_results(self, web):
         """
-        TEMP
+        Display the results of the pattern matching analysis.
 
-        :param web: Placeholder
+        :param web: Boolean indicating if the results are being displayed on the web.
         """
         if not web:
             for entry in self._detected_patterns:
-                pattern = entry[-1]
+                threat_type, pattern = entry
+                print(f"\nYour design may be susceptible to the following {threat_type.replace('_', ' ').title()} threats:\n")
+                print(f"Threat Name: {pattern.get_technique().strip()}\nMITRE ATT&CK Reference: {pattern.get_technique_num()}")
                 print(
-                    f"\nYour design may be susceptible to the following {(entry[0].replace('_', ' ')).title()} threats:\n")
-                print(
-                    f"Threat Name: {pattern.get_technique().strip()}\nMITRE ATT&CK Reference: {pattern.get_technique_num()}")
-                print(
-                    f"We recommend you review the mitigations associated with the"
-                    f" MITRE ATT&CK listing to harden your system. "
-                    f"\n\t(E.g., {pattern.get_mitigation().strip()}, reference number: {pattern.get_mitigation_num().strip()})")
+                    f"We recommend you review the mitigations associated with the MITRE ATT&CK listing to harden your system. \n\t(E.g., {pattern.get_mitigation().strip()}, reference number: {pattern.get_mitigation_num().strip()})")
 
     def perform_pattern_matching(self, web=False):
         """
-        TEMP
+        Perform pattern matching analysis to detect potential threats.
+
+        :param web: Boolean indicating if the results are being displayed on the web.
         """
-        # Create the analysis threads for each STRIDE classification.
-        t1 = threading.Thread(target=self._detect_patterns,
-                              args=(StrideClassification.SPOOF,))
-        # t2 = threading.Thread(target=self._detect_patterns,
-        #                      args=(StrideClassification.TAMPER,))
-        # t3 = threading.Thread(target=self._detect_patterns,
-        #                      args=(StrideClassification.REFUTE,))
-        t4 = threading.Thread(target=self._detect_patterns,
-                              args=(StrideClassification.INFO,))
-        t5 = threading.Thread(target=self._detect_patterns,
-                              args=(StrideClassification.DENY,))
-        # t6 = threading.Thread(target=self._detect_patterns,
-        #                      args=(StrideClassification.ELEVATE,))
+        threads = []
+        for threat_type in StrideClassification:
+            t = threading.Thread(target=self._detect_patterns, args=(threat_type,))
+            threads.append(t)
+            t.start()
 
-        # Start the threads.
-        t1.start()
-        # t2.start()
-        # t3.start()
-        t4.start()
-        t5.start()
-        # t6.start()
+        for t in threads:
+            t.join()
 
-        # Wait for each analysis activity to finish before moving on.
-        t1.join()
-        # t2.join()
-        # t3.join()
-        t4.join()
-        t5.join()
-        # t6.join()
-
-        # Calculate CEPI
-        self._calculate_cepi()
-
-        # Display the results.
+        self._calculate_ceri()
         self._display_results(web)
 
-    def get_cepi(self):
+    def get_ceri(self):
         """
-        TEMP
+        Get the calculated CERI values.
+
+        :return: List of CERI values.
         """
-        return self._cepi
+        return self._ceri
 
     def get_mitigated_threats(self):
         """
-        TEMP
+        Get the list of mitigated threats.
+
+        :return: List of mitigated threats.
         """
         return self._mitigated_threats
 
     def get_potential_threats(self):
         """
-        TEMP
+        Get the list of potential threats.
+
+        :return: List of potential threats.
         """
         return self._potential_threats
 
     def get_detected_threats(self):
         """
-        TEMP
+        Get the list of detected threats.
+
+        :return: List of detected threats.
         """
         return self._detected_patterns
-
-
-if __name__ == '__main__':
-    parser = ActivityParser(os.path.join(os.getcwd(), "..", "common",
-                                         "XMI Files",
-                                         "Spoofing Example Protected.xmi"))
-    result = parser.parse_xmi()
-    test = PatternMatching(parser.get_elements())
-    test.perform_pattern_matching()

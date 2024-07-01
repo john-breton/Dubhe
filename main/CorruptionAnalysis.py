@@ -129,9 +129,6 @@ class CorruptionAnalysis:
                                          best_element.get_name(),
                                          best_element.get_parent()])
 
-    # There are only two types of analysis, and they depend on the existence
-    # of datastores. If none exist, no results are reported.
-
     def _analyze_entry(self):
         """
         This analysis activity is specifically concerned with cleaning
@@ -171,7 +168,7 @@ class CorruptionAnalysis:
         the length of any corruptible paths within a system.
 
         ---How does this work?---
-        The tool identify the single longest path of ActivityElements
+        The tool identifies the single longest path of ActivityElements
         for a given UML Activity Diagram. Once this is identified, the
         tool will determine the mid-point of the path. Once determined
         a suggestion to place a data sanitizer between the mid-point
@@ -246,18 +243,43 @@ class CorruptionAnalysis:
                                     mid_element.get_parent()])
 
     def get_longest_path(self):
+        """
+        Get the longest path identified during the whole system analysis.
+
+        :return: The longest path as a list of ActivityElements.
+        """
         return self._longest_path
 
     def get_all_paths(self):
+        """
+        Get all the paths identified during the whole system analysis.
+
+        :return: A list of all paths, each path being a list of ActivityElements.
+        """
         return self._all_paths
 
     def get_protect_stores(self):
+        """
+        Get the results of the datastore protection analysis.
+
+        :return: A list of tuples representing the datastore protection recommendations.
+        """
         return self._protect_stores
 
     def get_protect_entry(self):
+        """
+        Get the results of the entry point protection analysis.
+
+        :return: A list of tuples representing the entry point protection recommendations.
+        """
         return self._protect_entry
 
     def get_protect_whole(self):
+        """
+        Get the results of the whole system protection analysis.
+
+        :return: A list of tuples representing the whole system protection recommendations.
+        """
         return self._protect_whole
 
     def _display_results(self, web=False, no_datastore=True):
@@ -266,6 +288,9 @@ class CorruptionAnalysis:
 
         Three results are possible, however only two will display if no
         data sanitizers were present in the submitted XMI.
+
+        :param web: Boolean indicating if the results should be displayed
+                    through the web UI.
         :param no_datastore: True if there are analysis results to show,
                              False otherwise (such as the case where a
                              system model already includes a data
@@ -373,10 +398,3 @@ class CorruptionAnalysis:
 
             # Display the results.
             self._display_results(web)
-
-
-if __name__ == '__main__':
-    parser = ActivityParser(os.path.join("..", "common", "XMI Files", "DualDatabase.xmi"))
-    result = parser.parse_xmi()
-    analysis = CorruptionAnalysis(parser.get_elements())
-    analysis.perform_analysis()

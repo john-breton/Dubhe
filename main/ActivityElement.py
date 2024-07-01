@@ -58,39 +58,99 @@ class ActivityElement:
         self._destination = []
 
     def set_uml_type(self, uml_type):
+        """
+        Set the UML type for this ActivityElement.
+
+        :param uml_type: The UML type to be set.
+        """
         self._uml_type = uml_type
 
     def get_uml_type(self):
+        """
+        Get the UML type of this ActivityElement.
+
+        :return: The UML type.
+        """
         return self._uml_type
 
     def set_parent(self, parent):
+        """
+        Set the parent for this ActivityElement.
+
+        :param parent: The parent to be set.
+        """
         self._parent = parent
 
     def get_parent(self):
+        """
+        Get the parent of this ActivityElement.
+
+        :return: The parent.
+        """
         return self._parent
 
     def set_source(self, source):
+        """
+        Add a source to the list of sources for this ActivityElement.
+
+        :param source: The source to be added.
+        """
         self._source.append(source)
 
     def get_source(self):
+        """
+        Get the list of sources for this ActivityElement.
+
+        :return: The list of sources.
+        """
         return self._source
 
     def set_destination(self, destination):
+        """
+        Add a destination to the list of destinations for this ActivityElement.
+
+        :param destination: The destination to be added.
+        """
         self._destination.append(destination)
 
     def get_destination(self):
+        """
+        Get the list of destinations for this ActivityElement.
+
+        :return: The list of destinations.
+        """
         return self._destination
 
     def set_name(self, name):
+        """
+        Set the name for this ActivityElement.
+
+        :param name: The name to be set.
+        """
         self._name = name
 
     def get_name(self):
+        """
+        Get the name of this ActivityElement.
+
+        :return: The name.
+        """
         return self._name
 
     def set_id(self, uml_id):
+        """
+        Set the ID for this ActivityElement.
+
+        :param uml_id: The ID to be set.
+        """
         self._id = uml_id
 
     def get_id(self):
+        """
+        Get the ID of this ActivityElement.
+
+        :return: The ID.
+        """
         return self._id
 
     def to_json(self):
@@ -98,7 +158,7 @@ class ActivityElement:
         Currently unused. Encapsulates the ActivityElement within JSON
         without the source and destination lists.
 
-        :return: A JSON representation of the ActivityElement
+        :return: A JSON representation of the ActivityElement.
         """
         return '{\n\t"uml_type": "' + self.get_uml_type() \
                + '",\n\t"parent": "' + self.get_parent() \
@@ -110,7 +170,7 @@ class ActivityElement:
         Currently unused. Forms a String to represent the name,
         source(s), and destination(s) of the ActivityElement.
 
-        :return: A String representation of the ActivityElement
+        :return: A String representation of the ActivityElement.
         """
         return f"Name: {self.get_name()}, Source: {self.get_source()}," \
                f" Destination: {self.get_destination()}"
