@@ -1,8 +1,9 @@
 import os
 import threading
-import spacy
 from enum import Enum
-from ActivityParser import ActivityParser
+
+import spacy
+
 from ThreatInfo import ThreatInfo
 
 
@@ -134,15 +135,13 @@ class PatternMatching:
             mitigation_patterns = threat.get_mitigation_pattern()
             mitigation_index = threat.get_mitigation_index()
             detected = False
-            path_detected = []
 
             for element in self._elements:
                 paths = self._collect_paths_from_element(element)
                 for path in paths:
                     if self._match_path_with_pattern(path, detect_pattern):
                         detected = True
-                        path_detected = path
-                        self._record_detection(threat, path, detect_pattern)
+                        self._record_detection(path, detect_pattern)
                         if self._check_mitigation(path, mitigation_patterns, detect_pattern, mitigation_index):
                             self._update_ceri_values(path, mitigated=True, potentially_mitigated=False)
                             self._mitigated_threats.append((threat_type, threat))
@@ -193,11 +192,10 @@ class PatternMatching:
         result = contains_in_order_with_wildcards(path_uml_types, pattern, self._nlp)
         return result
 
-    def _record_detection(self, threat, path, detect_pattern):
+    def _record_detection(self, path, detect_pattern):
         """
         Record detection of a pattern.
 
-        :param threat: The detected threat.
         :param path: The path where the threat was detected.
         :param detect_pattern: The pattern that was detected.
         """

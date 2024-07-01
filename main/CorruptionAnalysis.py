@@ -1,8 +1,5 @@
-import os
 import threading
 from collections import Counter
-
-from main.ActivityParser import ActivityParser
 
 
 class CorruptionAnalysis:

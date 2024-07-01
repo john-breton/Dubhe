@@ -416,7 +416,10 @@ def suggestions_page():
         total_paths += 1
 
     cpp = sum_paths / total_paths
-    bsp_vector = "({:.2f}, {:.2f}), {:.2f}".format(sum(entry[2] for entry in ceri) / len(ceri), sum(entry[3] for entry in ceri) / len(ceri), cpp)
+    if len(ceri) == 0:
+        bsp_vector = "(undf., undf.), {:.2f}".format(cpp)
+    else:
+        bsp_vector = "({:.2f}, {:.2f}), {:.2f}".format(sum(entry[2] for entry in ceri) / len(ceri), sum(entry[3] for entry in ceri) / len(ceri), cpp)
     ceri_values = [(ceri_val[0], ceri_val[1], round(ceri_val[2], 2), round(ceri_val[3], 2)) for ceri_val in ceri]
 
     return render_template("suggestions.html",
@@ -449,9 +452,11 @@ if __name__ == "__main__":
         print(
             "[ERROR]: It appears the supplied .xmi file is malformed. Dubhe currently supports XMI versions 2.X+. Please double-check your .xmi file before trying to rerun Dubhe.")
         exit()
+    # To use the CLI version of Dubhe, please ensure the following lines are uncommented.
+    # detector = PatternMatching(parser.get_elements())
+    # corruption = CorruptionAnalysis(parser.get_elements())
+    # detector.perform_analysis()
+    # corruption.perform_analysis()
 
-    detector = PatternMatching(parser.get_elements())
-    corruption = CorruptionAnalysis(parser.get_elements())
-    corruption.perform_analysis()
-
+    # To use the web interface, please ensure the following line is uncommented.
     app.run()

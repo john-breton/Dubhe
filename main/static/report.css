@@ -1,9 +1,7 @@
-/* report.css */
-
 .emoji {
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
     font-size: inherit;
-    color: inherit;
+    color: inherit
 }
 
 .report-container {
@@ -14,40 +12,40 @@
     align-items: flex-start;
     flex-direction: column;
     justify-content: flex-start;
-    background-color: #f1f1f1;
+    background-color: #f1f1f1
 }
 
 ::-webkit-scrollbar {
     width: 12px;
-    height: 12px;
+    height: 12px
 }
 
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 10px;
+    border-radius: 10px
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: #d9534f;
     border-radius: 10px;
-    border: 3px solid #f1f1f1;
+    border: 3px solid #f1f1f1
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #b7423b;
+    background-color: #b7423b
 }
 
 .report-filename-bar {
     width: 100%;
     padding: 10px;
     background-color: #007bff;
-    color: white;
+    color: #fff;
     text-align: center;
-    font-weight: bold;
+    font-weight: 700
 }
 
 .report-filename-text {
-    font-size: 16px;
+    font-size: 16px
 }
 
 .report-container1 {
@@ -57,7 +55,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    background-color: var(--dl-color-gray-white);
+    background-color: var(--dl-color-gray-white)
 }
 
 .report-sidebar {
@@ -67,8 +65,8 @@
     display: flex;
     padding: var(--dl-space-space-twounits);
     flex-direction: column;
-    background-color: #ffffff;
-    align-items: center; /* Center the content */
+    background-color: #fff;
+    align-items: center
 }
 
 .report-nav {
@@ -77,7 +75,7 @@
     display: flex;
     align-self: center;
     align-items: center;
-    flex-direction: column;
+    flex-direction: column
 }
 
 .report-link {
@@ -85,49 +83,49 @@
     font-weight: 700;
     margin-bottom: var(--dl-space-space-fiveunits);
     text-decoration: none;
-    text-align: center; /* Center the text */
+    text-align: center
 }
 
 .report-navlink {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .report-image {
     width: 90%;
     height: 100%;
     object-fit: cover;
-    margin-left: 0.5em;
-    margin-bottom: var(--dl-space-space-fourunits);
+    margin-left: .5em;
+    margin-bottom: var(--dl-space-space-fourunits)
 }
 
 .report-navlink1 {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .report-image1 {
     width: 90%;
     height: 100%;
     object-fit: cover;
-    margin-left: 0.5em;
-    margin-bottom: var(--dl-space-space-twounits);
+    margin-left: .5em;
+    margin-bottom: var(--dl-space-space-twounits)
 }
 
 .report-navlink2 {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .report-image2 {
     width: 90%;
     height: 100%;
     object-fit: cover;
-    margin-left: 0.5em;
-    margin-bottom: var(--dl-space-space-twounits);
+    margin-left: .5em;
+    margin-bottom: var(--dl-space-space-twounits)
 }
 
 .report-container2 {
@@ -139,7 +137,7 @@
     display: flex;
     position: absolute;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-start
 }
 
 .report-feature-card {
@@ -150,21 +148,21 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-fourunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
-    border-top-right-radius: var(--dl-radius-radius-radius8);
+    background-color: #fff;
+    border-top-right-radius: var(--dl-radius-radius-radius8)
 }
 
 .report-feature-card:hover {
-    transform: scale(1.02);
+    transform: scale(1.02)
 }
 
 .report-text {
-    margin-bottom: 14px;
+    margin-bottom: 14px
 }
 
 .report-text03 {
@@ -173,14 +171,14 @@
     font-size: 58px;
     align-self: center;
     text-align: center;
-    padding-top: 12%;
+    padding-top: 12%
 }
 
 .report-text04 {
     width: 90%;
     height: 45%;
     align-self: center;
-    text-align: left;
+    text-align: left
 }
 
 .report-feature-card1 {
@@ -191,21 +189,21 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
-    border-top-right-radius: var(--dl-radius-radius-radius8);
+    background-color: #fff;
+    border-top-right-radius: var(--dl-radius-radius-radius8)
 }
 
 .report-feature-card1:hover {
-    transform: scale(1.02);
+    transform: scale(1.02)
 }
 
 .report-text05 {
-    margin-bottom: 14px;
+    margin-bottom: 14px
 }
 
 .report-text08 {
@@ -214,14 +212,14 @@
     font-size: 58px;
     align-self: center;
     text-align: center;
-    padding-top: 12%;
+    padding-top: 12%
 }
 
 .report-text09 {
     width: 90%;
     height: 45%;
     align-self: center;
-    text-align: left;
+    text-align: left
 }
 
 .report-feature-card2 {
@@ -232,22 +230,22 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-threeunits);
     margin-right: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
-    border-top-right-radius: var(--dl-radius-radius-radius8);
+    background-color: #fff;
+    border-top-right-radius: var(--dl-radius-radius-radius8)
 }
 
 .report-feature-card2:hover {
-    transform: scale(1.02);
+    transform: scale(1.02)
 }
 
 .report-text10 {
-    margin-bottom: 14px;
+    margin-bottom: 14px
 }
 
 .report-text13 {
@@ -256,14 +254,14 @@
     font-size: 58px;
     align-self: center;
     text-align: center;
-    padding-top: 12%;
+    padding-top: 12%
 }
 
 .report-text14 {
     width: 90%;
     height: 45%;
     align-self: center;
-    text-align: left;
+    text-align: left
 }
 
 .report-container3 {
@@ -275,7 +273,7 @@
     display: flex;
     position: absolute;
     align-self: flex-end;
-    align-items: center;
+    align-items: center
 }
 
 .report-feature-card3 {
@@ -286,27 +284,27 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-fourunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
-    border-top-right-radius: var(--dl-radius-radius-radius8);
+    background-color: #fff;
+    border-top-right-radius: var(--dl-radius-radius-radius8)
 }
 
 .report-feature-card3:hover {
-    transform: scale(1.02);
+    transform: scale(1.02)
 }
 
 .report-text15 {
-    margin-bottom: 14px;
+    margin-bottom: 14px
 }
 
 .no-threats-detected {
     align-self: center;
     text-align: center;
-    font-size: 48px;
+    font-size: 48px
 }
 
 .report-image3 {
@@ -314,7 +312,7 @@
     height: 100%;
     align-self: center;
     object-fit: cover;
-    position: relative;
+    position: relative
 }
 
 .report-feature-card4 {
@@ -325,22 +323,22 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-threeunits);
     margin-right: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
-    border-top-right-radius: var(--dl-radius-radius-radius8);
+    background-color: #fff;
+    border-top-right-radius: var(--dl-radius-radius-radius8)
 }
 
 .report-feature-card4:hover {
-    transform: scale(1.02);
+    transform: scale(1.02)
 }
 
 .report-text16 {
-    margin-bottom: 14px;
+    margin-bottom: 14px
 }
 
 .report-text17 {
@@ -349,45 +347,45 @@
     font-size: 58px;
     align-self: center;
     text-align: center;
-    padding-top: 7%;
+    padding-top: 7%
 }
 
 .report-text18 {
     width: 90%;
     height: 45%;
     align-self: center;
-    text-align: left;
+    text-align: left
 }
 
 .report-list {
     list-style-type: none;
-    padding: 0;
+    padding: 0
 }
 
 .report-list li {
-    font-size: 16px;
+    font-size: 16px
 }
 
 .dropdown {
     cursor: pointer;
     display: flex;
     align-items: center;
-    font-weight: bold;
+    font-weight: 700;
     text-align: justify;
-    width: 100%; /* Ensure the dropdown container maintains its width */
+    width: 100%
 }
 
 .dropdown-text {
-    flex: 1;
+    flex: 1
 }
 
 .arrow {
     margin-right: 10px;
-    transition: transform 0.3s;
+    transition: transform .3s
 }
 
 .arrow.rotate {
-    transform: rotate(180deg);
+    transform: rotate(180deg)
 }
 
 .dropdown-content {
@@ -396,17 +394,17 @@
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #f9f9f9;
-    overflow-y: auto; /* Allow vertical scrolling */
-    max-height: 200px; /* Set a max height for the dropdown content */
-    overflow-x: hidden; /* Prevent horizontal overflow */
-    white-space: normal; /* Allow text wrapping */
-    width: 100%; /* Ensure the dropdown content maintains the width of its container */
+    overflow-y: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+    white-space: normal;
+    width: 100%
 }
 
 .dropdown-content.show {
-    display: block;
+    display: block
 }
 
 .indented {
-    margin-left: 20px;
+    margin-left: 20px
 }

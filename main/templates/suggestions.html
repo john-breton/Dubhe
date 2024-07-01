@@ -21,7 +21,7 @@
             border-style: solid;
         }
 
-        p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption {
+        p, li, ul, pre, div, h1, h2, h3, h4, h5, figure, blockquote, figcaption {
             margin: 0;
             padding: 0;
         }
@@ -166,7 +166,7 @@
                     <h1 class="report-text" style="text-align: center;">{{ uploaded_file_name }}</h1>
                     <h2 class="report-text">Security Analysis Report</h2>
                     <div class="scrollable-report" id="report-content">
-                        <h3>Total number of threats detected: {{ total_threats_checked }}</h3>
+                        <h3>Total Number of Threats Detected: {{ total_threats_checked }}/6</h3>
                         <br/>
                         {% for category, counts in threat_counts.items() %}
                         {% if counts['unmitigated'] or counts['potentially_mitigated'] or counts['mitigated'] %}
@@ -207,6 +207,7 @@
                         {% endfor %}
                         <h3>BSP Vector: < {{ bsp_vector }} ></h3>
                         <br/>
+                        {% if ceri_values %}
                         <h3>CERI Values for Detection Elements:</h3>
                         <ul class="indented">
                             {% for ceri in ceri_values %}
@@ -220,7 +221,8 @@
                             {% endfor %}
                         </ul>
                         <br/>
-                        <h3>Total number of flows detected: {{ total_paths }}</h3>
+                        {% endif %}
+                        <h3>Total Number of Flows Detected: {{ total_paths }}</h3>
                         <br/>
                         <h3>Has DataSanitizer Object? {{ has_data_sanitizer }}</h3>
                         {% if not has_data_sanitizer %}
@@ -229,6 +231,7 @@
                         <p>{{ suggestions_label|safe }}</p>
                         {% endif %}
                         <br/>
+                        {% if ceri_values and grouped_threats %}
                         <h3>Mitigation Suggestions:</h3>
                         {% for category, threats in grouped_threats.items() %}
                         {% if threats %}
@@ -238,7 +241,7 @@
                             Dubhe detected that your system may be susceptible
                             to the threat of <b>{{ threat[1] }}</b>
                             (<a href="https://attack.mitre.org/techniques/{{ threat[2] }}/"
-                                target="_blank" class="hyperlink">{{ threat[2] }}</a>)
+                                target="_blank" class="hyperlink">{{ threat[2] }}</a>).
                             <br><br>
                             To help mitigate against this threat, we recommend the mitigation named
                             <b>{{ threat[3] }}</b>
@@ -256,6 +259,7 @@
                         <br>
                         {% endif %}
                         {% endfor %}
+                        {% endif %}
                     </div>
                     <button class="print-button" onclick="printReport()">Print Report</button>
                 </div>

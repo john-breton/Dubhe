@@ -1,40 +1,38 @@
-/* suggestions.css */
-
 .suggestions-container {
     display: flex;
     width: 100%;
     min-height: 100vh;
-    background-color: #f1f1f1;
+    background-color: #f1f1f1
 }
 
 ::-webkit-scrollbar {
     width: 12px;
-    height: 12px;
+    height: 12px
 }
 
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 10px;
+    border-radius: 10px
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: #d9534f;
     border-radius: 10px;
-    border: 3px solid #f1f1f1;
+    border: 3px solid #f1f1f1
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #b7423b;
+    background-color: #b7423b
 }
 
 .suggestions-sidebar {
     width: 10%;
-    height: 100vh; /* Ensure sidebar scales to height of the page */
+    height: 100vh;
     background-color: var(--dl-color-gray-white);
     padding: var(--dl-space-space-twounits);
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center the content */
+    align-items: center
 }
 
 .suggestions-nav {
@@ -43,7 +41,7 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    justify-content: flex-start; /* Align content to the top */
+    justify-content: flex-start
 }
 
 .suggestions-link {
@@ -51,13 +49,13 @@
     font-weight: 700;
     margin-bottom: var(--dl-space-space-fiveunits);
     text-decoration: none;
-    text-align: center; /* Center the text */
+    text-align: center
 }
 
 .suggestions-navlink {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .suggestions-image {
@@ -65,13 +63,13 @@
     height: auto;
     object-fit: cover;
     margin-left: 8px;
-    margin-bottom: var(--dl-space-space-fourunits);
+    margin-bottom: var(--dl-space-space-fourunits)
 }
 
 .suggestions-navlink1 {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .suggestions-image1 {
@@ -79,13 +77,13 @@
     height: auto;
     object-fit: cover;
     margin-left: 8px;
-    margin-bottom: var(--dl-space-space-twounits);
+    margin-bottom: var(--dl-space-space-twounits)
 }
 
 .suggestions-navlink2 {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .suggestions-image2 {
@@ -93,12 +91,12 @@
     height: auto;
     object-fit: cover;
     margin-left: 8px;
-    margin-bottom: var(--dl-space-space-twounits);
+    margin-bottom: var(--dl-space-space-twounits)
 }
 
 .content-container {
     display: flex;
-    width: 90%;
+    width: 90%
 }
 
 .suggestions-content, .report-content {
@@ -106,50 +104,50 @@
     display: flex;
     flex-direction: column;
     padding: var(--dl-space-space-threeunits);
-    height: 100vh; /* Ensure equal height for both content divs */
-    overflow: hidden; /* Prevent resizing */
+    height: 100vh;
+    overflow: hidden
 }
 
 .suggestions-feature-card, .report-feature-card {
     width: 100%;
-    flex: 1; /* Ensure equal height for both feature cards */
+    flex: 1;
     display: flex;
     flex-direction: column;
     padding: var(--dl-space-space-unit);
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
-    overflow: hidden;
+    background-color: #fff;
+    overflow: hidden
 }
 
 .suggestions-feature-card:hover, .report-feature-card:hover {
-    transform: scale(1.02);
+    transform: scale(1.02)
 }
 
 .suggestions-text, .report-text {
-    margin-bottom: 14px;
+    margin-bottom: 14px
 }
 
 .dropdown {
     cursor: pointer;
     display: flex;
     align-items: center;
-    font-weight: bold;
-    text-align: justify;
+    font-weight: 700;
+    text-align: justify
 }
 
 .dropdown-text {
-    flex: 1;
+    flex: 1
 }
 
 .arrow {
     margin-right: 10px;
-    transition: transform 0.3s;
+    transition: transform .3s
 }
 
 .arrow.rotate {
-    transform: rotate(180deg);
+    transform: rotate(180deg)
 }
 
 .dropdown-content {
@@ -159,50 +157,55 @@
     padding: 10px;
     background-color: #f9f9f9;
     overflow-y: auto;
-    overflow-x: hidden; /* Prevent horizontal overflow */
-    white-space: normal; /* Allow text wrapping */
-    max-width: 100%; /* Ensure fixed width */
-    max-height: 400px; /* Ensure dropdown content does not cause div resizing */
+    overflow-x: hidden;
+    white-space: normal;
+    max-width: 100%;
+    max-height: 400px
 }
 
 .dropdown-content.show {
-    display: block;
+    display: block
 }
 
 .indented {
-    margin-left: 20px;
+    margin-left: 20px
 }
 
 .scrollable {
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: auto;
+    overflow-x: auto
 }
 
 .scrollable-report {
     max-height: 90%;
-    overflow-y: auto;
+    overflow-y: auto
 }
 
 .dropdown-content img {
     max-width: 100%;
-    height: auto;
+    height: auto
+}
+
+.report-content img {
+    max-width: 100%;
+    height: auto
 }
 
 .print-button {
     color: var(--dl-color-gray-white);
     align-self: center;
-    box-shadow: rgb(212, 212, 212) 5px 5px 10px 0;
+    box-shadow: #d4d4d4 5px 5px 10px 0;
     text-align: center;
-    transition: 0.3s;
+    transition: .3s;
     font-size: 20px;
     border-color: #d9534f;
     padding: var(--dl-space-space-unit) var(--dl-space-space-twounits);
-    background-color: rgb(217, 83, 79);
+    background-color: #d9534f;
     border-radius: 4px;
     cursor: pointer;
-    margin: 20px 0;
+    margin: 20px 0
 }
 
 .print-button:hover {
-    transform: scale(1.02);
+    transform: scale(1.02)
 }
