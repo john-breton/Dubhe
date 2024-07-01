@@ -4,5 +4,5 @@ TECHNIQUE NUMBER: T1548
 THREAT MITIGATION: Execution Prevention
 MITIGATION NUMBER: M1038
 DETECT PATTERN: [[("OpaqueAction", "Raise Permission"), "...", ("OpaqueAction", "Lower Permission")]]
-MITIGATION PATTERN: [["OpaqueAction", "...", "ActivityFinalNode"], "InputNode", ("OpaqueAction", "Lower Permission"), "...", "ActivityFinalNode"]
+MITIGATION PATTERN: [["OpaqueAction", "...", ("OpaqueAction", "Lower Permission"), "...", "ActivityFinalNode"], ["OpaqueAction", "...", ("OpaqueAction", "Lower Permission"), "...", "ActivityFinalNode"]]
 MITIGATION INDEX: 1

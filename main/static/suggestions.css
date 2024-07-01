@@ -7,6 +7,26 @@
     background-color: #f1f1f1;
 }
 
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #d9534f;
+    border-radius: 10px;
+    border: 3px solid #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #b7423b;
+}
+
 .suggestions-sidebar {
     width: 10%;
     height: 100vh; /* Ensure sidebar scales to height of the page */
@@ -140,9 +160,9 @@
     background-color: #f9f9f9;
     overflow-y: auto;
     overflow-x: hidden; /* Prevent horizontal overflow */
-    white-space: nowrap; /* Prevent text wrapping */
+    white-space: normal; /* Allow text wrapping */
     max-width: 100%; /* Ensure fixed width */
-    max-height: 200px; /* Ensure dropdown content does not cause div resizing */
+    max-height: 400px; /* Ensure dropdown content does not cause div resizing */
 }
 
 .dropdown-content.show {
@@ -159,8 +179,13 @@
 }
 
 .scrollable-report {
-    max-height: 600px; /* Adjust this value as needed */
+    max-height: 90%;
     overflow-y: auto;
+}
+
+.dropdown-content img {
+    max-width: 100%;
+    height: auto;
 }
 
 .print-button {

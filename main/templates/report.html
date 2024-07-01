@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dubhe - Report</title>
-    <meta property="og:title" content="Dubhe - Report"/>
+    <title>Dubhe - Analysis</title>
+    <meta property="og:title" content="Dubhe - Analysis"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="utf-8"/>
     <meta property="twitter:card" content="summary_large_image"/>
@@ -110,7 +110,7 @@
 </head>
 <body>
 <div class="report-container">
-        <div class="report-container1">
+    <div class="report-container1">
         <div class="report-sidebar">
             <nav class="report-nav">
                 <a href="/" rel="noreferrer noopener" class="report-link">Dubhe</a>
@@ -163,23 +163,35 @@
         </div>
         <div class="report-feature-card4">
             <h2 class="report-text16">Behavioural Security Posture - {{ filename }}</h2>
-            <label class="report-text17">< ({{'%0.2f'| format(ceri_average_worst|float)}}, {{'%0.2f'| format(ceri_average_best|float)}}), {{ cpp }} ></label>
+            <label class="report-text17">< ({{ ceri_average_worst }}, {{ ceri_average_best }}), {{ '%0.2f'|format(cpp|float) }} ></label>
+            {% if ceri_details|length > 0 %}
             <div class="dropdown" onclick="toggleDropdown('ceri')">
                 <span id="dropdown-arrow-ceri" class="arrow">▼</span>
                 <span class="dropdown-text">View BSP Vector String Breakdown</span>
             </div>
             <div id="dropdown-content-ceri" class="dropdown-content">
                 <ul class="report-list">
-                    <li><b>Worst-Case Average CERI</b>: {{ '%0.2f'|format(ceri_average_worst|float) }}</li>
-                    <li><b>Best-Case Average CERI</b>: {{ '%0.2f'|format(ceri_average_best|float) }}</li>
-                    <li><b>CPP</b>: {{ cpp }}</li>
+                    <li><b>Worst-Case Average CERI</b>: {{ ceri_average_worst }} (Assuming none of the potentially mitigated threats are truly mitigated)</li>
+                    <li><b>Best-Case Average CERI</b>: {{ ceri_average_best }} (Assuming all potentially mitigated threats are mitigated)</li>
+                    <li><b>CPP</b>: {{ '%0.2f'|format(cpp|float) }}</li>
                 </ul>
             </div>
             <div class="dropdown" onclick="toggleDropdown('bsp')">
                 <span id="dropdown-arrow-bsp" class="arrow">▼</span>
                 <span class="dropdown-text">View Individual CERI Details</span>
             </div>
-            <div id="dropdown-content-bsp" class="dropdown-content">{{ bsp_label|linkify_threat_numbers }}</div>
+            <div id="dropdown-content-bsp" class="dropdown-content">
+                <ul>
+                    {% for ceri in ceri_details %}
+                    <li><b>{{ ceri.uml_type }}: {{ ceri.name }}</b> - {{ ceri.worst }} (worst-case), {{ ceri.best }} (best-case)</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <div class="no-threats-detected">
+                🎉 Dubhe did not detect any threats in your system! 🎉
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -5,4 +5,4 @@ THREAT MITIGATION: Encrypt Sensitive Information
 MITIGATION NUMBER: M1041
 DETECT PATTERN: [["DataStoreNode", "...", "SendSignalAction"]]
 MITIGATION PATTERN: [["DecisionNode", "MergeNode"], ["DecisionNode", ("OpaqueAction", "Obfuscate Data"), "MergeNode"]]
-MITIGATION INDEX: -1
+MITIGATION INDEX: 1

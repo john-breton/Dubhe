@@ -9,8 +9,10 @@ from CorruptionAnalysis import CorruptionAnalysis
 from ActivityParser import ActivityParser
 from PatternMatching import PatternMatching
 
+# File paths for XMI files.
 XMI_FILE_PATH = os.path.join(os.getcwd(), "..", "common", "XMI Files", "Spoofing Example Unprotected.xmi")
 XMI_PATH_WEB = os.path.join(os.getcwd(), "..", "common", "XMI Files", "Analysis.xmi")
+
 app = Flask(__name__)
 web_detector = None
 web_corruption = None
@@ -19,22 +21,43 @@ uploaded_file_name = ""
 
 @app.template_filter('linkify_threat_numbers')
 def linkify_threat_numbers(text):
+    """
+    Custom Jinja filter to convert threat numbers into clickable links.
+
+    :param text: The text containing threat numbers.
+    :return: The text with threat numbers converted to hyperlinks.
+    """
     pattern = re.compile(r'\(T(\d+)\)')
     return Markup(pattern.sub(r'(<a href="https://attack.mitre.org/techniques/T\1/" target="_blank" class="hyperlink">T\1</a>)', text))
 
 
 @app.route("/")
 def home():
+    """
+    Route for the home page.
+
+    :return: Rendered home page.
+    """
     return render_template("index.html")
 
 
 @app.route("/start")
 def start_page():
+    """
+    Route for the start page.
+
+    :return: Rendered start page.
+    """
     return render_template("start.html")
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    """
+    Route for uploading and processing the XMI file.
+
+    :return: JSON response indicating success or error.
+    """
     global uploaded_file_name
     file = request.files.get('file')
     if not file:
@@ -62,6 +85,11 @@ def upload_file():
 
 @app.route("/report")
 def report_page():
+    """
+    Route for the report page that displays analysis results.
+
+    :return: Rendered report page.
+    """
     if web_detector is None:
         return render_template("start.html")
 
@@ -170,36 +198,44 @@ def report_page():
             radialaxis=dict(
                 visible=True,
                 range=[0, max(max(unmitigated_values), max(potential_values), max(mitigated_values)) + 1]  # Extend range by +1
-            )),
-        showlegend=True
+            ),
+            angularaxis=dict(
+                direction="counterclockwise",  # Orient the categories counterclockwise
+                rotation=90  # Start from the north
+            )
+        ),
+        showlegend=True,
+        legend=dict(
+            x=0.9,
+            y=1.1,
+            xanchor='center',
+            yanchor='top'
+        )
     )
 
     graph_div = fig.to_html(full_html=False)
 
-    ceri_average_worst = 0
-    ceri_average_best = 0
+    if len(ceri) == 0:
+        ceri_average_worst = 'undf.'
+        ceri_average_best = 'undf.'
+        bsp_label_sorted = "🎉 Dubhe did not detect any threats in your system! 🎉"
+        rounded_ceri = []
+    else:
+        ceri_average_worst = round(sum(entry[2] for entry in ceri) / len(ceri), 2)
+        ceri_average_best = round(sum(entry[3] for entry in ceri) / len(ceri), 2)
+        rounded_ceri = [{'uml_type': entry[0], 'name': entry[1], 'worst': round(entry[2], 2), 'best': round(entry[3], 2)} for entry in ceri]
 
-    for entry in ceri:
-        ceri_average_worst += entry[2]
-        ceri_average_best += entry[3]
+        bsp_label = ""
+        for entry in rounded_ceri:
+            if bsp_label == "":
+                bsp_label += f"<br><b>CERI for {entry['uml_type']}: {entry['name']}</b> - ({entry['worst']}, {entry['best']})"
+            else:
+                bsp_label += f"<br><b>CERI for {entry['uml_type']}: {entry['name']}</b> - ({entry['worst']}, {entry['best']})"
 
-    if not ceri:
-        return "No CERI values calculated, please check the input and try again."
-
-    ceri_average_worst = ceri_average_worst / len(ceri)
-    ceri_average_best = ceri_average_best / len(ceri)
-
-    bsp_label = ""
-    for entry in ceri:
-        if bsp_label == "":
-            bsp_label += f"<br><b>CERI for {entry[0]}: {entry[1]}</b> - ({entry[2]}, {entry[3]})"
-        else:
-            bsp_label += f"<br><b>CERI for {entry[0]}: {entry[1]}</b> - ({entry[2]}, {entry[3]})"
-
-    # Sort the BSP label alphabetically
-    bsp_entries = bsp_label.split("<br>")
-    bsp_entries_sorted = sorted([entry for entry in bsp_entries if entry.strip() != ""], key=lambda x: x.split(" ")[2].lower())
-    bsp_label_sorted = "<br>".join(bsp_entries_sorted)
+        # Sort the BSP label alphabetically
+        bsp_entries = bsp_label.split("<br>")
+        bsp_entries_sorted = sorted([entry for entry in bsp_entries if entry.strip() != ""], key=lambda x: x.split(" ")[2].lower())
+        bsp_label_sorted = "<br>".join(bsp_entries_sorted)
 
     mitigated_label = create_stride_sorted_label(mitigated)
     potential_label = create_stride_sorted_label(potential)
@@ -217,12 +253,19 @@ def report_page():
         mitigated_label=mitigated_label,
         potential_label=potential_label,
         unmitigated_label=unmitigated_label,
-        cpp=cpp,
-        graph_div=graph_div
+        cpp=round(cpp, 2),
+        graph_div=graph_div,
+        ceri_details=rounded_ceri  # Pass the rounded CERI details to the template
     )
 
 
 def create_stride_sorted_label(threats):
+    """
+    Create a formatted label for threats grouped by STRIDE categories.
+
+    :param threats: List of threats.
+    :return: Formatted label string.
+    """
     if not threats:
         return ""
 
@@ -238,7 +281,7 @@ def create_stride_sorted_label(threats):
 
     # Create a list of formatted threat strings
     threat_strings = [
-        (stride_order.get(entry[0].replace('_', ' ').title(), 6),  # Use a high default value for unrecognized threats
+        (stride_order.get(entry[0].replace('_', ' ').title(), 6),  # Use a high default value for unrecognized threats (should never be needed)
          f"<b>{entry[0].replace('_', ' ').title()}</b>: {entry[-1].get_technique().strip()} ({entry[-1].get_technique_num().strip()})")
         for entry in threats
     ]
@@ -254,6 +297,11 @@ def create_stride_sorted_label(threats):
 
 @app.route("/suggestions")
 def suggestions_page():
+    """
+    Route for the suggestions page that displays mitigation suggestions.
+
+    :return: Rendered suggestions page.
+    """
     if web_detector is None:
         return render_template("start.html")
 
@@ -275,7 +323,8 @@ def suggestions_page():
                 "<b>Protecting Expected Entry Points</b><br>"
                 "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
                 f"&emsp;<b>1. {entry_points[0][0]}: {entry_points[0][1]}</b> (parented by {entry_points[0][2]})<br>"
-                f"&emsp;<b>2. {entry_points[1][0]}: {entry_points[1][1]}</b> (parented by {entry_points[1][2]})</div><br>"
+                f"&emsp;<b>2. {entry_points[1][0]}: {entry_points[1][1]}</b> (parented by {entry_points[1][2]})</div>"
+                "<div class='indented'>This recommendation is useful if the threat of insider attacks is sufficiently small compared to the threat of external attacks. Examples of such external attacks include attempting to harm your system by threatening its availability or attempting a forceful takeover using arbitrary code execution via corrupted data.</div><br>"
             )
         else:
             suggestions_label += (
@@ -288,7 +337,8 @@ def suggestions_page():
                 "<b>Protecting Data Stores</b><br>"
                 "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
                 f"&emsp;<b>1. {datastore_points[0][0]}: {datastore_points[0][1]}</b> (parented by {datastore_points[0][2]})<br> "
-                f"&emsp;<b>2. {datastore_points[1][0]}: {datastore_points[1][1]}</b> (parented by {datastore_points[1][2]})</div><br>"
+                f"&emsp;<b>2. {datastore_points[1][0]}: {datastore_points[1][1]}</b> (parented by {datastore_points[1][2]})</div>"
+                "<div class='indented'>This recommendation is beneficial if you want to maximize the protection of your data stores against corrupted data that would be damaging if destroyed or leaked to an attacker (e.g., data injection attacks).</div><br>"
             )
         else:
             suggestions_label += (
@@ -302,6 +352,7 @@ def suggestions_page():
                 "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
                 f"&emsp;<b>1. {whole_system_points[0][0]}: {whole_system_points[0][1]}</b> (parented by {whole_system_points[0][2]})<br> "
                 f"&emsp;<b>2. {whole_system_points[1][0]}: {whole_system_points[1][1]}</b> (parented by {whole_system_points[1][2]})</div>"
+                "<div class='indented'>This recommendation should be applied if you have the goal of minimizing the longest flow of corruption within your system, making system-wide data corruption attacks more difficult.</div><br>"
             )
         else:
             suggestions_label += (
@@ -324,7 +375,8 @@ def suggestions_page():
         category = entry[0].replace('_', ' ').title()
         if category in grouped_threats:
             grouped_threats[category].append((entry[0].replace('_', ' ').title(), entry[-1].get_technique(), entry[-1].get_technique_num().strip(),
-                                              entry[-1].get_mitigation(), entry[-1].get_mitigation_num().strip(), "path/to/placeholder-image.jpg"))
+                                              entry[-1].get_mitigation(), entry[-1].get_mitigation_num(),
+                                              os.path.join("static", "assets", f"{entry[-1].get_mitigation_num()}.png")))
 
     # Collect the threats data
     all_threats = web_detector.get_detected_threats() + web_detector.get_potential_threats() + web_detector.get_mitigated_threats()
@@ -352,37 +404,41 @@ def suggestions_page():
     sum_paths = 0
     total_paths = 0
 
+    # Data Sanitizer Check
+    has_data_sanitizer = any(elem.get_parent() == 'Data Sanitizer' for elem in web_corruption._elements)
+
     for cpp_path in all_paths:
         for elem in cpp_path:
-            if elem.get_parent() == 'Data Sanitizer':
+            if elem.get_parent() == 'DATA SANITIZER' or elem.get_parent().upper() == 'DATASANITIZER':
                 total_paths += 1
                 sum_paths -= 1
         sum_paths += len(cpp_path) - 1
         total_paths += 1
 
     cpp = sum_paths / total_paths
-    bsp_vector = "({:.2f}, {:.2f}), {}".format(ceri[0][2], ceri[0][3], cpp)
-    ceri_values = [(ceri_val[0], ceri_val[1], ceri_val[2], ceri_val[3]) for ceri_val in ceri]
+    bsp_vector = "({:.2f}, {:.2f}), {:.2f}".format(sum(entry[2] for entry in ceri) / len(ceri), sum(entry[3] for entry in ceri) / len(ceri), cpp)
+    ceri_values = [(ceri_val[0], ceri_val[1], round(ceri_val[2], 2), round(ceri_val[3], 2)) for ceri_val in ceri]
 
-    # Data Sanitizer Check
-    has_data_sanitizer = any(elem.get_parent() == 'Data Sanitizer' for elem in web_corruption._elements)
-
-    return render_template(
-        "suggestions.html",
-        suggestions_label=Markup(suggestions_label),
-        grouped_threats=grouped_threats,
-        total_threats_checked=total_threats_checked,
-        threat_counts=threat_counts,
-        bsp_vector=bsp_vector,
-        ceri_values=ceri_values,
-        total_paths=total_paths,
-        has_data_sanitizer=has_data_sanitizer,
-        uploaded_file_name=uploaded_file_name
-    )
+    return render_template("suggestions.html",
+                           suggestions_label=suggestions_label,
+                           grouped_threats=grouped_threats,
+                           uploaded_file_name=uploaded_file_name,
+                           total_threats_checked=total_threats_checked,
+                           threat_counts=threat_counts,
+                           bsp_vector=bsp_vector,
+                           ceri_values=ceri_values,
+                           total_paths=total_paths,
+                           has_data_sanitizer=has_data_sanitizer,
+                           mitigation_suggestions=suggestions_label)
 
 
 @app.route("/learn")
 def learn_page():
+    """
+    Route for the learn page.
+
+    :return: Rendered learn page.
+    """
     return render_template("learn.html")
 
 
@@ -391,7 +447,7 @@ if __name__ == "__main__":
     result = parser.parse_xmi()
     if parser == 0:
         print(
-            "[ERROR]: It appears the supplied .xmi file is malformed. Dubhe currently support XMI versions 2.X+. Please double-check your .xmi file before trying to rerun Dubhe.")
+            "[ERROR]: It appears the supplied .xmi file is malformed. Dubhe currently supports XMI versions 2.X+. Please double-check your .xmi file before trying to rerun Dubhe.")
         exit()
 
     detector = PatternMatching(parser.get_elements())

@@ -1,32 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dubhe - Suggestions</title>
-    <meta property="og:title" content="Dubhe - Suggestions" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta charset="utf-8" />
-    <meta property="twitter:card" content="summary_large_image" />
+    <title>Dubhe - Report</title>
+    <meta property="og:title" content="Dubhe - Report"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8"/>
+    <meta property="twitter:card" content="summary_large_image"/>
     <style data-tag="reset-style-sheet">
-        html { line-height: 1.15; }
-        body { margin: 0; }
-        * { box-sizing: border-box; border-width: 0; border-style: solid; }
-        p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption { margin: 0; padding: 0; }
-        button { background-color: transparent; }
-        button, input, optgroup, select, textarea { font-family: inherit; font-size: 100%; line-height: 1.15; margin: 0; }
-        button, select { text-transform: none; }
-        button, [type="button"], [type="reset"], [type="submit"] { -webkit-appearance: button; }
-        button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner { border-style: none; padding: 0; }
-        button:-moz-focus, [type="button"], [type="reset"], [type="submit"]:-moz-focus { outline: 1px dotted ButtonText; }
-        a { color: inherit; text-decoration: inherit; }
-        input { padding: 2px 4px; }
-        img { display: block; }
-        html { scroll-behavior: smooth }
+        html {
+            line-height: 1.15;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+        }
+
+        p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption {
+            margin: 0;
+            padding: 0;
+        }
+
+        button {
+            background-color: transparent;
+        }
+
+        button, input, optgroup, select, textarea {
+            font-family: inherit;
+            font-size: 100%;
+            line-height: 1.15;
+            margin: 0;
+        }
+
+        button, select {
+            text-transform: none;
+        }
+
+        button, [type="button"], [type="reset"], [type="submit"] {
+            -webkit-appearance: button;
+        }
+
+        button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {
+            border-style: none;
+            padding: 0;
+        }
+
+        button:-moz-focus, [type="button"], [type="reset"], [type="submit"]:-moz-focus {
+            outline: 1px dotted ButtonText;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        input {
+            padding: 2px 4px;
+        }
+
+        img {
+            display: block;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
     </style>
     <style data-tag="default-style-sheet">
         html {
             font-family: Inter;
             font-size: 16px;
         }
+
         body {
             font-weight: 400;
             font-style: normal;
@@ -37,174 +87,208 @@
             color: var(--dl-color-gray-black);
             background-color: var(--dl-color-gray-white);
         }
+
         .hyperlink {
             color: blue;
             text-decoration: underline;
         }
     </style>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="https://unpkg.com/animate.css@4.1.1/animate.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" data-tag="font" />
-    <link rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/animate.css@4.1.1/animate.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" data-tag="font"/>
+    <link rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"/>
 </head>
 <body>
-    <link rel="stylesheet" href="../static/style.css" />
-    <div>
-        <link href="../static/suggestions.css" rel="stylesheet" />
-        <div class="suggestions-container">
-            <div class="suggestions-sidebar">
-                <nav class="suggestions-nav">
-                    <a href="/" rel="noreferrer noopener" class="suggestions-link">Dubhe</a>
-                    <a href="start" class="suggestions-navlink"><img alt="image" src="../static/assets/new.svg" loading="eager" class="suggestions-image" /></a>
-                    <a href="report" class="suggestions-navlink1"><img alt="image" src="../static/assets/suggestions.svg" loading="eager" class="suggestions-image1" /></a>
-                    <a href="suggestions" class="suggestions-navlink2"><img alt="image" src="../static/assets/report_selected.svg" loading="eager" class="suggestions-image2"/></a>
-                </nav>
-            </div>
-            <div class="content-container">
-                <div class="suggestions-content">
-                    <div class="suggestions-feature-card">
-                        <h2 class="suggestions-text">Mitigation Suggestions</h2>
-                        {% if suggestions_label.strip() %}
-                        <div class="dropdown" onclick="toggleDropdown('datasanitizer')">
-                            <span id="dropdown-arrow-datasanitizer" class="arrow">▼</span>
-                            <span class="dropdown-text">Data Corruption Attack Mitigation Suggestions</span>
-                        </div>
-                        <div id="dropdown-content-datasanitizer" class="dropdown-content scrollable">
-                            {{ suggestions_label|safe }}
-                        </div>
-                        {% endif %}
+<link rel="stylesheet" href="../static/style.css"/>
+<div>
+    <link href="../static/suggestions.css" rel="stylesheet"/>
+    <div class="suggestions-container">
+        <div class="suggestions-sidebar">
+            <nav class="suggestions-nav">
+                <a href="/" rel="noreferrer noopener" class="suggestions-link">Dubhe</a>
+                <a href="start" class="suggestions-navlink"><img alt="image" src="../static/assets/new.svg" loading="eager" class="suggestions-image"/></a>
+                <a href="report" class="suggestions-navlink1"><img alt="image" src="../static/assets/suggestions.svg" loading="eager"
+                                                                   class="suggestions-image1"/></a>
+                <a href="suggestions" class="suggestions-navlink2"><img alt="image" src="../static/assets/report_selected.svg" loading="eager"
+                                                                        class="suggestions-image2"/></a>
+            </nav>
+        </div>
+        <div class="content-container">
+            <div class="suggestions-content">
+                <div class="suggestions-feature-card">
+                    <h2 class="suggestions-text">Mitigation Suggestions</h2>
+                    {% if suggestions_label.strip() %}
+                    <div class="dropdown" onclick="toggleDropdown('datasanitizer')">
+                        <span id="dropdown-arrow-datasanitizer" class="arrow">▼</span>
+                        <span class="dropdown-text">Data Corruption Attack Mitigation Suggestions</span>
+                    </div>
+                    <div id="dropdown-content-datasanitizer" class="dropdown-content scrollable">
+                        {{ suggestions_label|safe }}
+                    </div>
+                    {% endif %}
 
+                    {% for category, threats in grouped_threats.items() %}
+                    {% if threats %}
+                    <div class="dropdown" style="padding-top: 10px;" onclick="toggleDropdown('threat_{{ category }}')">
+                        <span id="dropdown-arrow-threat_{{ category }}" class="arrow">▼</span>
+                        <span class="dropdown-text">{{ category }} Mitigation Suggestions</span>
+                    </div>
+                    <div id="dropdown-content-threat_{{ category }}" class="dropdown-content scrollable">
+                        {% for threat in threats %}
+                        <p>
+                            Dubhe detected that your system may be susceptible
+                            to the threat of <b>{{ threat[1] }}</b>
+                            (<a href="https://attack.mitre.org/techniques/{{ threat[2] }}/"
+                                target="_blank" class="hyperlink">{{ threat[2]
+                            }}</a>)
+                            <br><br>
+                            To help mitigate against this threat, we recommend the mitigation named
+                            <b>{{ threat[3] }}</b>
+                            (<a href="https://attack.mitre.org/mitigations/{{ threat[4] }}/"
+                                target="_blank" class="hyperlink">{{ threat[4]
+                            }}</a>).
+                            <br><br>
+                            To give you an example of how that might look in a
+                            UML activity diagram, please see the example image
+                            below (of note the mitigation elements are coloured green):
+                            <br>
+                        </p>
+                        <img src="{{ threat[5] }}"
+                             alt="Image for {{ threat[0] }}">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="report-content">
+                <div class="report-feature-card">
+                    <h1 class="report-text" style="text-align: center;">{{ uploaded_file_name }}</h1>
+                    <h2 class="report-text">Security Analysis Report</h2>
+                    <div class="scrollable-report" id="report-content">
+                        <h3>Total number of threats detected: {{ total_threats_checked }}</h3>
+                        <br/>
+                        {% for category, counts in threat_counts.items() %}
+                        {% if counts['unmitigated'] or counts['potentially_mitigated'] or counts['mitigated'] %}
+                        <h3>{{ category.replace('_', ' ').title() }} ({{ counts['unmitigated']|length + counts['potentially_mitigated']|length +
+                            counts['mitigated']|length }})</h3>
+                        <p class="indented"><b>Unmitigated Threats:</b> {{ counts['unmitigated']|length }}</p>
+                        <ul class="indented">
+                            {% for threat in counts['unmitigated'] %}
+                            <ul class="indented">
+                                <li>{{ threat[1] }} (<a href="https://attack.mitre.org/techniques/{{ threat[0] }}/" target="_blank" class="hyperlink">{{
+                                    threat[0].strip() }}</a>)
+                                </li>
+                            </ul>
+                            {% endfor %}
+                        </ul>
+                        <p class="indented"><b>Potentially Mitigated Threats:</b> {{ counts['potentially_mitigated']|length }}</p>
+                        <ul class="indented">
+                            {% for threat in counts['potentially_mitigated'] %}
+                            <ul class="indented">
+                                <li>{{ threat[1] }} (<a href="https://attack.mitre.org/techniques/{{ threat[0] }}/" target="_blank" class="hyperlink">{{
+                                    threat[0].strip() }}</a>)
+                                </li>
+                            </ul>
+                            {% endfor %}
+                        </ul>
+                        <p class="indented"><b>Mitigated Threats:</b> {{ counts['mitigated']|length }}</p>
+                        <ul class="indented">
+                            {% for threat in counts['mitigated'] %}
+                            <ul class="indented">
+                                <li>{{ threat[1] }} (<a href="https://attack.mitre.org/techniques/{{ threat[0] }}/" target="_blank" class="hyperlink">{{
+                                    threat[0].strip() }}</a>)
+                                </li>
+                            </ul>
+                            {% endfor %}
+                        </ul>
+                        <br>
+                        {% endif %}
+                        {% endfor %}
+                        <h3>BSP Vector: < {{ bsp_vector }} ></h3>
+                        <br/>
+                        <h3>CERI Values for Detection Elements:</h3>
+                        <ul class="indented">
+                            {% for ceri in ceri_values %}
+                            <li><b>{{ ceri[1] }} ({{ ceri[0] }})</b>
+                                <ul class="indented">
+                                    <li>Worst-case CERI: {{ ceri[2] }},
+                                        Best-case CERI: {{ ceri[3] }}
+                                    </li>
+                                </ul>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        <br/>
+                        <h3>Total number of flows detected: {{ total_paths }}</h3>
+                        <br/>
+                        <h3>Has DataSanitizer Object? {{ has_data_sanitizer }}</h3>
+                        {% if not has_data_sanitizer %}
+                        <br/>
+                        <h3>Suggested DataSanitizer Locations:</h3>
+                        <p>{{ suggestions_label|safe }}</p>
+                        {% endif %}
+                        <br/>
+                        <h3>Mitigation Suggestions:</h3>
                         {% for category, threats in grouped_threats.items() %}
                         {% if threats %}
-                        <div class="dropdown" style="padding-top: 10px;" onclick="toggleDropdown('threat_{{ category }}')">
-                            <span id="dropdown-arrow-threat_{{ category }}" class="arrow">▼</span>
-                            <span class="dropdown-text">{{ category }} Mitigation Suggestions</span>
-                        </div>
-                        <div id="dropdown-content-threat_{{ category }}" class="dropdown-content scrollable">
-                            {% for threat in threats %}
-                            <p>
-                                Dubhe detected that your system may be susceptible
-                                to the threat of <b>{{ threat[1] }}</b>
-                                (<a href="https://attack.mitre.org/techniques/{{ threat[2] }}/"
-                                    target="_blank" class="hyperlink">{{ threat[2]
-                                }}</a>)
-                                <br><br>
-                                To help mitigate against this threat, we suggest
-                                implementing an appropriate countermeasure, such as
-                                {{ threat[3] }}
-                                (<a href="https://attack.mitre.org/mitigations/{{ threat[4] }}/"
-                                    target="_blank" class="hyperlink">{{ threat[4]
-                                }}</a>).
-                                <br><br>
-                                To give you an example of how that might look in a
-                                UML activity diagram, please see the example image
-                                below:
-                                <br>
-                            </p>
-                            <img src="{{ threat[5] }}"
-                                 alt="Image for {{ threat[0] }}">
-                            {% endfor %}
-                        </div>
+                        <h4>{{ category }} Mitigation Suggestions</h4>
+                        {% for threat in threats %}
+                        <p>
+                            Dubhe detected that your system may be susceptible
+                            to the threat of <b>{{ threat[1] }}</b>
+                            (<a href="https://attack.mitre.org/techniques/{{ threat[2] }}/"
+                                target="_blank" class="hyperlink">{{ threat[2] }}</a>)
+                            <br><br>
+                            To help mitigate against this threat, we recommend the mitigation named
+                            <b>{{ threat[3] }}</b>
+                            (<a href="https://attack.mitre.org/mitigations/{{ threat[4] }}/"
+                                target="_blank" class="hyperlink">{{ threat[4] }}</a>).
+                            <br><br>
+                            To give you an example of how that might look in a
+                            UML activity diagram, please see the example image
+                            below (of note the mitigation elements are coloured green):
+                            <br>
+                        </p>
+                        <img src="{{ threat[5] }}"
+                             alt="Image for {{ threat[0] }}">
+                        {% endfor %}
+                        <br>
                         {% endif %}
                         {% endfor %}
                     </div>
-                </div>
-                <div class="report-content">
-                    <div class="report-feature-card">
-                        <h1 class="report-text" style="text-align: center;">{{ uploaded_file_name }}</h1>
-                        <h2 class="report-text">Security Analysis Report</h2>
-                        <div class="scrollable-report" id="report-content">
-                            <h3>Total number of threats detected: {{ total_threats_checked }}</h3>
-                            <br/>
-                            {% for category, counts in threat_counts.items() %}
-                            {% if counts['unmitigated'] or counts['potentially_mitigated'] or counts['mitigated'] %}
-                            <h3>{{ category.replace('_', ' ').title() }} ({{ counts['unmitigated']|length + counts['potentially_mitigated']|length + counts['mitigated']|length }})</h3>
-                            <p class="indented"><b>Unmitigated Threats:</b> {{ counts['unmitigated']|length }}</p>
-                            <ul class="indented">
-                                {% for threat in counts['unmitigated'] %}
-                                <ul class="indented">
-                                    <li>{{ threat[1] }} (<a href="https://attack.mitre.org/techniques/{{ threat[0] }}/" target="_blank" class="hyperlink">{{ threat[0].strip() }}</a>)
-                                    </li>
-                                </ul>
-                                {% endfor %}
-                            </ul>
-                            <p class="indented"><b>Potentially Mitigated Threats:</b> {{ counts['potentially_mitigated']|length }}</p>
-                            <ul class="indented">
-                                {% for threat in counts['potentially_mitigated'] %}
-                                <ul class="indented">
-                                    <li>{{ threat[1] }} (<a href="https://attack.mitre.org/techniques/{{ threat[0] }}/" target="_blank" class="hyperlink">{{ threat[0].strip() }}</a>)
-                                    </li>
-                                </ul>
-                                {% endfor %}
-                            </ul>
-                            <p class="indented"><b>Mitigated Threats:</b> {{ counts['mitigated']|length }}</p>
-                            <ul class="indented">
-                                {% for threat in counts['mitigated'] %}
-                                <ul class="indented">
-                                    <li>{{ threat[1] }} (<a href="https://attack.mitre.org/techniques/{{ threat[0] }}/" target="_blank" class="hyperlink">{{ threat[0].strip() }}</a>)
-                                    </li>
-                                </ul>
-                                {% endfor %}
-                            </ul>
-                            <br>
-                            {% endif %}
-                            {% endfor %}
-                            <h3>BSP Vector: {{ bsp_vector }}</h3>
-                            <br/>
-                            <h3>CERI Values for Detection Elements:</h3>
-                            <ul class="indented">
-                                {% for ceri in ceri_values %}
-                                <li><b>{{ ceri[1] }} ({{ ceri[0] }})</b>
-                                    <ul class="indented">
-                                        <li>Worst-case CERI: {{ ceri[2] }},
-                                            Best-case CERI: {{ ceri[3] }}
-                                        </li>
-                                    </ul>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                            <br/>
-                            <h3>Total number of flows detected: {{ total_paths }}</h3>
-                            <br/>
-                            <h3>Has Data Sanitizer Object? {{ has_data_sanitizer }}</h3>
-                            {% if not has_data_sanitizer %}
-                            <br/>
-                            <h3>Suggested Data Sanitizer Locations:</h3>
-                            <p>{{ suggestions_label }}</p>
-                            {% endif %}
-                        </div>
-                        <button class="print-button" onclick="printReport()">Print Report</button>
-                    </div>
+                    <button class="print-button" onclick="printReport()">Print Report</button>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        function toggleDropdown(type) {
-            var content = document.getElementById(`dropdown-content-${type}`);
-            var arrow = document.getElementById(`dropdown-arrow-${type}`);
-            if (content.classList.contains("show")) {
-                content.classList.remove("show");
-                arrow.classList.remove("rotate");
-            } else {
-                content.classList.add("show");
-                arrow.classList.add("rotate");
-            }
+</div>
+<script>
+    function toggleDropdown(type) {
+        var content = document.getElementById(`dropdown-content-${type}`);
+        var arrow = document.getElementById(`dropdown-arrow-${type}`);
+        if (content.classList.contains("show")) {
+            content.classList.remove("show");
+            arrow.classList.remove("rotate");
+        } else {
+            content.classList.add("show");
+            arrow.classList.add("rotate");
         }
+    }
 
-        function printReport() {
-            const fileName = "{{ uploaded_file_name }}";
-            const reportContent = document.getElementById('report-content').innerHTML;
-            const printWindow = window.open('', '', 'height=800,width=600');
-            printWindow.document.write('<html><head><title>Security Analysis Report</title>');
-            printWindow.document.write('<link rel="stylesheet" href="../static/suggestions.css" />');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write('<h1 style="text-align: center;">' + fileName + '</h1>');
-            printWindow.document.write(reportContent);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
-        }
-    </script>
+    function printReport() {
+        const fileName = "{{ uploaded_file_name }}";
+        const reportContent = document.getElementById('report-content').innerHTML;
+        const printWindow = window.open('', '', 'height=800,width=600');
+        printWindow.document.write('<html><head><title>Security Analysis Report</title>');
+        printWindow.document.write('<link rel="stylesheet" href="../static/suggestions.css" />');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write('<h1 style="text-align: center;">' + fileName + '</h1>');
+        printWindow.document.write(reportContent);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    }
+</script>
 </body>
 </html>
