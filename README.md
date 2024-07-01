@@ -8,7 +8,7 @@ Created by the CyberSEA Lab at Carleton University. Learn more [here](https://ca
 Lead Maintainer: [John Breton](mailto:johnbreton37@gmail.com)
 
 ### Did You Know?
-Dubhe is a star in the Ursa Major constellation. It is commonly referred to as a ""pointer star"" as it is helpful for finding Polaris, also known as the North Star. Dubhe follows the naming conventions of previous released security posture analysis tools. You can learn more about these tools [here](https://compass.carleton.ca/explore).
+Dubhe is a star in the Ursa Major constellation. It is commonly referred to as a **pointer star** as it is helpful for finding Polaris, also known as the North Star. Dubhe follows the naming conventions of previous released security posture analysis tools. You can learn more about these tools [here](https://compass.carleton.ca/explore).
 
 ## Sample Video
 ![A demonstration of Dubhe](https://github.com/john-breton/Dubhe/blob/main/main/static/assets/Dubhe.gif?raw=true)
