@@ -28,8 +28,9 @@ class CorruptionAnalysis:
         self._protect_stores = []
         self._protect_entry = []
         self._protect_whole = []
-        self._longest_path = 0
+        self._longest_path = []
         self._all_paths = []
+        self._has_data_sanitizer = self._check_for_data_sanitizer()
 
     def _get_element_by_id(self, target_id):
         """
@@ -44,6 +45,18 @@ class CorruptionAnalysis:
             if element.get_id() == target_id:
                 return element
         return None
+
+    def _check_for_data_sanitizer(self):
+        """
+        Check if any element is of type DataSanitizer.
+
+        :return: True if an element of type DataSanitizer is found,
+                 False otherwise.
+        """
+        for element in self._elements:
+            if element.get_uml_type() == self.DATA_SANITIZER:
+                return True
+        return False
 
     def _analyze_datastore(self):
         """
@@ -85,12 +98,8 @@ class CorruptionAnalysis:
             for prev_ele in self._elements:
                 if prev_ele_id == prev_ele.get_id():
                     # We have a match, populate the analysis results.
-                    self._protect_stores.append([prev_ele.get_uml_type(),
-                                                 prev_ele.get_name(),
-                                                 prev_ele.get_parent()])
-                    self._protect_stores.append([curr_store.get_uml_type(),
-                                                 curr_store.get_name(),
-                                                 curr_store.get_parent()])
+                    self._protect_stores.append([prev_ele.get_uml_type(), prev_ele.get_name(), prev_ele.get_parent()])
+                    self._protect_stores.append([curr_store.get_uml_type(), curr_store.get_name(), curr_store.get_parent()])
                     break
         elif len(indexes) > 1:
             # A more complicated case, we need do walk backs on each
@@ -101,8 +110,7 @@ class CorruptionAnalysis:
                 temp_array = []
                 while True:
                     if len(curr_element.get_source()) != 0:
-                        temp_ele = self._get_element_by_id(
-                            curr_element.get_source()[0])
+                        temp_ele = self._get_element_by_id(curr_element.get_source()[0])
                         temp_array.append(temp_ele.get_id())
                         curr_element = temp_ele
                     else:
@@ -116,15 +124,10 @@ class CorruptionAnalysis:
             # Grab the first element with the highest number of occurrences.
             # Due to Python Counter order preservation, this is the optimal
             # ActivityElement that will protect the most datastores.
-            best_element = self._get_element_by_id(
-                max(total_counts, key=total_counts.get))
+            best_element = self._get_element_by_id(max(total_counts, key=total_counts.get))
             prev_best = self._get_element_by_id(best_element.get_source()[0])
-            self._protect_stores.append([prev_best.get_uml_type(),
-                                         prev_best.get_name(),
-                                         prev_best.get_parent()])
-            self._protect_stores.append([best_element.get_uml_type(),
-                                         best_element.get_name(),
-                                         best_element.get_parent()])
+            self._protect_stores.append([prev_best.get_uml_type(), prev_best.get_name(), prev_best.get_parent()])
+            self._protect_stores.append([best_element.get_uml_type(), best_element.get_name(), best_element.get_parent()])
 
     def _analyze_entry(self):
         """
@@ -145,19 +148,20 @@ class CorruptionAnalysis:
         for element in self._elements:
             if element.get_uml_type() == CorruptionAnalysis.INITIAL_NODE_TYPE:
                 # We found the initial node.
-                initial_data = [element.get_uml_type(), element.get_name(),
-                                element.get_parent()]
-                next_element = element.get_destination()[0]
+                initial_data = [element.get_uml_type(), element.get_name(), element.get_parent()]
+                if element.get_destination():
+                    next_element = element.get_destination()[0]
                 break
 
         # We need to walk through it twice to find the connecting element.
-        for element in self._elements:
-            if element.get_id() == next_element:
-                # We found the connected element.
-                connected_data = [element.get_uml_type(), element.get_name(),
-                                  element.get_parent()]
-        self._protect_entry.append(initial_data)
-        self._protect_entry.append(connected_data)
+        if next_element:
+            for element in self._elements:
+                if element.get_id() == next_element:
+                    # We found the connected element.
+                    connected_data = [element.get_uml_type(), element.get_name(), element.get_parent()]
+        if initial_data and connected_data:
+            self._protect_entry.append(initial_data)
+            self._protect_entry.append(connected_data)
 
     def _analyze_whole(self):
         """
@@ -173,18 +177,12 @@ class CorruptionAnalysis:
         """
         # Determine the longest path in the system
         # Find each element without a source (path start elements)
-        source_elements = []
-        for element in self._elements:
-            if len(element.get_source()) == 0:
-                source_elements.append(element)
+        source_elements = [element for element in self._elements if len(element.get_source()) == 0]
 
         # Determine the paths for each element
-        all_paths = []
-        for curr_source in source_elements:
-            all_paths.append([curr_source])
+        all_paths = [[curr_source] for curr_source in source_elements]
         for curr_depth in all_paths:
-            while curr_depth is not None and \
-                    len(curr_depth[-1].get_destination()) > 0:
+            while curr_depth and len(curr_depth[-1].get_destination()) > 0:
                 if len(curr_depth[-1].get_destination()) > 1:
                     # There are multiple edges exiting the element.
                     # Account for each of them, essentially creating a
@@ -194,8 +192,7 @@ class CorruptionAnalysis:
                         # Create a copy of the curr_depth array
                         copy_array = curr_depth.copy()
                         # Append the element from the destinations to this copy
-                        copy_array.append(self._get_element_by_id(
-                            curr_depth[-1].get_destination()[i]))
+                        copy_array.append(self._get_element_by_id(curr_depth[-1].get_destination()[i]))
                         # Store this modified copy in the new_paths
                         new_paths.append(copy_array)
 
@@ -204,14 +201,12 @@ class CorruptionAnalysis:
                         all_paths.append(path)
 
                     # Finally, update the original curr_depth
-                    next_element = self._get_element_by_id(
-                        curr_depth[-1].get_destination()[-1])
+                    next_element = self._get_element_by_id(curr_depth[-1].get_destination()[-1])
                     curr_depth.append(next_element)
                 else:
                     # There is only one edge exiting the element, simply
                     # append it to the end of the path and continue.
-                    next_element = self._get_element_by_id(
-                        curr_depth[-1].get_destination()[0])
+                    next_element = self._get_element_by_id(curr_depth[-1].get_destination()[0])
                     curr_depth.append(next_element)
 
         # Determine the longest path
@@ -232,12 +227,8 @@ class CorruptionAnalysis:
         prev_element = self._get_element_by_id(mid_element.get_source()[-1])
 
         # Prepare the analysis result.
-        self._protect_whole.append([prev_element.get_uml_type(),
-                                    prev_element.get_name(),
-                                    prev_element.get_parent()])
-        self._protect_whole.append([mid_element.get_uml_type(),
-                                    mid_element.get_name(),
-                                    mid_element.get_parent()])
+        self._protect_whole.append([prev_element.get_uml_type(), prev_element.get_name(), prev_element.get_parent()])
+        self._protect_whole.append([mid_element.get_uml_type(), mid_element.get_name(), mid_element.get_parent()])
 
     def get_longest_path(self):
         """
@@ -295,65 +286,32 @@ class CorruptionAnalysis:
         """
         if not web:
             if no_datastore:
-                print("----Protecting Expected Entry Points----")
-                print(f"It is recommended to place a Data Sanitizer object between"
-                      f" the following elements:\n\t- {self._protect_entry[0][0]} "
-                      f"(parented by {self._protect_entry[0][2]})\n\t- "
-                      f"{self._protect_entry[1][0]}: {self._protect_entry[1][1]} "
-                      f"(parented by {self._protect_entry[1][2]})")
-                print("This recommendation is useful if the threat of insider "
-                      "attacks is sufficiently small compared to\nthe threat of "
-                      "external attacks. Examples of such external attacks include"
-                      " attempting to harm\nyour system by threatening its "
-                      "availability, or attempting a forceful takeover using "
-                      "arbitrary \ncode execution via corrupted data.")
-                if len(self._protect_stores) > 0:
+                if self._protect_entry:
+                    print("----Protecting Expected Entry Points----")
+                    print(f"It is recommended to place a Data Sanitizer object between"
+                          f" the following elements:\n\t- {self._protect_entry[0][0]} "
+                          f"(parented by {self._protect_entry[0][2]})\n\t- "
+                          f"{self._protect_entry[1][0]}: {self._protect_entry[1][1]} "
+                          f"(parented by {self._protect_entry[1][2]})")
+                if self._protect_stores:
                     print("\n----Protecting Data Stores----")
-                    print(f"It is recommended to place a Data Sanitizer object"
-                          f"between the following elements:\n\t- "
-                          f"{self._protect_stores[0][0]}: "
-                          f"{self._protect_stores[0][1]} (parented by "
-                          f"{self._protect_stores[0][2]})\n\t- "
-                          f"{self._protect_stores[1][0]}: "
-                          f"{self._protect_stores[1][1]}"
+                    print(f"It is recommended to place a Data Sanitizer object between"
+                          f" the following elements:\n\t- {self._protect_stores[0][0]}: "
+                          f"{self._protect_stores[0][1]} (parented by {self._protect_stores[0][2]})\n\t- "
+                          f"{self._protect_stores[1][0]}: {self._protect_stores[1][1]}"
                           f" (parented by {self._protect_stores[1][2]})")
-                    print("This recommendation is beneficial if you want to "
-                          "maximize the protection of your data stores\nagainst "
-                          "corrupted data that would be damaging if destroyed or "
-                          "leaked to an attacker\n(e.g. data injection attacks).")
-                print("\n----Minimizing Corruption Propagation----")
-                print(f"It is recommended to place a Data Sanitizer object between"
-                      f" the following elements:\n\t- {self._protect_whole[0][0]}:"
-                      f" {self._protect_whole[0][1]} (parented by "
-                      f"{self._protect_whole[0][2]})\n\t- "
-                      f"{self._protect_whole[1][0]}:"
-                      f" {self._protect_whole[1][1]} (parented by "
-                      f"{self._protect_whole[1][2]})")
-                print("This recommendation should be applied if you have the goal "
-                      "of minimizing the longest path\nof corruption within your "
-                      "system, making system wide data corruption attacks more"
-                      " difficult.")
+                if self._protect_whole:
+                    print("\n----Minimizing Corruption Propagation----")
+                    print(f"It is recommended to place a Data Sanitizer object between"
+                          f" the following elements:\n\t- {self._protect_whole[0][0]}:"
+                          f" {self._protect_whole[0][1]} (parented by {self._protect_whole[0][2]})\n\t- "
+                          f"{self._protect_whole[1][0]}:"
+                          f" {self._protect_whole[1][1]} (parented by {self._protect_whole[1][2]})")
             else:
                 print("----Detected Data Sanitizer----")
-                print("It appears your submitted XMI already contains a reference "
-                      "to a 'DataSanitizer'. It may be\nplaced in an optimal "
-                      "location according to your specific security goals. If you "
-                      "wish to have\nanalysis performed, please remove any "
-                      "references to 'DataSanitizer' elements and resubmit\n"
-                      "your modified XMI to Dubhe.")
-
-    def _check_for_datastore(self):
-        """
-        Check the list of analyzed elements for an ActivityElement
-        with the parent "DataSanitizer".
-
-        :return: True if an element with the parent DataSanitizer
-                 is found, False otherwise.
-        """
-        for element in self._elements:
-            if element.get_parent() == CorruptionAnalysis.DATA_SANITIZER:
-                return True
-        return False
+                print(
+                    "It appears your submitted XMI already contains a reference to a 'DataSanitizer'. If you wish to have analysis performed, please remove "
+                    "any references to 'DataSanitizer' elements and resubmit your modified XMI to Dubhe.")
 
     def perform_analysis(self, web=False):
         """
@@ -373,10 +331,10 @@ class CorruptionAnalysis:
         the XMI 2.X standard.
         """
         # Parse the XMI into usable ActivityElement objects.
-        if self._check_for_datastore():
+        if self._has_data_sanitizer:
             # The submitted diagram already includes a data sanitizer.
             # Don't try to supersede the judgement of designers.
-            self._display_results(False)
+            self._display_results(False, no_datastore=False)
         else:
             # Create the analysis threads.
             t1 = threading.Thread(target=self._analyze_datastore)

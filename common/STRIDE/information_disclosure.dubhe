@@ -4,5 +4,5 @@ TECHNIQUE NUMBER: T1557
 THREAT MITIGATION: Encrypt Sensitive Information
 MITIGATION NUMBER: M1041
 DETECT PATTERN: [["DataStoreNode", "...", "SendSignalAction"]]
-MITIGATION PATTERN: [["DecisionNode", "MergeNode"], ["DecisionNode", ("OpaqueAction", "Obfuscate Data"), "MergeNode"]]
+MITIGATION PATTERN: [["DecisionNode", "MergeNode"], ["DecisionNode", ("OpaqueAction", "Encipher Data"), "MergeNode"]]
 MITIGATION INDEX: 1

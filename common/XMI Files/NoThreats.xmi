@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.0" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="StarUML" exporterVersion="2.0"/>
+	<uml:Model xmi:id="AAAAAAGQa2A/YE8DscQ=" xmi:type="uml:Model" name="RootModel">
+		<packagedElement xmi:id="AAAAAAGQa19ic06iHPk=" name="Activity1" visibility="public" isReentrant="true" xmi:type="uml:Activity" isReadOnly="false" isSingleExecution="false">
+			<groups xmi:id="AAAAAAGQa1+XVE7OvZs=" name="ActivityPartition1" visibility="public" xmi:type="uml:ActivityPartition">
+				<node xmi:id="AAAAAAGQa193mU6qO7U=" name="InitialNode1" visibility="public" xmi:type="uml:InitialNode"/>
+				<node xmi:id="AAAAAAGQa1+EsE60xIg=" name="Action1" visibility="public" xmi:type="uml:OpaqueAction" isLocallyReentrant="false" isSynchronous="true"/>
+				<node xmi:id="AAAAAAGQa199Fk6vtXU=" name="ActivityFinalNode1" visibility="public" xmi:type="uml:ActivityFinalNode"/>
+			</groups>
+			<edge xmi:id="AAAAAAGQa1+3kk7bUkc=" visibility="public" source="AAAAAAGQa193mU6qO7U=" target="AAAAAAGQa1+EsE60xIg=" xmi:type="uml:ControlFlow"/>
+			<edge xmi:id="AAAAAAGQa1+/mk7sghE=" visibility="public" source="AAAAAAGQa1+EsE60xIg=" target="AAAAAAGQa199Fk6vtXU=" xmi:type="uml:ControlFlow"/>
+		</packagedElement>
+	</uml:Model>
+</xmi:XMI>

@@ -1,5 +1,6 @@
 import os
 import threading
+from collections import defaultdict
 from enum import Enum
 
 import spacy
@@ -27,15 +28,19 @@ def contains_in_order_with_wildcards(path, pattern, nlp, check_semantic=True):
         if pattern_element == "...":
             # Skip wildcard and try to match subsequent elements
             pattern_idx += 1
+            # Case where the wildcard is at the end of a pattern (at that point there's no need for the wildcard, and it should be removed from the .dubhe file)
             if pattern_idx == len(pattern):
                 return True
             next_pattern_elem = pattern[pattern_idx]
             while path_idx < len(path):
+                # Check to see if we need to perform semantic equivalence
                 if isinstance(next_pattern_elem, tuple):
                     if path[path_idx][0] == next_pattern_elem[0]:
                         if check_semantic:
                             name_similarity = nlp(path[path_idx][1]).similarity(nlp(next_pattern_elem[1]))
-                            if name_similarity >= 0.7:
+                            # We should only keep checking the pattern here in cases where the semantic equivalence of the name is not what we expect
+                            # Otherwise, we can just break out and move on to the next element
+                            if name_similarity >= PatternMatching.SIMILARITY_THRESHOLD:
                                 break
                         else:
                             break
@@ -51,7 +56,7 @@ def contains_in_order_with_wildcards(path, pattern, nlp, check_semantic=True):
             if path_element[0] == pattern_element[0]:
                 if len(pattern_element) > 1 and check_semantic:
                     name_similarity = nlp(path_element[1]).similarity(nlp(pattern_element[1]))
-                    if name_similarity < 0.7:
+                    if name_similarity < PatternMatching.SIMILARITY_THRESHOLD:
                         path_idx += 1
                         continue
                 pattern_idx += 1
@@ -98,11 +103,23 @@ class PatternMatching:
         self._pattern_path = os.path.join("..", "common", "STRIDE")
         self._elements = elements
         self._detected_patterns = []
-        self._detection_elements = {}
-        self._potential_threats = []
         self._mitigated_threats = []
+        self._potential_threats = []
+        self._detection_elements = {}
         self._ceri = []
         self._nlp = spacy.load('en_core_web_md')
+        self._lock = threading.Lock()
+        self._final_sets = []
+        self.local_data = threading.local()
+
+    def thread_start(self, threat_type):
+        self.thread_data()
+        self._detect_patterns(threat_type)
+
+    def thread_data(self):
+        self.local_data.potential_threats = []
+        self.local_data.mitigated_threats = []
+        self.local_data.local_detection_elems = defaultdict(lambda: [0, 0, 0, 0])
 
     def _detect_patterns(self, threat_type):
         """
@@ -144,18 +161,23 @@ class PatternMatching:
                         self._record_detection(path, detect_pattern)
                         if self._check_mitigation(path, mitigation_patterns, detect_pattern, mitigation_index):
                             self._update_ceri_values(path, mitigated=True, potentially_mitigated=False)
-                            self._mitigated_threats.append((threat_type, threat))
+                            self.local_data.mitigated_threats.append((threat_type, threat))
                         elif self._check_potential_mitigation(path, mitigation_patterns, detect_pattern, mitigation_index):
                             self._update_ceri_values(path, mitigated=False, potentially_mitigated=True)
-                            self._potential_threats.append((threat_type, threat))
+                            self.local_data.potential_threats.append((threat_type, threat))
                         break
                 if detected:
                     break
+            with self._lock:
+                if detected and (threat_type, threat) not in self.local_data.mitigated_threats and (threat_type, threat) not in self.local_data.potential_threats:
+                    self._detected_patterns.append((threat_type, threat))
+                elif not detected:
+                    pass
 
-            if detected and (threat_type, threat) not in self._mitigated_threats and (threat_type, threat) not in self._potential_threats:
-                self._detected_patterns.append((threat_type, threat))
-            elif not detected:
-                pass
+        with self._lock:
+            self._final_sets.append(self.local_data.local_detection_elems)
+            self._mitigated_threats.extend(self.local_data.mitigated_threats)
+            self._potential_threats.extend(self.local_data.potential_threats)
 
     def _collect_paths_from_element(self, element):
         """
@@ -199,19 +221,79 @@ class PatternMatching:
         :param path: The path where the threat was detected.
         :param detect_pattern: The pattern that was detected.
         """
-        pattern_elements = set(detect_pattern)
-        for element in path:
-            element_uml_type = element.get_uml_type()
-            element_name = element.get_name()
-            if element_uml_type in pattern_elements or any(
-                    isinstance(p, tuple) and p[0] == element_uml_type and self._semantic_similarity(p[1], element_name) >= PatternMatching.SIMILARITY_THRESHOLD
-                    for p in detect_pattern if isinstance(p, tuple)):
-                element_id = element.get_id()
-                cyclomatic_complexity = 1 + (len(element.get_source()) if isinstance(element.get_source(), list) else 0)
-                if element_id not in self._detection_elements:
-                    self._detection_elements[element_id] = [cyclomatic_complexity, 0, 0, 1]
+        pattern_elements = sorted(set(detect_pattern), key=detect_pattern.index)
+        first_elem = False
+        if pattern_elements[0] == "...":
+            # Sanity case, a detection pattern should never start with a wild card and the .dubhe file should be changed to fix this
+            pattern_elements = pattern_elements[1:-1]
+
+        # Build our list of elements that participate in the detection pattern for the path
+        detected_elems = []
+        temp_elems = []
+        pattern_idx = 0
+
+        for pre_elem in path:
+            if not first_elem:
+                if isinstance(pattern_elements[pattern_idx], tuple) \
+                        and self._semantic_similarity(pattern_elements[pattern_idx][1],  pre_elem.get_name()) >= PatternMatching.SIMILARITY_THRESHOLD \
+                        and pattern_elements[pattern_idx][0] == pre_elem.get_uml_type():
+                    # Found the first element in the path that takes part in the detection pattern with semantic equivalence passing
+                    first_elem = True
+                    temp_elems.append(pre_elem)
+                    pattern_idx += 1
+                elif pattern_elements[pattern_idx] == pre_elem.get_uml_type():
+                    # Found the first element in the path that takes part in the detection pattern
+                    first_elem = True
+                    temp_elems.append(pre_elem)
+                    pattern_idx += 1
+            elif first_elem and isinstance(pattern_elements[pattern_idx][0], tuple) \
+                    and self._semantic_similarity(pattern_elements[pattern_idx][1], pre_elem.get_name()) >= PatternMatching.SIMILARITY_THRESHOLD \
+                    and pattern_elements[pattern_idx][0] == pre_elem.get_uml_type():
+                temp_elems.append(pre_elem)
+                if pattern_elements[pattern_idx] == pattern_elements[-1]:
+                    # Account for the case where multiple instances of the threat are present in a path
+                    detected_elems.extend(temp_elems)
+                    first_elem = False
+                    temp_elems = []
+                    pattern_idx = 0
+            elif first_elem and pattern_elements[pattern_idx] == "..." \
+                    and pattern_elements[pattern_idx] != pattern_elements[-1]:
+                temp_elems.append(pre_elem)
+                if pattern_elements[pattern_idx + 1] == pre_elem.get_uml_type():
+                    pattern_idx += 2  # Skip over the index of the element we just matched
+                    if pattern_idx == len(pattern_elements):
+                        detected_elems.extend(temp_elems)
+                        first_elem = False
+                        temp_elems = []
+                        pattern_idx = 0
+
+            elif first_elem and pattern_elements[pattern_idx] == pre_elem.get_uml_type():
+                temp_elems.append(pre_elem)
+                pattern_idx += 1
+                if pattern_elements[pattern_idx - 1] == pattern_elements[-1]:
+                    # Account for the case where multiple instances of the threat are present in a path
+                    detected_elems.extend(temp_elems)
+                    first_elem = False
+                    temp_elems = []
+                    pattern_idx = 0
+
+            # Account for multiple paths originating from a single detected element when checking for critical elements that participate in threat patterns
+            if len(temp_elems) > 0 and len(temp_elems[-1].get_source()) > 1:
+                for curr_source in temp_elems[-1].get_source():
+                    curr_source_elem = self._get_element_by_id(curr_source)
+                    if curr_source_elem not in path:
+                        temp_elems.insert(len(temp_elems) - 1, curr_source_elem)
+
+
+        for element in detected_elems:
+            # Add our detected elements with their appropriate values for CERI calculations later to our _detection_elements list
+            element_id = element.get_id()
+            cyclomatic_complexity = 1 + (len(element.get_source()) if isinstance(element.get_source(), list) else 0)
+            with self._lock:
+                if element_id not in self.local_data.local_detection_elems:
+                    self.local_data.local_detection_elems[element_id] = [cyclomatic_complexity, 0, 0, 1]
                 else:
-                    self._detection_elements[element_id][3] += 1
+                    self.local_data.local_detection_elems[element_id][3] += 1
 
     def _update_ceri_values(self, path, mitigated, potentially_mitigated):
         """
@@ -223,12 +305,17 @@ class PatternMatching:
         """
         for element in path:
             element_id = element.get_id()
-            if element_id in self._detection_elements:
+            # Grab branching elements on the path and ensure they are properly updated alongside the main detected path
+            dest = element.get_destination()
+            if len(dest) > 1:
+                for branch_elem in dest:
+                    if self._get_element_by_id(branch_elem) not in path:
+                        path.append(self._get_element_by_id(branch_elem))
+            if element_id in self.local_data.local_detection_elems:
                 if mitigated:
-                    self._detection_elements[element_id][1] += 1
-                if potentially_mitigated:
-                    self._detection_elements[element_id][2] += 1
-                self._detection_elements[element_id][3] += 1
+                    self.local_data.local_detection_elems[element_id][1] += 1
+                elif potentially_mitigated:
+                    self.local_data.local_detection_elems[element_id][2] += 1
 
     def _get_element_by_id(self, target_id):
         """
@@ -350,10 +437,19 @@ class PatternMatching:
         The best case CERI will include both mitigated and potentially mitigated threats.
         The worst case CERI will only include mitigated threats.
         """
+        for curr_set in self._final_sets:
+            for set_key in curr_set:
+                if set_key in self._detection_elements:
+                    self._detection_elements[set_key][1] += curr_set[set_key][1]
+                    self._detection_elements[set_key][2] += curr_set[set_key][2]
+                    self._detection_elements[set_key][3] += curr_set[set_key][3]
+                else:
+                    self._detection_elements[set_key] = curr_set[set_key]
+
         for elem in self._detection_elements:
             full_elem = self._get_element_by_id(elem)
             ceri_vals = self._detection_elements[elem]
-            if ceri_vals[3] > 0:
+            if ceri_vals[3] > 0:  # Sanity check, we should never reach this stage for non-critical elements
                 ceri_worst = ceri_vals[0] * (1 - (ceri_vals[1] / ceri_vals[3]))
                 ceri_best = ceri_vals[0] * (1 - ((ceri_vals[1] + ceri_vals[2]) / ceri_vals[3]))
                 self._ceri.append((full_elem.get_uml_type(), full_elem.get_name(), ceri_worst, ceri_best))
@@ -370,7 +466,8 @@ class PatternMatching:
                 print(f"\nYour design may be susceptible to the following {threat_type.replace('_', ' ').title()} threats:\n")
                 print(f"Threat Name: {pattern.get_technique().strip()}\nMITRE ATT&CK Reference: {pattern.get_technique_num()}")
                 print(
-                    f"We recommend you review the mitigations associated with the MITRE ATT&CK listing to harden your system. \n\t(E.g., {pattern.get_mitigation().strip()}, reference number: {pattern.get_mitigation_num().strip()})")
+                    f"We recommend you review the mitigations associated with the MITRE ATT&CK listing to harden your system. \n\t(E.g., "
+                    f"{pattern.get_mitigation().strip()}, reference number: {pattern.get_mitigation_num().strip()})")
 
     def perform_pattern_matching(self, web=False):
         """
@@ -380,13 +477,14 @@ class PatternMatching:
         """
         threads = []
         for threat_type in StrideClassification:
-            t = threading.Thread(target=self._detect_patterns, args=(threat_type,))
+            t = threading.Thread(target=self.thread_start, args=(threat_type,), name=threat_type)
             threads.append(t)
             t.start()
 
         for t in threads:
             t.join()
 
+        # To avoid race conditions, only calculate the CERI values once all threats have been checked
         self._calculate_ceri()
         self._display_results(web)
 

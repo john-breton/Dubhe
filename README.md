@@ -50,7 +50,8 @@ Dubhe currently supports the following types of analysis:
  - Analysis of UML Activity Diagrams to provide recommendations for the locations of data sanitization objects with activity flows. Up to three recommendations can be generated that aim to minimize the potential for data corruption propagation throughout the system as a whole, or to protect datastores or the expected entry points of systems.
  - Suggestion mitigation patterns for detected unmitigated threats, with the ability to save the full analysis report as a PDF for future reference.
 
-More details on how this analysis works can be found within the source code of Dubhe.
+More details on how this analysis works can be found within the source code of Dubhe and in the following publication(s):
+ - J Breton, J Jaskolka, GOM Yee, Hardening Systems Against Data Corruption Attacks at Design Time - <a href="https://www.fps-2023.com/index.php/detailed-program/">FPS 2023</a> 
 
 ## Contributing
 If you want to contribute to Dubhe, feel free to open a merge request! Be sure to describe your changes and to ensure all existing test cases pass. If these conditions are not met your merge request will likely be closed.

@@ -16,10 +16,10 @@ class TestActivityElement(unittest.TestCase):
 
     def test_default_constructor(self):
         # Test the default constructor.
-        self.assertEqual(self.activity_element_default.get_uml_type(), "empty")
-        self.assertEqual(self.activity_element_default.get_name(), "empty")
-        self.assertEqual(self.activity_element_default.get_id(), "empty")
-        self.assertEqual(self.activity_element_default.get_parent(), "empty")
+        self.assertEqual(self.activity_element_default.get_uml_type(), None)
+        self.assertEqual(self.activity_element_default.get_name(), None)
+        self.assertEqual(self.activity_element_default.get_id(), None)
+        self.assertEqual(self.activity_element_default.get_parent(), None)
 
     def test_data_constructor(self):
         # The constructor once parameters are supplied.

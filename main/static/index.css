@@ -73,6 +73,7 @@
 }
 
 .home-button {
+    font-size: 1.0vw;
     color: var(--dl-color-gray-white);
     box-shadow: #a3d3e8 5px 5px 10px 0;
     transition: .3s;
@@ -86,6 +87,7 @@
 }
 
 .home-button1 {
+    font-size: 1.0vw;
     color: #fff;
     box-shadow: 5px 5px 10px 0 #a3d3e8;
     transition: .3s;

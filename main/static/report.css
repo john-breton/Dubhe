@@ -1,7 +1,7 @@
 .emoji {
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
     font-size: inherit;
-    color: inherit
+    color: inherit;
 }
 
 .report-container {
@@ -12,27 +12,27 @@
     align-items: flex-start;
     flex-direction: column;
     justify-content: flex-start;
-    background-color: #f1f1f1
+    background-color: #f1f1f1;
 }
 
 ::-webkit-scrollbar {
     width: 12px;
-    height: 12px
+    height: 12px;
 }
 
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 10px
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: #d9534f;
     border-radius: 10px;
-    border: 3px solid #f1f1f1
+    border: 3px solid #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #b7423b
+    background-color: #b7423b;
 }
 
 .report-filename-bar {
@@ -41,11 +41,11 @@
     background-color: #007bff;
     color: #fff;
     text-align: center;
-    font-weight: 700
+    font-weight: 700;
 }
 
 .report-filename-text {
-    font-size: 16px
+    font-size: 1.5rem;
 }
 
 .report-container1 {
@@ -55,7 +55,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    background-color: var(--dl-color-gray-white)
+    background-color: var(--dl-color-gray-white);
 }
 
 .report-sidebar {
@@ -66,7 +66,7 @@
     padding: var(--dl-space-space-twounits);
     flex-direction: column;
     background-color: #fff;
-    align-items: center
+    align-items: center;
 }
 
 .report-nav {
@@ -75,57 +75,57 @@
     display: flex;
     align-self: center;
     align-items: center;
-    flex-direction: column
+    flex-direction: column;
 }
 
 .report-link {
-    font-size: 42px;
+    font-size: clamp(1rem, 2.5vw, 3rem);
     font-weight: 700;
     margin-bottom: var(--dl-space-space-fiveunits);
     text-decoration: none;
-    text-align: center
+    text-align: center;
 }
 
 .report-navlink {
     display: block;
     width: 100%;
-    text-align: center
+    text-align: center;
 }
 
 .report-image {
-    width: 90%;
-    height: 100%;
+    width: clamp(3rem, 10vw, 90%);
+    height: clamp(3rem, 10vw, 100%);
     object-fit: cover;
-    margin-left: .5em;
-    margin-bottom: var(--dl-space-space-fourunits)
+    margin-left: 0.5em;
+    margin-bottom: var(--dl-space-space-fourunits);
 }
 
 .report-navlink1 {
     display: block;
     width: 100%;
-    text-align: center
+    text-align: center;
 }
 
 .report-image1 {
-    width: 90%;
-    height: 100%;
+    width: clamp(1rem, 10vw, 90%);
+    height: clamp(1rem, 10vw, 100%);
     object-fit: cover;
-    margin-left: .5em;
-    margin-bottom: var(--dl-space-space-twounits)
+    margin-left: 0.5em;
+    margin-bottom: var(--dl-space-space-twounits);
 }
 
 .report-navlink2 {
     display: block;
     width: 100%;
-    text-align: center
+    text-align: center;
 }
 
 .report-image2 {
-    width: 90%;
-    height: 100%;
+    width: clamp(1rem, 10vw, 90%);
+    height: clamp(1rem, 10vw, 100%);
     object-fit: cover;
-    margin-left: .5em;
-    margin-bottom: var(--dl-space-space-twounits)
+    margin-left: 0.5em;
+    margin-bottom: var(--dl-space-space-twounits);
 }
 
 .report-container2 {
@@ -137,7 +137,7 @@
     display: flex;
     position: absolute;
     align-items: center;
-    justify-content: flex-start
+    justify-content: flex-start;
 }
 
 .report-feature-card {
@@ -154,31 +154,33 @@
     margin-left: var(--dl-space-space-fourunits);
     border-radius: var(--dl-radius-radius-radius8);
     background-color: #fff;
-    border-top-right-radius: var(--dl-radius-radius-radius8)
+    border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
 .report-feature-card:hover {
-    transform: scale(1.02)
+    transform: scale(1.02);
 }
 
 .report-text {
-    margin-bottom: 14px
+    margin-bottom: 1%;
+    font-size: 1.5vw;
 }
 
 .report-text03 {
     width: 90%;
     height: 45%;
-    font-size: 58px;
+    font-size: 3vw;
     align-self: center;
     text-align: center;
-    padding-top: 12%
+    padding-top: 12%;
+    margin-bottom: 5%;
 }
 
 .report-text04 {
     width: 90%;
     height: 45%;
     align-self: center;
-    text-align: left
+    text-align: left;
 }
 
 .report-feature-card1 {
@@ -195,31 +197,33 @@
     margin-left: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
     background-color: #fff;
-    border-top-right-radius: var(--dl-radius-radius-radius8)
+    border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
 .report-feature-card1:hover {
-    transform: scale(1.02)
+    transform: scale(1.02);
 }
 
 .report-text05 {
-    margin-bottom: 14px
+    margin-bottom: 1%;
+    font-size: 1.5vw;
 }
 
 .report-text08 {
     width: 90%;
     height: 45%;
-    font-size: 58px;
+    font-size: 3vw;
     align-self: center;
     text-align: center;
-    padding-top: 12%
+    padding-top: 12%;
+    margin-bottom: 5%;
 }
 
 .report-text09 {
     width: 90%;
     height: 45%;
     align-self: center;
-    text-align: left
+    text-align: left;
 }
 
 .report-feature-card2 {
@@ -237,31 +241,33 @@
     margin-right: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
     background-color: #fff;
-    border-top-right-radius: var(--dl-radius-radius-radius8)
+    border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
 .report-feature-card2:hover {
-    transform: scale(1.02)
+    transform: scale(1.02);
 }
 
 .report-text10 {
-    margin-bottom: 14px
+    margin-bottom: 1%;
+    font-size: 1.5vw;
 }
 
 .report-text13 {
     width: 90%;
     height: 45%;
-    font-size: 58px;
+    font-size: 3vw;
     align-self: center;
     text-align: center;
-    padding-top: 12%
+    padding-top: 12%;
+    margin-bottom: 5%;
 }
 
 .report-text14 {
     width: 90%;
     height: 45%;
     align-self: center;
-    text-align: left
+    text-align: left;
 }
 
 .report-container3 {
@@ -273,11 +279,11 @@
     display: flex;
     position: absolute;
     align-self: flex-end;
-    align-items: center
+    align-items: center;
 }
 
 .report-feature-card3 {
-    width: 30%;
+    width: 30vw;
     height: 80%;
     display: flex;
     flex-direction: column;
@@ -286,25 +292,29 @@
     align-self: center;
     box-shadow: 5px 5px 10px 0 #1212121a;
     transition: .3s;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     margin-left: var(--dl-space-space-fourunits);
     border-radius: var(--dl-radius-radius-radius8);
     background-color: #fff;
-    border-top-right-radius: var(--dl-radius-radius-radius8)
+    border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
 .report-feature-card3:hover {
-    transform: scale(1.02)
+    transform: scale(1.02);
 }
 
 .report-text15 {
-    margin-bottom: 14px
+    margin-bottom: 14px;
+    font-size: 1.5vw;
 }
 
 .no-threats-detected {
     align-self: center;
     text-align: center;
-    font-size: 48px
+    font-size: 1.5vw;
+    margin-top: 10px;
+    margin-bottom: 1%;
 }
 
 .report-image3 {
@@ -312,7 +322,7 @@
     height: 100%;
     align-self: center;
     object-fit: cover;
-    position: relative
+    position: relative;
 }
 
 .report-feature-card4 {
@@ -330,40 +340,42 @@
     margin-right: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
     background-color: #fff;
-    border-top-right-radius: var(--dl-radius-radius-radius8)
+    border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
 .report-feature-card4:hover {
-    transform: scale(1.02)
+    transform: scale(1.02);
 }
 
 .report-text16 {
-    margin-bottom: 14px
+    margin-bottom: 14px;
+    font-size: 1.5vw;
 }
 
 .report-text17 {
     width: 90%;
-    height: 45%;
-    font-size: 58px;
+    height: auto;
+    font-size: 3vw;
     align-self: center;
     text-align: center;
-    padding-top: 7%
+    padding-top: 5%;
+    padding-bottom: 3%;
 }
 
 .report-text18 {
     width: 90%;
     height: 45%;
     align-self: center;
-    text-align: left
+    text-align: left;
 }
 
 .report-list {
     list-style-type: none;
-    padding: 0
+    padding: 0;
 }
 
 .report-list li {
-    font-size: 16px
+    font-size: 0.9vw;
 }
 
 .dropdown {
@@ -372,39 +384,59 @@
     align-items: center;
     font-weight: 700;
     text-align: justify;
-    width: 100%
+    width: 100%;
 }
 
 .dropdown-text {
-    flex: 1
+    flex: 1;
+    font-size: 1.0vw;
+    margin-right: 10px;
 }
 
 .arrow {
     margin-right: 10px;
-    transition: transform .3s
+    transition: transform .3s;
 }
 
 .arrow.rotate {
-    transform: rotate(180deg)
+    transform: rotate(180deg);
 }
 
 .dropdown-content {
     display: none;
-    margin-top: 10px;
+    margin-top: 2px;
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #f9f9f9;
     overflow-y: auto;
-    max-height: 200px;
+    max-height: 40%;
     overflow-x: hidden;
     white-space: normal;
-    width: 100%
+    width: 100%;
+    font-size: 0.9vw;
 }
 
 .dropdown-content.show {
-    display: block
+    display: block;
+}
+
+.plotly-graph-div {
+    width: 28vw;
+    height: 22vw;
+    position: relative;
+    overflow: auto;
+    object-fit: scale-down;
 }
 
 .indented {
-    margin-left: 20px
+    margin-left: 20px;
+    font-size: 1.2rem;
+}
+
+.no-optimization {
+    text-align: center;
+    font-size: 1.5vw;
+    color: #d9534f;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

@@ -100,13 +100,6 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="stylesheet" href="../static/style.css"/>
     <link href="../static/report.css" rel="stylesheet"/>
-    <style>
-        .plotly-graph-div {
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-        }
-    </style>
 </head>
 <body>
 <div class="report-container">
@@ -159,7 +152,7 @@
     <div class="report-container3">
         <div class="report-feature-card3">
             <h2 class="report-text15">STRIDE Threat Mitigation</h2>
-            <div class="report-image3 plotly-graph-div">{{ graph_div|safe }}</div>
+            <div class="report-image3 plotly-graph-div" id="plotly-graph-div">{{ graph_div|safe }}</div>
         </div>
         <div class="report-feature-card4">
             <h2 class="report-text16">Behavioural Security Posture - {{ filename }}</h2>
@@ -191,11 +184,45 @@
             <div class="no-threats-detected">
                 🎉 Dubhe did not detect any threats in your system! 🎉
             </div>
+            {% if not has_data_sanitizer %}
+            <div class="dropdown" onclick="toggleDropdown('cerialt')">
+                <span id="dropdown-arrow-cerialt" class="arrow">▼</span>
+                <span class="dropdown-text">View BSP Vector String Breakdown</span>
+            </div>
+            <div id="dropdown-content-cerialt" class="dropdown-content">
+                <ul>
+                    <li>CERI values for your system were not calculated because no critical elements were identified. That means Dubhe did not identify any
+                        threat patterns within your system.
+                    </li>
+                    <br/>
+                    <li><b>CPP</b>: {{ '%0.2f'|format(cpp|float) }}</li>
+                </ul>
+            </div>
+            {% else %}
+            <div class="no-optimization">
+                🛡️ DataSanitizer detected. No optimization recommendations provided.
+            </div>
+            {% endif %}
             {% endif %}
         </div>
     </div>
 </div>
 <script>
+    function resizeGraph() {
+        var gd = document.getElementById('plotly-graph-div');
+        if (gd) {
+            Plotly.relayout(gd, {
+                width: gd.clientWidth,
+                height: gd.clientHeight
+            });
+            Plotly.Plots.resize(gd);
+        }
+    }
+
+    window.addEventListener('resize', resizeGraph);
+    window.addEventListener('load', resizeGraph);
+    resizeGraph();  // Initial call to resize the graph
+
     function toggleDropdown(type) {
         var content = document.getElementById(`dropdown-content-${type}`);
         var arrow = document.getElementById(`dropdown-arrow-${type}`);

@@ -4,5 +4,5 @@ TECHNIQUE NUMBER: T1078
 THREAT MITIGATION: Account Use Policies
 MITIGATION NUMBER: M1036
 DETECT PATTERN: [["AcceptEventAction", "OpaqueAction", "...", "DataStoreNode"]]
-MITIGATION PATTERN: [["DecisionNode", "ActivityFinalNode"], ["DecisionNode", "OpaqueAction", "DecisionNode", "ActivityFinalNode"]]
+MITIGATION PATTERN: [["DecisionNode", "...", "ActivityFinalNode"], ["DecisionNode", ("OpaqueAction", "Authentication Success"), "DecisionNode", "ActivityFinalNode"]]
 MITIGATION INDEX: 3

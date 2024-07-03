@@ -3,6 +3,6 @@ THREAT TECHNIQUE: Indicator Removal
 TECHNIQUE NUMBER: T1070
 THREAT MITIGATION: Remote Data Storage & Data Sanitization
 MITIGATION NUMBER: M1029
-DETECT PATTERN: [["OpaqueAction", "...", ("DataStoreNode", "Log")]]
+DETECT PATTERN: [["OpaqueAction", "...", "OpaqueAction", "DataStoreNode"]]
 MITIGATION PATTERN: [[("OpaqueAction", "Sanitize Data"), "...", "ForkNode", "...", "DataStoreNode", "...", "JoinNode"]]
 MITIGATION INDEX: 0

@@ -1,5 +1,7 @@
 import os
 import re
+from itertools import chain
+
 import numpy as np
 from flask import Flask, render_template, request, jsonify
 import plotly.graph_objects as go
@@ -104,7 +106,7 @@ def report_page():
 
     for cpp_path in all_paths:
         for elem in cpp_path:
-            if elem.get_parent() == 'Data Sanitizer':
+            if elem.get_parent() == 'Data Sanitizer' or elem.get_parent() == "DataSanitizer":
                 total_paths += 1
                 sum_paths -= 1
         sum_paths += len(cpp_path) - 1
@@ -116,49 +118,53 @@ def report_page():
     potential_values = [0, 0, 0, 0, 0, 0]
     mitigated_values = [0, 0, 0, 0, 0, 0]
 
-    for entry in unmitigated:
-        if entry[0].replace('_', ' ').title() == "Spoofing":
-            unmitigated_values[0] += 1
-        elif entry[0].replace('_', ' ').title() == "Tampering":
-            unmitigated_values[1] += 1
-        elif entry[0].replace('_', ' ').title() == "Repudiation":
-            unmitigated_values[2] += 1
-        elif entry[0].replace('_', ' ').title() == "Information Disclosure":
-            unmitigated_values[3] += 1
-        elif entry[0].replace('_', ' ').title() == "Denial Of Service":
-            unmitigated_values[4] += 1
-        elif entry[0].replace('_', ' ').title() == "Elevation Of Privilege":
-            unmitigated_values[5] += 1
+    combined = chain(unmitigated, potential, mitigated)
 
-    for entry in potential:
+    for entry in combined:
         if entry[0].replace('_', ' ').title() == "Spoofing":
-            potential_values[0] += 1
+            if entry in unmitigated:
+                unmitigated_values[0] += 1
+            elif entry in potential:
+                potential_values[0] += 1
+            else:
+                mitigated_values[0] += 1
         elif entry[0].replace('_', ' ').title() == "Tampering":
-            potential_values[1] += 1
+            if entry in unmitigated:
+                unmitigated_values[1] += 1
+            elif entry in potential:
+                potential_values[1] += 1
+            else:
+                mitigated_values[1] += 1
         elif entry[0].replace('_', ' ').title() == "Repudiation":
-            potential_values[2] += 1
+            if entry in unmitigated:
+                unmitigated_values[2] += 1
+            elif entry in potential:
+                potential_values[2] += 1
+            else:
+                mitigated_values[2] += 1
         elif entry[0].replace('_', ' ').title() == "Information Disclosure":
-            potential_values[3] += 1
+            if entry in unmitigated:
+                unmitigated_values[3] += 1
+            elif entry in potential:
+                potential_values[3] += 1
+            else:
+                mitigated_values[3] += 1
         elif entry[0].replace('_', ' ').title() == "Denial Of Service":
-            potential_values[4] += 1
+            if entry in unmitigated:
+                unmitigated_values[4] += 1
+            elif entry in potential:
+                potential_values[4] += 1
+            else:
+                mitigated_values[4] += 1
         elif entry[0].replace('_', ' ').title() == "Elevation Of Privilege":
-            potential_values[5] += 1
+            if entry in unmitigated:
+                unmitigated_values[5] += 1
+            elif entry in potential:
+                potential_values[5] += 1
+            else:
+                mitigated_values[5] += 1
 
-    for entry in mitigated:
-        if entry[0].replace('_', ' ').title() == "Spoofing":
-            mitigated_values[0] += 1
-        elif entry[0].replace('_', ' ').title() == "Tampering":
-            mitigated_values[1] += 1
-        elif entry[0].replace('_', ' ').title() == "Repudiation":
-            mitigated_values[2] += 1
-        elif entry[0].replace('_', ' ').title() == "Information Disclosure":
-            mitigated_values[3] += 1
-        elif entry[0].replace('_', ' ').title() == "Denial Of Service":
-            mitigated_values[4] += 1
-        elif entry[0].replace('_', ' ').title() == "Elevation Of Privilege":
-            mitigated_values[5] += 1
-
-    categories = ['Spoofing', 'Tampering', 'Repudiation', 'Information Disclosure', 'Denial of Service', 'Elevation of Privilege']
+    categories = ['Spoofing', 'Tampering', 'Repudiation', 'Information\nDisclosure', 'Denial\nof Service', 'Elevation\nof Privilege']
     num_vars = len(categories)
     angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
 
@@ -170,7 +176,7 @@ def report_page():
     fig = go.Figure()
 
     fig.add_trace(go.Scatterpolar(
-        r=[x + 1 for x in unmitigated_values],  # Shift values by +1
+        r=unmitigated_values,  # Shift values by +1
         theta=categories,
         fill='toself',
         name='Unmitigated',
@@ -178,7 +184,7 @@ def report_page():
     ))
 
     fig.add_trace(go.Scatterpolar(
-        r=[x + 1 for x in potential_values],  # Shift values by +1
+        r=potential_values,  # Shift values by +1
         theta=categories,
         fill='toself',
         name='Potentially Mitigated',
@@ -186,7 +192,7 @@ def report_page():
     ))
 
     fig.add_trace(go.Scatterpolar(
-        r=[x + 1 for x in mitigated_values],  # Shift values by +1
+        r=mitigated_values,  # Shift values by +1
         theta=categories,
         fill='toself',
         name='Mitigated',
@@ -194,14 +200,15 @@ def report_page():
     ))
 
     fig.update_layout(
+        autosize=True,
         polar=dict(
             radialaxis=dict(
                 visible=True,
-                range=[0, max(max(unmitigated_values), max(potential_values), max(mitigated_values)) + 1]  # Extend range by +1
+                range=[-1, max(max(unmitigated_values), max(potential_values), max(mitigated_values)) + 1]
             ),
             angularaxis=dict(
-                direction="counterclockwise",  # Orient the categories counterclockwise
-                rotation=90  # Start from the north
+                direction="counterclockwise",
+                rotation=90
             )
         ),
         showlegend=True,
@@ -324,7 +331,9 @@ def suggestions_page():
                 "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
                 f"&emsp;<b>1. {entry_points[0][0]}: {entry_points[0][1]}</b> (parented by {entry_points[0][2]})<br>"
                 f"&emsp;<b>2. {entry_points[1][0]}: {entry_points[1][1]}</b> (parented by {entry_points[1][2]})</div>"
-                "<div class='indented'>This recommendation is useful if the threat of insider attacks is sufficiently small compared to the threat of external attacks. Examples of such external attacks include attempting to harm your system by threatening its availability or attempting a forceful takeover using arbitrary code execution via corrupted data.</div><br>"
+                "<div class='indented'>This recommendation is useful if the threat of insider attacks is sufficiently small compared to the threat of "
+                "external attacks. Examples of such external attacks include attempting to harm your system by threatening its availability or attempting a "
+                "forceful takeover using arbitrary code execution via corrupted data.</div><br> "
             )
         else:
             suggestions_label += (
@@ -338,7 +347,8 @@ def suggestions_page():
                 "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
                 f"&emsp;<b>1. {datastore_points[0][0]}: {datastore_points[0][1]}</b> (parented by {datastore_points[0][2]})<br> "
                 f"&emsp;<b>2. {datastore_points[1][0]}: {datastore_points[1][1]}</b> (parented by {datastore_points[1][2]})</div>"
-                "<div class='indented'>This recommendation is beneficial if you want to maximize the protection of your data stores against corrupted data that would be damaging if destroyed or leaked to an attacker (e.g., data injection attacks).</div><br>"
+                "<div class='indented'>This recommendation is beneficial if you want to maximize the protection of your data stores against corrupted data "
+                "that would be damaging if destroyed or leaked to an attacker (e.g., data injection attacks).</div><br> "
             )
         else:
             suggestions_label += (
@@ -352,7 +362,8 @@ def suggestions_page():
                 "<div class='indented'>It is recommended to place a DataSanitizer object between the following elements:<br>"
                 f"&emsp;<b>1. {whole_system_points[0][0]}: {whole_system_points[0][1]}</b> (parented by {whole_system_points[0][2]})<br> "
                 f"&emsp;<b>2. {whole_system_points[1][0]}: {whole_system_points[1][1]}</b> (parented by {whole_system_points[1][2]})</div>"
-                "<div class='indented'>This recommendation should be applied if you have the goal of minimizing the longest flow of corruption within your system, making system-wide data corruption attacks more difficult.</div><br>"
+                "<div class='indented'>This recommendation should be applied if you have the goal of minimizing the longest flow of corruption within your "
+                "system, making system-wide data corruption attacks more difficult.</div><br> "
             )
         else:
             suggestions_label += (
@@ -405,7 +416,7 @@ def suggestions_page():
     total_paths = 0
 
     # Data Sanitizer Check
-    has_data_sanitizer = any(elem.get_parent() == 'Data Sanitizer' for elem in web_corruption._elements)
+    has_data_sanitizer = any(elem.get_parent() == 'DataSanitizer' for elem in web_corruption._elements)
 
     for cpp_path in all_paths:
         for elem in cpp_path:
@@ -450,7 +461,8 @@ if __name__ == "__main__":
     result = parser.parse_xmi()
     if parser == 0:
         print(
-            "[ERROR]: It appears the supplied .xmi file is malformed. Dubhe currently supports XMI versions 2.X+. Please double-check your .xmi file before trying to rerun Dubhe.")
+            "[ERROR]: It appears the supplied .xmi file is malformed. Dubhe currently supports XMI versions 2.X+. Please double-check your .xmi file before "
+            "trying to rerun Dubhe.")
         exit()
     # To use the CLI version of Dubhe, please ensure the following lines are uncommented.
     # detector = PatternMatching(parser.get_elements())

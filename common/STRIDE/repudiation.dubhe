@@ -3,6 +3,6 @@ THREAT TECHNIQUE: Access Token Manipulation
 TECHNIQUE NUMBER: T1134
 THREAT MITIGATION: User Account Logging
 MITIGATION NUMBER: M1018
-DETECT PATTERN: [["SendSignalAction", "AcceptEventAction"]]
-MITIGATION PATTERN: [[("OpaqueAction", "Log *"), "...", ("DataStoreNode", "* Log")]]
-MITIGATION INDEX: -1
+DETECT PATTERN: [["SendSignalAction", "AcceptEventAction", "...", "DataStoreNode"]]
+MITIGATION PATTERN: [[("OpaqueAction", "Log Event"), "...", "OpaqueAction", "DataStoreNode"]]
+MITIGATION INDEX: 2

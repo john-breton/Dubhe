@@ -60,11 +60,11 @@
 }
 
 .start-link {
-    font-size: 42px;
+    font-size: clamp(1rem, 2.5vw, 3rem);
     font-weight: 700;
     margin-bottom: var(--dl-space-space-fiveunits);
     text-decoration: none;
-    text-align: center
+    text-align: center;
 }
 
 .start-navlink {
@@ -134,12 +134,11 @@
 }
 
 .start-text {
-    width: 70%;
-    height: 30%;
-    font-size: 180%;
+    align-self: center;
     text-align: center;
+    font-size: 1.8vw;
     padding-top: var(--dl-space-space-fourunits);
-    margin-bottom: var(--dl-space-space-fourunits)
+    margin-bottom: var(--dl-space-space-fiveunits)
 }
 
 .start-button {
@@ -148,7 +147,7 @@
     box-shadow: #d4d4d4 5px 5px 10px 0;
     text-align: center;
     transition: .3s;
-    font-size: 20px;
+    font-size: 1.3vw;
     border-color: #d9534f;
     padding: var(--dl-space-space-unit) var(--dl-space-space-twounits);
     background-color: #d9534f
