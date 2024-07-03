@@ -25,11 +25,6 @@ click==8.1.7
     #   typer
 cloudpathlib==0.16.0
     # via weasel
-colorama==0.4.6
-    # via
-    #   click
-    #   tqdm
-    #   wasabi
 confection==0.1.4
     # via
     #   thinc
@@ -93,7 +88,7 @@ pydantic==2.7.1
     #   weasel
 pydantic-core==2.18.2
     # via pydantic
-requests==2.31.0
+requests==2.32.2
     # via
     #   spacy
     #   weasel
