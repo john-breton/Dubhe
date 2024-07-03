@@ -112,7 +112,7 @@ tenacity==8.4.2
     # via plotly
 thinc==8.2.3
     # via spacy
-tqdm==4.66.2
+tqdm==4.66.3
     # via spacy
 typer==0.9.4
     # via
