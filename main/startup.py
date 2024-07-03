@@ -158,7 +158,7 @@ def report_page():
         elif entry[0].replace('_', ' ').title() == "Elevation Of Privilege":
             mitigated_values[5] += 1
 
-    categories = ['Spoofing', 'Tampering', 'Repudiation', 'Information Disclosure', 'Denial of Service', 'Elevation of Privilege']
+    categories = ['Spoofing', 'Tampering', 'Repudiation', 'Information\nDisclosure', 'Denial\nof Service', 'Elevation\nof Privilege']
     num_vars = len(categories)
     angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
 
@@ -170,7 +170,7 @@ def report_page():
     fig = go.Figure()
 
     fig.add_trace(go.Scatterpolar(
-        r=[x + 1 for x in unmitigated_values],  # Shift values by +1
+        r=unmitigated_values,  # Shift values by +1
         theta=categories,
         fill='toself',
         name='Unmitigated',
@@ -178,7 +178,7 @@ def report_page():
     ))
 
     fig.add_trace(go.Scatterpolar(
-        r=[x + 1 for x in potential_values],  # Shift values by +1
+        r=potential_values,  # Shift values by +1
         theta=categories,
         fill='toself',
         name='Potentially Mitigated',
@@ -186,7 +186,7 @@ def report_page():
     ))
 
     fig.add_trace(go.Scatterpolar(
-        r=[x + 1 for x in mitigated_values],  # Shift values by +1
+        r=mitigated_values,  # Shift values by +1
         theta=categories,
         fill='toself',
         name='Mitigated',
@@ -194,14 +194,15 @@ def report_page():
     ))
 
     fig.update_layout(
+        autosize=True,
         polar=dict(
             radialaxis=dict(
                 visible=True,
-                range=[0, max(max(unmitigated_values), max(potential_values), max(mitigated_values)) + 1]  # Extend range by +1
+                range=[-1, max(max(unmitigated_values), max(potential_values), max(mitigated_values)) + 1]
             ),
             angularaxis=dict(
-                direction="counterclockwise",  # Orient the categories counterclockwise
-                rotation=90  # Start from the north
+                direction="counterclockwise",
+                rotation=90
             )
         ),
         showlegend=True,
