@@ -1,4 +1,3 @@
-/* start.css */
 .start-container {
     width: 100%;
     display: flex;
@@ -7,27 +6,27 @@
     align-items: flex-start;
     flex-direction: column;
     justify-content: flex-start;
-    background-color: #f1f1f1;
+    background-color: #f1f1f1
 }
 
 ::-webkit-scrollbar {
     width: 12px;
-    height: 12px;
+    height: 12px
 }
 
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 10px;
+    border-radius: 10px
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: #d9534f;
     border-radius: 10px;
-    border: 3px solid #f1f1f1;
+    border: 3px solid #f1f1f1
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #b7423b;
+    background-color: #b7423b
 }
 
 .start-container1 {
@@ -37,7 +36,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    background-color: var(--dl-color-gray-white);
+    background-color: var(--dl-color-gray-white)
 }
 
 .start-sidebar {
@@ -47,8 +46,8 @@
     display: flex;
     padding: var(--dl-space-space-twounits);
     flex-direction: column;
-    background-color: #ffffff;
-    align-items: center; /* Center the content */
+    background-color: #fff;
+    align-items: center
 }
 
 .start-nav {
@@ -57,57 +56,57 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: flex-start
 }
 
 .start-link {
-    font-size: 42px;
+    font-size: clamp(1rem, 2.5vw, 3rem);
     font-weight: 700;
     margin-bottom: var(--dl-space-space-fiveunits);
     text-decoration: none;
-    text-align: center; /* Center the text */
+    text-align: center;
 }
 
 .start-navlink {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .start-image {
     width: 90%;
     height: 100%;
     object-fit: cover;
-    margin-left: 0.5em;
-    margin-bottom: var(--dl-space-space-fourunits);
+    margin-left: .5em;
+    margin-bottom: var(--dl-space-space-fourunits)
 }
 
 .start-navlink1 {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .start-image1 {
     width: 90%;
     height: 100%;
     object-fit: cover;
-    margin-left: 0.5em;
-    margin-bottom: var(--dl-space-space-twounits);
+    margin-left: .5em;
+    margin-bottom: var(--dl-space-space-twounits)
 }
 
 .start-navlink2 {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center
 }
 
 .start-image2 {
     width: 90%;
     height: 100%;
     object-fit: cover;
-    margin-left: 0.5em;
-    margin-bottom: var(--dl-space-space-threeunits);
+    margin-left: .5em;
+    margin-bottom: var(--dl-space-space-threeunits)
 }
 
 .start-container2 {
@@ -120,8 +119,7 @@
     position: absolute;
     align-self: flex-end;
     align-items: center;
-    justify-content: center;
-    backface-visibility: #ff0000;
+    justify-content: center
 }
 
 .start-container3 {
@@ -132,60 +130,59 @@
     position: relative;
     align-items: center;
     flex-direction: column;
-    justify-content: center;
+    justify-content: center
 }
 
 .start-text {
-    width: 70%;
-    height: 30%;
-    font-size: 180%;
+    align-self: center;
     text-align: center;
+    font-size: 1.8vw;
     padding-top: var(--dl-space-space-fourunits);
-    margin-bottom: var(--dl-space-space-fourunits);
+    margin-bottom: var(--dl-space-space-fiveunits)
 }
 
 .start-button {
     color: var(--dl-color-gray-white);
     align-self: center;
-    box-shadow: rgb(212, 212, 212) 5px 5px 10px 0;
+    box-shadow: #d4d4d4 5px 5px 10px 0;
     text-align: center;
-    transition: 0.3s;
-    font-size: 20px;
+    transition: .3s;
+    font-size: 1.3vw;
     border-color: #d9534f;
     padding: var(--dl-space-space-unit) var(--dl-space-space-twounits);
-    background-color: rgb(217, 83, 79);
+    background-color: #d9534f
 }
 
 .start-button:hover {
-    transform: scale(1.02);
+    transform: scale(1.02)
 }
 
 .start-button.dragover {
     background-color: #f9a157;
-    border-color: #f9a157;
+    border-color: #f9a157
 }
 
 .start-filename {
     font-size: 180%;
     text-align: center;
     padding-top: var(--dl-space-space-fourunits);
-    margin-bottom: var(--dl-space-space-fourunits);
+    margin-bottom: var(--dl-space-space-fourunits)
 }
 
 @media (max-width: 1600px) {
     .start-text {
-        width: 90%;
+        width: 90%
     }
 }
 
 @media (max-width: 1200px) {
     .start-container1 {
-        height: 100%;
+        height: 100%
     }
 }
 
 @media (max-width: 767px) {
     .start-sidebar {
-        height: 70vh;
+        height: 70vh
     }
 }

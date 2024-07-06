@@ -25,6 +25,11 @@ click==8.1.7
     #   typer
 cloudpathlib==0.16.0
     # via weasel
+colorama==0.4.6
+    # via
+    #   click
+    #   tqdm
+    #   wasabi
 confection==0.1.4
     # via
     #   thinc
@@ -50,7 +55,7 @@ langcodes==3.4.0
     # via spacy
 language-data==1.2.0
     # via langcodes
-lxml==5.2.2
+lxml==5.2.1
     # via -r requirements.in
 marisa-trie==1.1.0
     # via language-data
@@ -88,13 +93,15 @@ pydantic==2.7.1
     #   weasel
 pydantic-core==2.18.2
     # via pydantic
-requests==2.32.2
+requests==2.31.0
     # via
     #   spacy
     #   weasel
 smart-open==6.4.0
-    # via weasel
-spacy==3.7.5
+    # via
+    #   spacy
+    #   weasel
+spacy==3.7.4
     # via -r requirements.in
 spacy-legacy==3.0.12
     # via spacy
@@ -110,7 +117,7 @@ tenacity==8.4.2
     # via plotly
 thinc==8.2.3
     # via spacy
-tqdm==4.66.3
+tqdm==4.66.2
     # via spacy
 typer==0.9.4
     # via
@@ -122,7 +129,7 @@ typing-extensions==4.11.0
     #   pydantic
     #   pydantic-core
     #   typer
-urllib3==2.2.2
+urllib3==2.2.1
     # via requests
 wasabi==1.1.2
     # via
