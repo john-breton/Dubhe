@@ -1,5 +1,3 @@
-/* report.css */
-
 .emoji {
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
     font-size: inherit;
@@ -41,13 +39,13 @@
     width: 100%;
     padding: 10px;
     background-color: #007bff;
-    color: white;
+    color: #fff;
     text-align: center;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .report-filename-text {
-    font-size: 16px;
+    font-size: 1.5rem;
 }
 
 .report-container1 {
@@ -67,8 +65,8 @@
     display: flex;
     padding: var(--dl-space-space-twounits);
     flex-direction: column;
-    background-color: #ffffff;
-    align-items: center; /* Center the content */
+    background-color: #fff;
+    align-items: center;
 }
 
 .report-nav {
@@ -81,22 +79,22 @@
 }
 
 .report-link {
-    font-size: 42px;
+    font-size: clamp(1rem, 2.5vw, 3rem);
     font-weight: 700;
     margin-bottom: var(--dl-space-space-fiveunits);
     text-decoration: none;
-    text-align: center; /* Center the text */
+    text-align: center;
 }
 
 .report-navlink {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center;
 }
 
 .report-image {
-    width: 90%;
-    height: 100%;
+    width: clamp(3rem, 10vw, 90%);
+    height: clamp(3rem, 10vw, 100%);
     object-fit: cover;
     margin-left: 0.5em;
     margin-bottom: var(--dl-space-space-fourunits);
@@ -105,12 +103,12 @@
 .report-navlink1 {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center;
 }
 
 .report-image1 {
-    width: 90%;
-    height: 100%;
+    width: clamp(1rem, 10vw, 90%);
+    height: clamp(1rem, 10vw, 100%);
     object-fit: cover;
     margin-left: 0.5em;
     margin-bottom: var(--dl-space-space-twounits);
@@ -119,12 +117,12 @@
 .report-navlink2 {
     display: block;
     width: 100%;
-    text-align: center; /* Center the content */
+    text-align: center;
 }
 
 .report-image2 {
-    width: 90%;
-    height: 100%;
+    width: clamp(1rem, 10vw, 90%);
+    height: clamp(1rem, 10vw, 100%);
     object-fit: cover;
     margin-left: 0.5em;
     margin-bottom: var(--dl-space-space-twounits);
@@ -150,12 +148,12 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-fourunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
+    background-color: #fff;
     border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
@@ -164,16 +162,18 @@
 }
 
 .report-text {
-    margin-bottom: 14px;
+    margin-bottom: 1%;
+    font-size: 1.5vw;
 }
 
 .report-text03 {
     width: 90%;
     height: 45%;
-    font-size: 58px;
+    font-size: 3vw;
     align-self: center;
     text-align: center;
     padding-top: 12%;
+    margin-bottom: 5%;
 }
 
 .report-text04 {
@@ -191,12 +191,12 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
+    background-color: #fff;
     border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
@@ -205,16 +205,18 @@
 }
 
 .report-text05 {
-    margin-bottom: 14px;
+    margin-bottom: 1%;
+    font-size: 1.5vw;
 }
 
 .report-text08 {
     width: 90%;
     height: 45%;
-    font-size: 58px;
+    font-size: 3vw;
     align-self: center;
     text-align: center;
     padding-top: 12%;
+    margin-bottom: 5%;
 }
 
 .report-text09 {
@@ -232,13 +234,13 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-threeunits);
     margin-right: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
+    background-color: #fff;
     border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
@@ -247,16 +249,18 @@
 }
 
 .report-text10 {
-    margin-bottom: 14px;
+    margin-bottom: 1%;
+    font-size: 1.5vw;
 }
 
 .report-text13 {
     width: 90%;
     height: 45%;
-    font-size: 58px;
+    font-size: 3vw;
     align-self: center;
     text-align: center;
     padding-top: 12%;
+    margin-bottom: 5%;
 }
 
 .report-text14 {
@@ -279,19 +283,20 @@
 }
 
 .report-feature-card3 {
-    width: 30%;
+    width: 30vw;
     height: 80%;
     display: flex;
     flex-direction: column;
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
-    align-items: flex-start;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
+    align-items: center;
+    justify-content: center;
     margin-left: var(--dl-space-space-fourunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
+    background-color: #fff;
     border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
@@ -301,12 +306,15 @@
 
 .report-text15 {
     margin-bottom: 14px;
+    font-size: 1.5vw;
 }
 
 .no-threats-detected {
     align-self: center;
     text-align: center;
-    font-size: 48px;
+    font-size: 1.5vw;
+    margin-top: 10px;
+    margin-bottom: 1%;
 }
 
 .report-image3 {
@@ -325,13 +333,13 @@
     padding: var(--dl-space-space-unit);
     max-width: var(--dl-size-size-maxwidth);
     align-self: center;
-    box-shadow: 5px 5px 10px 0px rgba(18, 18, 18, 0.1);
-    transition: 0.3s;
+    box-shadow: 5px 5px 10px 0 #1212121a;
+    transition: .3s;
     align-items: flex-start;
     margin-left: var(--dl-space-space-threeunits);
     margin-right: var(--dl-space-space-threeunits);
     border-radius: var(--dl-radius-radius-radius8);
-    background-color: #ffffff;
+    background-color: #fff;
     border-top-right-radius: var(--dl-radius-radius-radius8);
 }
 
@@ -341,15 +349,17 @@
 
 .report-text16 {
     margin-bottom: 14px;
+    font-size: 1.5vw;
 }
 
 .report-text17 {
     width: 90%;
-    height: 45%;
-    font-size: 58px;
+    height: auto;
+    font-size: 3vw;
     align-self: center;
     text-align: center;
-    padding-top: 7%;
+    padding-top: 5%;
+    padding-bottom: 3%;
 }
 
 .report-text18 {
@@ -365,25 +375,27 @@
 }
 
 .report-list li {
-    font-size: 16px;
+    font-size: 0.9vw;
 }
 
 .dropdown {
     cursor: pointer;
     display: flex;
     align-items: center;
-    font-weight: bold;
+    font-weight: 700;
     text-align: justify;
-    width: 100%; /* Ensure the dropdown container maintains its width */
+    width: 100%;
 }
 
 .dropdown-text {
     flex: 1;
+    font-size: 1.0vw;
+    margin-right: 10px;
 }
 
 .arrow {
     margin-right: 10px;
-    transition: transform 0.3s;
+    transition: transform .3s;
 }
 
 .arrow.rotate {
@@ -392,21 +404,39 @@
 
 .dropdown-content {
     display: none;
-    margin-top: 10px;
+    margin-top: 2px;
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #f9f9f9;
-    overflow-y: auto; /* Allow vertical scrolling */
-    max-height: 200px; /* Set a max height for the dropdown content */
-    overflow-x: hidden; /* Prevent horizontal overflow */
-    white-space: normal; /* Allow text wrapping */
-    width: 100%; /* Ensure the dropdown content maintains the width of its container */
+    overflow-y: auto;
+    max-height: 40%;
+    overflow-x: hidden;
+    white-space: normal;
+    width: 100%;
+    font-size: 0.9vw;
 }
 
 .dropdown-content.show {
     display: block;
 }
 
+.plotly-graph-div {
+    width: 28vw;
+    height: 22vw;
+    position: relative;
+    overflow: auto;
+    object-fit: scale-down;
+}
+
 .indented {
     margin-left: 20px;
+    font-size: 1.2rem;
+}
+
+.no-optimization {
+    text-align: center;
+    font-size: 1.5vw;
+    color: #d9534f;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
