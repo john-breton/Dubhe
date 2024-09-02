@@ -25,11 +25,6 @@ click==8.1.7
     #   typer
 cloudpathlib==0.16.0
     # via weasel
-colorama==0.4.6
-    # via
-    #   click
-    #   tqdm
-    #   wasabi
 confection==0.1.4
     # via
     #   thinc
@@ -79,7 +74,7 @@ packaging==24.0
     #   spacy
     #   thinc
     #   weasel
-plotly==5.22.0
+plotly==5.24.0
     # via -r requirements.in
 preshed==3.0.9
     # via
