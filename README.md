@@ -43,6 +43,9 @@ If you want to try to submit your own XMI files for analysis with Dubhe, great! 
 
 Sample XMI files are included under `common/XMI Files` which were generated using [StarUML](https://staruml.io/download/). You can find the model files that were used to generate the XMI under `common/StarUML Files`.
 
+### Sample Analysis
+If you want to try out the tool, we recommend following the Online Seller of Merchandise (OSM) system analysis located in `common/XMI Files/Scenario Walkthrough Files`. 
+
 ## Analysis
 Dubhe currently supports the following types of analysis:
  - Determination of a system's behavioural security posture through the calculation of its average Critical Element Risk Index (CERI) and its Corruption Propagation Potential (CPP).
