@@ -15,7 +15,7 @@ catalogue==2.0.10
     #   spacy
     #   srsly
     #   thinc
-certifi==2024.2.2
+certifi==2024.7.4
     # via requests
 charset-normalizer==3.3.2
     # via requests
@@ -88,7 +88,7 @@ pydantic==2.7.1
     #   weasel
 pydantic-core==2.18.2
     # via pydantic
-requests==2.31.0
+requests==2.32.2
     # via
     #   spacy
     #   weasel
@@ -110,7 +110,7 @@ tenacity==8.4.2
     # via plotly
 thinc==8.2.3
     # via spacy
-tqdm==4.66.2
+tqdm==4.66.3
     # via spacy
 typer==0.9.4
     # via
@@ -122,7 +122,7 @@ typing-extensions==4.11.0
     #   pydantic
     #   pydantic-core
     #   typer
-urllib3==2.2.1
+urllib3==2.2.2
     # via requests
 wasabi==1.1.2
     # via
@@ -133,7 +133,7 @@ weasel==0.3.4
     # via spacy
 werkzeug==3.0.2
     # via flask
-zipp==3.18.1
+zipp==3.19.1
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
