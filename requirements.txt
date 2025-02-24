@@ -63,6 +63,8 @@ murmurhash==1.0.10
     #   preshed
     #   spacy
     #   thinc
+narwhals==1.28.0
+    # via plotly
 numpy==1.26.4
     # via
     #   blis
@@ -74,7 +76,7 @@ packaging==24.0
     #   spacy
     #   thinc
     #   weasel
-plotly==5.24.1
+plotly==6.0.0
     # via -r requirements.in
 preshed==3.0.9
     # via
@@ -106,8 +108,6 @@ srsly==2.4.8
     #   spacy
     #   thinc
     #   weasel
-tenacity==8.4.2
-    # via plotly
 thinc==8.2.3
     # via spacy
 tqdm==4.66.3
